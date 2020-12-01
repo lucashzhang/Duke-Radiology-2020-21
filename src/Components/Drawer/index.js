@@ -5,6 +5,9 @@ import theme from '../../Utilities/theme';
 import { useDropzone } from 'react-dropzone';
 import { List, ListItem, ListItemText } from '@material-ui/core';
 
+import { writeFiles, readDICOMS } from '../../Utilities/fileHandler.js';
+
+
 
 const useStyles = makeStyles((theme) => ({
     drawerContainer: {
@@ -22,7 +25,7 @@ function FileDrawer() {
 
     const classes = useStyles();
     const onDrop = useCallback(acceptedFiles => {
-        console.log(acceptedFiles);
+        readDICOMS(acceptedFiles)
     }, [])
     const { getRootProps, getInputProps, open } = useDropzone({ onDrop, noClick: true });
     const [isClickable, setIsClickable] = useState(true)
