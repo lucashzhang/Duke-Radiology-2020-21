@@ -5,7 +5,7 @@ import theme from '../../Utilities/theme';
 import { useDropzone } from 'react-dropzone';
 import { List, ListItem, ListItemText } from '@material-ui/core';
 
-import { writeFiles, readDICOMS } from '../../Utilities/fileHandler.js';
+import { readRSFiles } from '../../Utilities/fileHandler.js';
 
 
 
@@ -24,30 +24,31 @@ const useStyles = makeStyles((theme) => ({
 function FileDrawer() {
 
     const classes = useStyles();
+
+    const [isClickable, setIsClickable] = useState(true);
+    const [structs, setStructs] = useState([]);
+
     const onDrop = useCallback(acceptedFiles => {
-        readDICOMS(acceptedFiles)
-    }, [])
+        readRSFiles(acceptedFiles).then(newStructs => {
+            setStructs(newStructs) 
+        });
+    }, []);
     const { getRootProps, getInputProps, open } = useDropzone({ onDrop, noClick: true });
-    const [isClickable, setIsClickable] = useState(true)
+
 
     return (
         <ThemeProvider theme={theme}>
-            <div {...getRootProps()} className={classes.drawerContainer} onClick={() => {if (isClickable) open()}}>
+            <div {...getRootProps()} className={classes.drawerContainer} onClick={() => { if (isClickable) open() }}>
                 <input {...getInputProps()} />
                 {
                     <List onMouseEnter={() => setIsClickable(false)} onMouseLeave={() => setIsClickable(true)}>
-                        <ListItem button onClick={e => e.preventDefault()}>
-                            <ListItemText primary='Home' />
-                        </ListItem>
-                        <ListItem button>
-                            <ListItemText primary='About Me' />
-                        </ListItem>
-                        <ListItem button>
-                            <ListItemText primary='My Projects' />
-                        </ListItem>
-                        <ListItem button>
-                            <ListItemText primary='Contact Me' />
-                        </ListItem>
+                        {
+                            structs.map((struct, index) => (
+                                <ListItem button key={`${struct.name}${struct.roi}`}>
+                                    <ListItemText primary={struct.name} />
+                                </ListItem>
+                            ))
+                        }
                     </List>
                 }
             </div>

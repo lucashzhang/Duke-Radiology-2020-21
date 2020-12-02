@@ -38,41 +38,41 @@ function WebsiteDrawer(props) {
 
     return (
         <div>
-                <ThemeProvider theme={theme}>
-                    <Drawer
-                        variant="permanent"
-                        className={clsx(classes.drawer, classes.drawerOpen)}
-                        classes={{
-                            paper: classes.drawerClose
-                        }}
-                    >
-                        <List>
-                            <ListItem button component={Link}>
-                                <Tooltip title='My Resume'><ListItemIcon><FaFile /></ListItemIcon></Tooltip>
-                                <ListItemText primary='My Resume' />
-                            </ListItem>
-                        </List>
-                        <Divider />
-                        <List>
-                            <ListItem button component={Link} to='/home'>
-                                <Tooltip title='Home'><ListItemIcon><FaHome /></ListItemIcon></Tooltip>
-                                <ListItemText primary='Home' />
-                            </ListItem>
-                            <ListItem button component={Link} to='/about'>
-                                <Tooltip title='About Me'><ListItemIcon><FaUser /></ListItemIcon></Tooltip>
-                                <ListItemText primary='About Me' />
-                            </ListItem>
-                            <ListItem button component={Link} to='/programming'>
-                                <Tooltip title='My Projects'><ListItemIcon><FaCode /></ListItemIcon></Tooltip>
-                                <ListItemText primary='My Projects' />
-                            </ListItem>
-                            <ListItem button component={Link} to='/contact'>
-                                <Tooltip title='Contact Me'><ListItemIcon><FaAddressBook /></ListItemIcon></Tooltip>
-                                <ListItemText primary='Contact Me' />
-                            </ListItem>
-                        </List>
-                    </Drawer>
-                </ThemeProvider>
+            <ThemeProvider theme={theme}>
+                <Drawer
+                    variant="permanent"
+                    className={clsx(classes.drawer, classes.drawerOpen)}
+                    classes={{
+                        paper: classes.drawerClose
+                    }}
+                >
+                    <List>
+                        <ListItem button component={Link} to='/'>
+                            <Tooltip title='My Resume'><ListItemIcon><FaFile /></ListItemIcon></Tooltip>
+                            <ListItemText primary='My Resume' />
+                        </ListItem>
+                    </List>
+                    <Divider />
+                    <List>
+                        <ListItem button component={Link} to='/home'>
+                            <Tooltip title='Home'><ListItemIcon><FaHome /></ListItemIcon></Tooltip>
+                            <ListItemText primary='Home' />
+                        </ListItem>
+                        <ListItem button component={Link} to='/about'>
+                            <Tooltip title='About Me'><ListItemIcon><FaUser /></ListItemIcon></Tooltip>
+                            <ListItemText primary='About Me' />
+                        </ListItem>
+                        <ListItem button component={Link} to='/programming'>
+                            <Tooltip title='My Projects'><ListItemIcon><FaCode /></ListItemIcon></Tooltip>
+                            <ListItemText primary='My Projects' />
+                        </ListItem>
+                        <ListItem button component={Link} to='/contact'>
+                            <Tooltip title='Contact Me'><ListItemIcon><FaAddressBook /></ListItemIcon></Tooltip>
+                            <ListItemText primary='Contact Me' />
+                        </ListItem>
+                    </List>
+                </Drawer>
+            </ThemeProvider>
         </div>
     )
 }
