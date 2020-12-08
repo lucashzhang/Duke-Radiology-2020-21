@@ -10,11 +10,10 @@ import { readDir } from '../../Utilities/fileHandler.js';
 
 const useStyles = makeStyles((theme) => ({
     drawerContainer: {
-        width: 'calc(270px - 2rem)',
-        height: 'calc(100vh - 2rem)',
+        width: 'calc(270px)',
+        height: 'calc(100vh)',
         backgroundColor: theme.palette.primary.main,
         color: theme.palette.background.paper,
-        padding: '1rem',
         overflow: 'auto'
     }
 }));
@@ -24,16 +23,22 @@ function FileDrawer() {
 
     const classes = useStyles();
 
-    const [isClickable, setIsClickable] = useState(true);
     const [structs, setStructs] = useState([]);
 
-    useEffect(() => readDir(), []);
+    function genStructList() {
+        readDir('RS').then(fileData => {
+            let newStructs = fileData['RS'][0].structList;
+            setStructs(newStructs);
+        });
+    }
+
+    useEffect(genStructList, []);
 
 
     return (
         <ThemeProvider theme={theme}>
             <div className={classes.drawerContainer}>
-                <List onMouseEnter={() => setIsClickable(false)} onMouseLeave={() => setIsClickable(true)}>
+                <List>
                     {
                         structs.map((struct, index) => (
                             <ListItem button key={`${struct.name}${struct.roi}`}>

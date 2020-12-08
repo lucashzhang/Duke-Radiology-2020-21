@@ -1,4 +1,4 @@
-import { RS } from './fileObjects';
+import { RS, CT } from './fileObjects';
 
 // const { dialog } = window.require('electron').remote;
 const fs = window.require('fs'); // Load the File System to execute our common tasks (CRUD)
@@ -27,20 +27,28 @@ export async function readDir(searchType = null) {
         }
     });
     let dirResults = await Promise.all(filePromises);
-    let output = []
+    let output = {}
     for (let file of dirResults) {
         const { type } = parseFileName(file.filename);
         switch (type) {
             case 'RS':
-                output.push(new RS(file.contents))
+                if (output.hasOwnProperty('RS')) {
+                    output['RS'].push(new RS(file.contents))
+                } else {
+                    output['RS'] = [new RS(file.contents)]
+                }
                 break;
             case 'CT':
+                if (output.hasOwnProperty('CT')) {
+                    output['CT'].push(new CT(file.contents))
+                } else {
+                    output['CT'] = [new CT(file.contents)]
+                }
                 break;
             default:
                 break;
         }
     }
-    console.log(output)
     return output;
 }
 
