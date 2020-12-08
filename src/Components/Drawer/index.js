@@ -1,8 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ThemeProvider, makeStyles } from '@material-ui/core/styles';
 import theme from '../../Utilities/theme';
 
-import { useDropzone } from 'react-dropzone';
 import { List, ListItem, ListItemText } from '@material-ui/core';
 
 import { readDir } from '../../Utilities/fileHandler.js';
