@@ -1,11 +1,11 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ThemeProvider, makeStyles } from '@material-ui/core/styles';
 import theme from '../../Utilities/theme';
 
 import { useDropzone } from 'react-dropzone';
 import { List, ListItem, ListItemText } from '@material-ui/core';
 
-import { readRSFiles } from '../../Utilities/fileHandler.js';
+import { readDir } from '../../Utilities/fileHandler.js';
 
 
 
@@ -28,29 +28,21 @@ function FileDrawer() {
     const [isClickable, setIsClickable] = useState(true);
     const [structs, setStructs] = useState([]);
 
-    const onDrop = useCallback(acceptedFiles => {
-        readRSFiles(acceptedFiles).then(newStructs => {
-            setStructs(newStructs) 
-        });
-    }, []);
-    const { getRootProps, getInputProps, open } = useDropzone({ onDrop, noClick: true });
+    useEffect(() => readDir(), []);
 
 
     return (
         <ThemeProvider theme={theme}>
-            <div {...getRootProps()} className={classes.drawerContainer} onClick={() => { if (isClickable) open() }}>
-                <input {...getInputProps()} />
-                {
-                    <List onMouseEnter={() => setIsClickable(false)} onMouseLeave={() => setIsClickable(true)}>
-                        {
-                            structs.map((struct, index) => (
-                                <ListItem button key={`${struct.name}${struct.roi}`}>
-                                    <ListItemText primary={struct.name} />
-                                </ListItem>
-                            ))
-                        }
-                    </List>
-                }
+            <div className={classes.drawerContainer}>
+                <List onMouseEnter={() => setIsClickable(false)} onMouseLeave={() => setIsClickable(true)}>
+                    {
+                        structs.map((struct, index) => (
+                            <ListItem button key={`${struct.name}${struct.roi}`}>
+                                <ListItemText primary={struct.name} />
+                            </ListItem>
+                        ))
+                    }
+                </List>
             </div>
         </ThemeProvider>
     );
