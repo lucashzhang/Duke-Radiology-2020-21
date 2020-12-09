@@ -5,11 +5,15 @@ import { TAG_DICT } from './dicomDict';
 export class DCM {
     constructor(buffer) {
         try {
-            this.dataSet = dicomParser.parseDicom(buffer);
+            this.imageData = daikon.Series.parseImage(new DataView(this.toArrayBuffer(buffer)));
         }
         catch (err) {
             console.log(err)
         }
+    }
+
+    toArrayBuffer(b) {
+        return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength);
     }
 
     convertFromID(id) {
@@ -27,33 +31,28 @@ export class RS extends DCM {
     
     get structList() {
         let structs = [];
-        let observations = this.dataSet.elements[this.convertToID('30060080')];
-        for (let item of observations.items) {
-            let itemData = item.dataSet;
+        // let observations = this.dataSet.elements[this.convertToID('30060080')];
+        // for (let item of observations.items) {
+        //     let itemData = item.dataSet;
+        //     structs.push({
+        //         name: String(itemData.string("x30060085")),
+        //         roi: parseInt(itemData.string("x30060084"))
+        //     });
+        // }
+        let observations = this.imageData.tags['30060080'].value;
+        for (let obs of observations) {
+            let dataVals = obs.value;
             structs.push({
-                name: String(itemData.string("x30060085")),
-                roi: parseInt(itemData.string("x30060084"))
-            });
+                name: String(dataVals.find(obj => obj.id === "30060085").value[0]),
+                roi: parseInt(dataVals.find(obj => obj.id === "30060084").value[0]),
+            })
         }
     
         return structs;
     }
 }
 
-export class CT {
-
-    constructor(buffer) {
-        try {
-            this.imageData = daikon.Series.parseImage(new DataView(this.toArrayBuffer(buffer)));
-        }
-        catch (err) {
-            console.log(err)
-        }
-    }
-
-    toArrayBuffer(b) {
-        return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength);
-    }
+export class CT extends DCM {
 
     get pixelData() {
         if (this.imageData.hasPixelData()) {
@@ -72,19 +71,4 @@ export class CT {
             return this.imageData.getCols();
         }
     }
-
-    // get pixelData() {
-    //     let pixelDataElement = this.dataSet.elements[this.convertToID('7fe00010')];
-    //     return new Uint8ClampedArray(this.dataSet.byteArray.buffer, pixelDataElement.dataOffset, pixelDataElement.length);
-    // }
-
-    // get rows() {
-    //     let data = new Uint16Array(this.dataSet.byteArray.buffer, this.dataSet.elements["x00280010"].dataOffset, this.dataSet.elements["x00280010"].length);
-    //     return data[0];
-    // }
-
-    // get columns() {
-    //     let data = new Uint16Array(this.dataSet.byteArray.buffer, this.dataSet.elements["x00280011"].dataOffset, this.dataSet.elements["x00280011"].length);
-    //     return data[0];
-    // }
 }
