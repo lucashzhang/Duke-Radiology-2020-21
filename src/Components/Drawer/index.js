@@ -4,9 +4,6 @@ import theme from '../../Utilities/theme';
 
 import { List, ListItem, ListItemText } from '@material-ui/core';
 
-import { readDir } from '../../Utilities/fileHandler.js';
-
-
 
 const useStyles = makeStyles((theme) => ({
     drawerContainer: {
@@ -19,28 +16,17 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function FileDrawer() {
+function StructMenu(props) {
 
     const classes = useStyles();
-
-    const [structs, setStructs] = useState([]);
-
-    function genStructList() {
-        readDir('RS').then(fileData => {
-            let newStructs = fileData['RS'][0].structList;
-            setStructs(newStructs);
-        });
-    }
-
-    useEffect(genStructList, []);
-
+    const structs = props.structs;
 
     return (
         <ThemeProvider theme={theme}>
             <div className={classes.drawerContainer}>
                 <List>
                     {
-                        structs.map((struct, index) => (
+                        structs.map((struct) => (
                             <ListItem button key={`${struct.name}${struct.roi}`}>
                                 <ListItemText primary={struct.name} />
                             </ListItem>
@@ -52,4 +38,4 @@ function FileDrawer() {
     );
 }
 
-export default FileDrawer;
+export default StructMenu;

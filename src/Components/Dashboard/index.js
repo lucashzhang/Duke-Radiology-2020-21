@@ -1,7 +1,9 @@
-import React from "react";
-import FileDrawer from '../Drawer';
+import React, { useState, useEffect } from "react";
+import StructMenu from '../Drawer';
 import { makeStyles } from '@material-ui/core/styles';
 import CTCanvas from '../CTCanvas';
+
+import { readDir } from '../../Utilities/fileHandler'
 
 const useStyles = makeStyles((theme) => ({
     frame: {
@@ -16,11 +18,27 @@ const useStyles = makeStyles((theme) => ({
 
 function Dashboard() {
     const classes = useStyles();
+
+    const [structs, setStructs] = useState([]);
+    const [series, setSeries] = useState(null)
+
+    function genStructList() {
+        readDir('ALL', true).then(fileData => {
+            let newStructs = fileData['RS'][0].structList;
+            let newSeries = fileData['SERIES']
+            console.log(newSeries)
+            setStructs(newStructs);
+            setSeries(newSeries);
+        });
+    }
+
+    useEffect(genStructList, []);
+
     return (
-        <div className = {classes.frame}>
-            <FileDrawer></FileDrawer>
+        <div className={classes.frame}>
+            <StructMenu structs={structs}></StructMenu>
             <div className={classes.viewport}>
-                <CTCanvas></CTCanvas>
+                <CTCanvas image={series ? series.images[0] : null}></CTCanvas>
             </div>
         </div>
     );
