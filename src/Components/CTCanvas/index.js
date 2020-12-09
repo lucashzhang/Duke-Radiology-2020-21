@@ -40,7 +40,6 @@ function CTCanvas() {
 
         let obj = image.getInterpretedData(false, true);
         let array = new Uint8ClampedArray(obj.data);
-        console.log(array)
 
         let temp = 0
         for (let i = 3, k = 0; i < data.byteLength; i += 4, k++) {
