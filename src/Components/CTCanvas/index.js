@@ -39,9 +39,7 @@ function CTCanvas() {
         let data = imgData.data;
 
         for (var i = 0; i < data.length; i+=4) {
-            data[i] = newData[Math.floor(i / 2)];
-            data[i+1] = newData[Math.floor(i / 2)];
-            data[i+2] = newData[Math.floor(i / 2)];
+            data[i] = data[i+1] = data[i+2] = data[i+3] = newData[Math.floor(i / 2)];
             data[i+3] = 255;
         }
 
