@@ -1,14 +1,17 @@
+import daikon from 'daikon';
 import { RS, CT } from './fileObjects';
 
 // const { dialog } = window.require('electron').remote;
 const fs = window.require('fs'); // Load the File System to execute our common tasks (CRUD)
 
-export async function readDir(searchType = null) {
+export async function readDir(searchType = null, series = false) {
 
     // Temporary directory, will dynamically change afterwards
     let absDir = '/home/lucashzhang/Personal-Projects/duke-radiology/Patient-DICOM/01';
 
     if (!absDir.endsWith('/')) absDir += '/';
+
+    if (series) searchType = 'CT'
 
     let filePromises = []
     fs.readdirSync(absDir).forEach(file => {
@@ -26,7 +29,20 @@ export async function readDir(searchType = null) {
             }
         }
     });
+
     let dirResults = await Promise.all(filePromises);
+    let output = buildObjects(dirResults);
+
+    // Builds a series if specified in the parameters
+    if (series && output['CT'] && output['CT'].length > 0) {
+        let imageSeries = buildSeries(output['CT']);
+        output['SERIES'] = imageSeries;
+    }
+
+    return output;
+}
+
+function buildObjects(dirResults) {
     let output = {}
     for (let file of dirResults) {
         const { type } = parseFileName(file.filename);
@@ -50,6 +66,21 @@ export async function readDir(searchType = null) {
         }
     }
     return output;
+}
+
+function buildSeries(images) {
+    let series = new daikon.Series();
+
+    for (let image of images) {
+        let data = image.imageData;
+        if (series.matchesSeries(data)) {
+            series.addImage(data);
+        }
+        
+    }
+    series.buildSeries();
+
+    return series
 }
 
 function parseFileName(filename) {

@@ -1,4 +1,5 @@
 import * as dicomParser from 'dicom-parser';
+import * as daikon from 'daikon';
 import { TAG_DICT } from './dicomDict';
 
 export class DCM {
@@ -39,20 +40,51 @@ export class RS extends DCM {
     }
 }
 
-export class CT extends DCM {
+export class CT {
+
+    constructor(buffer) {
+        try {
+            this.imageData = daikon.Series.parseImage(new DataView(this.toArrayBuffer(buffer)));
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+
+    toArrayBuffer(b) {
+        return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength);
+    }
 
     get pixelData() {
-        let pixelDataElement = this.dataSet.elements[this.convertToID('7fe00010')];
-        return new Uint8ClampedArray(this.dataSet.byteArray.buffer, pixelDataElement.dataOffset, pixelDataElement.length);
+        if (this.imageData.hasPixelData()) {
+            return this.imageData.getPixelData();
+        }
     }
 
     get rows() {
-        let data = new Uint16Array(this.dataSet.byteArray.buffer, this.dataSet.elements["x00280010"].dataOffset, this.dataSet.elements["x00280010"].length);
-        return data[0];
+        if (this.imageData.hasPixelData()) {
+            return this.imageData.getRows();
+        }
     }
 
     get columns() {
-        let data = new Uint16Array(this.dataSet.byteArray.buffer, this.dataSet.elements["x00280011"].dataOffset, this.dataSet.elements["x00280011"].length);
-        return data[0];
+        if (this.imageData.hasPixelData()) {
+            return this.imageData.getCols();
+        }
     }
+
+    // get pixelData() {
+    //     let pixelDataElement = this.dataSet.elements[this.convertToID('7fe00010')];
+    //     return new Uint8ClampedArray(this.dataSet.byteArray.buffer, pixelDataElement.dataOffset, pixelDataElement.length);
+    // }
+
+    // get rows() {
+    //     let data = new Uint16Array(this.dataSet.byteArray.buffer, this.dataSet.elements["x00280010"].dataOffset, this.dataSet.elements["x00280010"].length);
+    //     return data[0];
+    // }
+
+    // get columns() {
+    //     let data = new Uint16Array(this.dataSet.byteArray.buffer, this.dataSet.elements["x00280011"].dataOffset, this.dataSet.elements["x00280011"].length);
+    //     return data[0];
+    // }
 }
