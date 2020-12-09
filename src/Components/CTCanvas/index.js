@@ -41,15 +41,14 @@ function CTCanvas() {
         let obj = image.getInterpretedData(false, true);
         let array = new Uint8ClampedArray(obj.data);
 
-        let temp = 0
         for (let i = 3, k = 0; i < data.byteLength; i += 4, k++) {
             //convert 16-bit to 8-bit, because we cannot render a 16-bit value to the canvas.
-            let result = ((array[k + 1] & 0xFF) << 8) | (array[k] & 0xFF);
-            result = (result & 0xFFFF) >> 8;
-            data[i] = 255 - result;
-            temp = k;
+            // let result = ((array[k + 1] & 0xFF) << 8) | (array[k] & 0xFF);
+            // result = (result & 0xFFFF) >> 8;
+            // data[i] = 255 - result;
+
+            data[i] = 255 - array[k]
         }
-        console.log(temp)
 
         ctx.putImageData(imgData, 0, 0);
     }
