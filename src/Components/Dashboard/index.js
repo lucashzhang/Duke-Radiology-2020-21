@@ -31,6 +31,7 @@ function Dashboard() {
         readDir(dirPath).then(fileData => {
             setStructs(fileData['RS'][0].structList);
             setSeries(fileData['SERIES']);
+            console.log(fileData['SERIES'].imageArray)
         });
     }
 
@@ -46,6 +47,8 @@ function Dashboard() {
             <StructMenu structs={structs}></StructMenu>
             <div className={classes.viewport}>
                 <CTCanvas series={series} view='AXIAL'></CTCanvas>
+                <CTCanvas series={series} view='CORONAL'></CTCanvas>
+                <CTCanvas series={series} view='SAGITTAL'></CTCanvas>
             </div>
         </div>
     );

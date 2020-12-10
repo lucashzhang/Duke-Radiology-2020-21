@@ -25,6 +25,18 @@ function CTCanvas(props) {
                 sliceDepth = series.depth;
                 drawCT(series.getAxialSlice(sliceNum));
                 break;
+            case 'CORONAL':
+                canvasRef.current.width = series.width;
+                canvasRef.current.height = series.depth;
+                sliceDepth = series.height;
+                drawCT(series.getCoronalSlice(sliceNum));
+                break;
+            case 'SAGITTAL':
+                canvasRef.current.width = series.depth;
+                canvasRef.current.height = series.height;
+                sliceDepth = series.width;
+                drawCT(series.getSagittalSlice(sliceNum));
+                break;
             default:
                 break;
         }

@@ -75,6 +75,15 @@ export class CTSeries {
         this.width = this.series.images[0].getCols();
         this.height = this.series.images[0].getRows();
         this.depth = this.series.images.length;
+        this.imageArray = this.buildImageArray()
+    }
+
+    buildImageArray() {
+        let res = [];
+        for (let i = 0; i < this.depth; i++) {
+            res.push(this.getSlice(i))
+        }
+        return res;
     }
 
     buildSeries(images) {
@@ -96,9 +105,36 @@ export class CTSeries {
         return this.series.images;
     }
 
-    getAxialSlice(sliceNum) {
+    getSlice(sliceNum) {
         let image = this.axialImages[sliceNum];
         let ctImg = image.getInterpretedData(false, true);
         return new Uint8ClampedArray(ctImg.data);
+    }
+
+    getAxialSlice(sliceNum) {
+        return this.imageArray[sliceNum]
+    }
+
+    getCoronalSlice(sliceNum) {
+        let temp = [];
+
+        for (let i = 0; i < this.depth; i++) {
+            for (let j = 0; j < this.width; j++) {
+                temp.push(this.imageArray[i][sliceNum * this.width + j])
+            }
+        }
+        return new Uint8ClampedArray(temp);
+    }
+
+    getSagittalSlice(sliceNum) {
+        let temp = [];
+
+        for (let i = 0; i < this.height - 1; i++) {
+            for (let j = 0; j < this.depth; j++) {
+                temp.push(this.imageArray[j][sliceNum + this.width * i]);
+            }
+        }
+
+        return new Uint8ClampedArray(temp);
     }
 }
