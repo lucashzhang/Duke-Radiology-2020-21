@@ -24,6 +24,7 @@ function Dashboard() {
 
     const [structs, setStructs] = useState([]);
     const [series, setSeries] = useState(null);
+    const [imgNum, setImgNum] = useState(0);
     const dirPath = useSelector(state => state.directory.folderDirectory, shallowEqual);
 
     function genStructList() {
@@ -31,9 +32,8 @@ function Dashboard() {
         readDir(dirPath).then(fileData => {
             let newStructs = fileData['RS'][0].structList;
             let newSeries = fileData['SERIES']
-            console.log(newSeries)
             setStructs(newStructs);
-            setSeries(newSeries);
+            setSeries(fileData['SERIES']);
         });
     }
 
@@ -41,14 +41,33 @@ function Dashboard() {
         dispatch(setFolderDirectory('/home/lucashzhang/Personal-Projects/duke-radiology/Patient-DICOM/01'))
     }
 
+    function initKeyListener() {
+        window.addEventListener('keydown', handleUserKeyPress);
+        return () => {
+            window.removeEventListener('keydown', handleUserKeyPress);
+        };
+    }
+
+    function handleUserKeyPress(e) {
+        if (series == null) return;
+        const key = e.key.toUpperCase();
+
+        if ((key === 'ARROWRIGHT' || key === 'ARROWUP')) {
+            setImgNum(prevState => prevState < series.images.length - 1 ? prevState + 1 : series.images.length - 1);
+        } else if ((key === 'ARROWLEFT' || key === 'ARROWDOWN')) {
+            setImgNum(prevState => prevState > 0 ? prevState - 1 : 0);
+        }
+    }
+
     useEffect(initPath, []);
     useEffect(genStructList, [dirPath]);
+    useEffect(initKeyListener, [series]);
 
     return (
         <div className={classes.frame}>
             <StructMenu structs={structs}></StructMenu>
             <div className={classes.viewport}>
-                <CTCanvas image={series ? series.images[0] : null}></CTCanvas>
+                <CTCanvas image={series ? series.images[imgNum] : null}></CTCanvas>
             </div>
         </div>
     );
