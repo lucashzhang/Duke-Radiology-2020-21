@@ -31,7 +31,6 @@ function Dashboard() {
         readDir(dirPath).then(fileData => {
             setStructs(fileData['RS'][0].structList);
             setSeries(fileData['SERIES']);
-            console.log(fileData['SERIES'].imageArray)
         });
     }
 

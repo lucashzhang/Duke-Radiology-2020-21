@@ -133,8 +133,7 @@ export class CTSeries {
             for (let j = 0; j < this.depth; j++) {
                 temp.push(this.imageArray[j][sliceNum + this.width * i]);
             }
-        }
-
+        } 
         return new Uint8ClampedArray(temp);
     }
 }
