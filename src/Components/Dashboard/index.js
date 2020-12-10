@@ -7,7 +7,7 @@ import CTCanvas from '../CTCanvas';
 import { readDir } from '../../Utilities/fileHandler';
 import { setFolderDirectory } from '../../Redux/actions';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
     frame: {
         display: 'flex',
         flexDirection: 'row'
@@ -24,15 +24,13 @@ function Dashboard() {
 
     const [structs, setStructs] = useState([]);
     const [series, setSeries] = useState(null);
-    const [imgNum, setImgNum] = useState(0);
+    const [sliceNum, setSliceNum] = useState(0);
     const dirPath = useSelector(state => state.directory.folderDirectory, shallowEqual);
 
     function genStructList() {
         if (dirPath === '' || dirPath == null) return;
         readDir(dirPath).then(fileData => {
-            let newStructs = fileData['RS'][0].structList;
-            let newSeries = fileData['SERIES']
-            setStructs(newStructs);
+            setStructs(fileData['RS'][0].structList);
             setSeries(fileData['SERIES']);
         });
     }
@@ -53,9 +51,9 @@ function Dashboard() {
         const key = e.key.toUpperCase();
 
         if ((key === 'ARROWRIGHT' || key === 'ARROWUP')) {
-            setImgNum(prevState => prevState < series.images.length - 1 ? prevState + 1 : series.images.length - 1);
+            setSliceNum(prevState => prevState < series.images.length - 1 ? prevState + 1 : series.images.length - 1);
         } else if ((key === 'ARROWLEFT' || key === 'ARROWDOWN')) {
-            setImgNum(prevState => prevState > 0 ? prevState - 1 : 0);
+            setSliceNum(prevState => prevState > 0 ? prevState - 1 : 0);
         }
     }
 
@@ -67,7 +65,7 @@ function Dashboard() {
         <div className={classes.frame}>
             <StructMenu structs={structs}></StructMenu>
             <div className={classes.viewport}>
-                <CTCanvas image={series ? series.images[imgNum] : null}></CTCanvas>
+                <CTCanvas image={series ? series.images[sliceNum] : null}></CTCanvas>
             </div>
         </div>
     );
