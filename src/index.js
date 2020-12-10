@@ -8,6 +8,8 @@ import initStore from './Redux';
 import { Provider } from 'react-redux';
 
 const store = initStore();
+// Temporary, for viewing the store
+window.store = store;
 
 ReactDOM.render(
   <React.StrictMode>
