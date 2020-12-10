@@ -53,8 +53,10 @@ function CTCanvas(props) {
         const key = e.key.toUpperCase();
 
         if ((key === 'ARROWRIGHT' || key === 'ARROWUP')) {
+            // Increments forward
             setSliceNum(prevState => prevState < props.images.length - 1 ? prevState + 1 : props.images.length - 1);
         } else if ((key === 'ARROWLEFT' || key === 'ARROWDOWN')) {
+            // Increments backward
             setSliceNum(prevState => prevState > 0 ? prevState - 1 : 0);
         }
     }
@@ -62,8 +64,10 @@ function CTCanvas(props) {
     function handleUserScroll(e) {
         const direction = e.deltaY;
         if (direction > 0) {
+            // On scroll down
             setSliceNum(prevState => prevState > 0 ? prevState - 1 : 0);
         } else if (direction < 0) {
+            // On scroll up
             setSliceNum(prevState => prevState < props.images.length - 1 ? prevState + 1 : props.images.length - 1);
         }
     }
