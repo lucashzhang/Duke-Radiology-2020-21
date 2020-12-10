@@ -1,5 +1,5 @@
-import daikon from 'daikon';
-import { RS, CT } from './fileObjects';
+// import daikon from 'daikon';
+import { RS, CT, CTSeries } from './fileObjects';
 
 // const { dialog } = window.require('electron').remote;
 const fs = window.require('fs'); // Load the File System to execute our common tasks (CRUD)
@@ -33,8 +33,7 @@ export async function readDir(absDir, include = { 'ALL': true }) {
 
     // Builds a series if specified in the parameters
     if ((include['SERIES'] || include['ALL']) && output['CT'] && output['CT'].length > 0) {
-        let imageSeries = buildSeries(output['CT']);
-        output['SERIES'] = imageSeries;
+        output['SERIES'] = new CTSeries(output['CT']);
     }
 
     return output;
@@ -64,21 +63,6 @@ function buildObjects(dirResults) {
         }
     }
     return output;
-}
-
-function buildSeries(images) {
-    let series = new daikon.Series();
-
-    for (let image of images) {
-        let data = image.imageData;
-        if (series.matchesSeries(data)) {
-            series.addImage(data);
-        }
-
-    }
-    series.buildSeries();
-
-    return series
 }
 
 function parseFileName(filename) {

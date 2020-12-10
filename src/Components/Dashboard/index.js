@@ -35,7 +35,7 @@ function Dashboard() {
     }
 
     function initPath() {
-        dispatch(setFolderDirectory('/home/lucashzhang/Personal-Projects/duke-radiology/Patient-DICOM/01'))
+        dispatch(setFolderDirectory('/home/lucashzhang/Personal-Projects/duke-radiology/Patient-DICOM/02'))
     }
 
     useEffect(initPath, []);
@@ -45,7 +45,7 @@ function Dashboard() {
         <div className={classes.frame}>
             <StructMenu structs={structs}></StructMenu>
             <div className={classes.viewport}>
-                <CTCanvas images={series ? series.images : null}></CTCanvas>
+                <CTCanvas series={series} view='AXIAL'></CTCanvas>
             </div>
         </div>
     );

@@ -1,6 +1,8 @@
-import * as dicomParser from 'dicom-parser';
+// import * as dicomParser from 'dicom-parser';
 import * as daikon from 'daikon';
 import { TAG_DICT } from './dicomDict';
+
+// These objects are all wrappers for daikon image/series objects, they supply the necessary functions to manipulate the data
 
 export class DCM {
     constructor(filename, buffer) {
@@ -32,14 +34,6 @@ export class RS extends DCM {
     
     get structList() {
         let structs = [];
-        // let observations = this.dataSet.elements[this.convertToID('30060080')];
-        // for (let item of observations.items) {
-        //     let itemData = item.dataSet;
-        //     structs.push({
-        //         name: String(itemData.string("x30060085")),
-        //         roi: parseInt(itemData.string("x30060084"))
-        //     });
-        // }
         let observations = this.imageData.tags['30060080'].value;
         for (let obs of observations) {
             let dataVals = obs.value;
@@ -71,5 +65,40 @@ export class CT extends DCM {
         if (this.imageData.hasPixelData()) {
             return this.imageData.getCols();
         }
+    }
+}
+
+export class CTSeries {
+
+    constructor(ctArray) {
+        this.series = this.buildSeries(ctArray);
+        this.width = this.series.images[0].getCols();
+        this.height = this.series.images[0].getRows();
+        this.depth = this.series.images.length;
+    }
+
+    buildSeries(images) {
+        let series = new daikon.Series();
+    
+        for (let image of images) {
+            let data = image.imageData;
+            if (series.matchesSeries(data)) {
+                series.addImage(data);
+            }
+    
+        }
+        series.buildSeries();
+    
+        return series
+    }
+
+    get axialImages() {
+        return this.series.images;
+    }
+
+    getAxialSlice(sliceNum) {
+        let image = this.axialImages[sliceNum];
+        let ctImg = image.getInterpretedData(false, true);
+        return new Uint8ClampedArray(ctImg.data);
     }
 }

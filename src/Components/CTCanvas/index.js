@@ -12,10 +12,22 @@ function CTCanvas(props) {
 
     const classes = useStyles();
     const canvasRef = useRef(null);
+    const series = props.series;
+    let sliceDepth = 1;
     const [sliceNum, setSliceNum] = useState(0);
 
     function drawCanvas() {
-        if (props.images) drawCT(props.images[sliceNum])
+        if (props.series == null) return;
+        switch (props.view.toUpperCase()) {
+            case 'AXIAL':
+                canvasRef.current.width = series.width;
+                canvasRef.current.height = series.height;
+                sliceDepth = series.depth;
+                drawCT(series.getAxialSlice(sliceNum));
+                break;
+            default:
+                break;
+        }
     }
 
     function canvasReset() {
@@ -24,14 +36,9 @@ function CTCanvas(props) {
         ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     }
 
-    function drawCT(image) {
+    function drawCT(imgArray) {
         canvasReset();
         const ctx = canvasRef.current.getContext('2d');
-        // Get new image data and size canvas accordingly
-        let ctImg = image.getInterpretedData(false, true);
-        let array = new Uint8ClampedArray(ctImg.data);
-        canvasRef.current.width = ctImg.numCols;
-        canvasRef.current.height = ctImg.numRows;
         // Create new image data object
         let imgData = ctx.createImageData(canvasRef.current.width, canvasRef.current.height);
         let data = imgData.data;
@@ -42,19 +49,19 @@ function CTCanvas(props) {
             // result = (result & 0xFFFF) >> 8;
             // data[i] = 255 - result;
 
-            data[i] = 255 - array[k]
+            data[i] = 255 - imgArray[k]
         }
         // set image data object
         ctx.putImageData(imgData, 0, 0);
     }
 
     function handleUserKeyPress(e) {
-        if (props.images == null) return;
+        if (props.series == null) return;
         const key = e.key.toUpperCase();
 
         if ((key === 'ARROWRIGHT' || key === 'ARROWUP')) {
             // Increments forward
-            setSliceNum(prevState => prevState < props.images.length - 1 ? prevState + 1 : props.images.length - 1);
+            setSliceNum(prevState => prevState < sliceDepth - 1 ? prevState + 1 : sliceDepth - 1);
         } else if ((key === 'ARROWLEFT' || key === 'ARROWDOWN')) {
             // Increments backward
             setSliceNum(prevState => prevState > 0 ? prevState - 1 : 0);
@@ -62,24 +69,25 @@ function CTCanvas(props) {
     }
 
     function handleUserScroll(e) {
+        if (props.series == null) return;
         const direction = e.deltaY;
         if (direction > 0) {
             // On scroll down
             setSliceNum(prevState => prevState > 0 ? prevState - 1 : 0);
         } else if (direction < 0) {
             // On scroll up
-            setSliceNum(prevState => prevState < props.images.length - 1 ? prevState + 1 : props.images.length - 1);
+            setSliceNum(prevState => prevState < sliceDepth - 1 ? prevState + 1 : sliceDepth - 1);
         }
     }
 
-    useEffect(drawCanvas, [props.images, sliceNum]);
+    useEffect(drawCanvas, [series, sliceNum]);
 
     return (
         <canvas
             ref={canvasRef}
             className={classes.canvas}
-            onKeyDown = {handleUserKeyPress}
-            onWheel = {handleUserScroll}
+            onKeyDown={handleUserKeyPress}
+            onWheel={handleUserScroll}
             tabIndex="0"
         >
         </canvas>
