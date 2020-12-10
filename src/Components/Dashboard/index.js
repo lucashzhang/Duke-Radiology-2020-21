@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { shallowEqual, useSelector, useDispatch } from "react-redux";
 import StructMenu from '../Drawer';
 import { makeStyles } from '@material-ui/core/styles';
 import CTCanvas from '../CTCanvas';
 
-import { readDir } from '../../Utilities/fileHandler'
+import { readDir } from '../../Utilities/fileHandler';
+import { setFolderDirectory } from '../../Redux/actions';
 
 const useStyles = makeStyles((theme) => ({
     frame: {
@@ -18,12 +20,15 @@ const useStyles = makeStyles((theme) => ({
 
 function Dashboard() {
     const classes = useStyles();
+    const dispatch = useDispatch();
 
     const [structs, setStructs] = useState([]);
-    const [series, setSeries] = useState(null)
+    const [series, setSeries] = useState(null);
+    const dirPath = useSelector(state => state.directory.folderDirectory);
 
     function genStructList() {
-        readDir('/home/lucashzhang/Personal-Projects/duke-radiology/Patient-DICOM/01').then(fileData => {
+        if (dirPath === '' || dirPath == null) return;
+        readDir(dirPath).then(fileData => {
             let newStructs = fileData['RS'][0].structList;
             let newSeries = fileData['SERIES']
             console.log(newSeries)
@@ -32,7 +37,12 @@ function Dashboard() {
         });
     }
 
-    useEffect(genStructList, []);
+    function initPath() {
+        dispatch(setFolderDirectory('/home/lucashzhang/Personal-Projects/duke-radiology/Patient-DICOM/01'))
+    }
+
+    useEffect(initPath, []);
+    useEffect(genStructList, [dirPath]);
 
     return (
         <div className={classes.frame}>
