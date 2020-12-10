@@ -4,19 +4,17 @@ import { RS, CT } from './fileObjects';
 // const { dialog } = window.require('electron').remote;
 const fs = window.require('fs'); // Load the File System to execute our common tasks (CRUD)
 
-export async function readDir(searchType, series = false) {
+export async function readDir(absDir, include = { 'ALL': true }) {
 
-    // Temporary directory, will dynamically change afterwards
-    let absDir = '/home/lucashzhang/Personal-Projects/duke-radiology/Patient-DICOM/01';
-
+    // Accepts object that dictates what should be included, if the object is not included as a parameter, will read all of the files and creates a series
     if (!absDir.endsWith('/')) absDir += '/';
 
-    if (series && searchType != 'CT') searchType = 'ALL'
+    if (include['SERIES']) include['CT'] = true
 
     let filePromises = []
     fs.readdirSync(absDir).forEach(file => {
         const { type, extension } = parseFileName(file);
-        if ((searchType === 'ALL' || type === searchType) && extension === 'dcm') {
+        if ((include[type] || include['ALL']) && extension === 'dcm') {
             try {
                 filePromises.push(new Promise((resolve, reject) => {
                     fs.readFile(`${absDir}${file}`, (err, content) => {
@@ -34,7 +32,7 @@ export async function readDir(searchType, series = false) {
     let output = buildObjects(dirResults);
 
     // Builds a series if specified in the parameters
-    if (series && output['CT'] && output['CT'].length > 0) {
+    if ((include['SERIES'] || include['ALL']) && output['CT'] && output['CT'].length > 0) {
         let imageSeries = buildSeries(output['CT']);
         output['SERIES'] = imageSeries;
     }
@@ -76,7 +74,7 @@ function buildSeries(images) {
         if (series.matchesSeries(data)) {
             series.addImage(data);
         }
-        
+
     }
     series.buildSeries();
 

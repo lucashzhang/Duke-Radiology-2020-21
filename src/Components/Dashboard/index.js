@@ -23,7 +23,7 @@ function Dashboard() {
     const [series, setSeries] = useState(null)
 
     function genStructList() {
-        readDir('ALL', true).then(fileData => {
+        readDir('/home/lucashzhang/Personal-Projects/duke-radiology/Patient-DICOM/01').then(fileData => {
             let newStructs = fileData['RS'][0].structList;
             let newSeries = fileData['SERIES']
             console.log(newSeries)
