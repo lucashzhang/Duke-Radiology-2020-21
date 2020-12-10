@@ -24,7 +24,7 @@ function Dashboard() {
 
     const [structs, setStructs] = useState([]);
     const [series, setSeries] = useState(null);
-    const dirPath = useSelector(state => state.directory.folderDirectory);
+    const dirPath = useSelector(state => state.directory.folderDirectory, shallowEqual);
 
     function genStructList() {
         if (dirPath === '' || dirPath == null) return;
