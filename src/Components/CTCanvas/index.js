@@ -1,18 +1,21 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
-const useStyles = makeStyles((theme) => ({
-
+const useStyles = makeStyles(() => ({
+    canvas: {
+        cursor: 'pointer'
+    }
 }));
 
 
 function CTCanvas(props) {
 
-    // const classes = useStyles();
+    const classes = useStyles();
     const canvasRef = useRef(null);
+    const [sliceNum, setSliceNum] = useState(0);
 
     function drawCanvas() {
-        if (props.image) drawCT(props.image)
+        if (props.images) drawCT(props.images[sliceNum])
     }
 
     function canvasReset() {
@@ -45,12 +48,35 @@ function CTCanvas(props) {
         ctx.putImageData(imgData, 0, 0);
     }
 
-    useEffect(drawCanvas, [props.image]);
+    function handleUserKeyPress(e) {
+        if (props.images == null) return;
+        const key = e.key.toUpperCase();
 
+        if ((key === 'ARROWRIGHT' || key === 'ARROWUP')) {
+            setSliceNum(prevState => prevState < props.images.length - 1 ? prevState + 1 : props.images.length - 1);
+        } else if ((key === 'ARROWLEFT' || key === 'ARROWDOWN')) {
+            setSliceNum(prevState => prevState > 0 ? prevState - 1 : 0);
+        }
+    }
+
+    function handleUserScroll(e) {
+        const direction = e.deltaY;
+        if (direction > 0) {
+            setSliceNum(prevState => prevState > 0 ? prevState - 1 : 0);
+        } else if (direction < 0) {
+            setSliceNum(prevState => prevState < props.images.length - 1 ? prevState + 1 : props.images.length - 1);
+        }
+    }
+
+    useEffect(drawCanvas, [props.images, sliceNum]);
 
     return (
         <canvas
             ref={canvasRef}
+            className={classes.canvas}
+            onKeyDown = {handleUserKeyPress}
+            onWheel = {handleUserScroll}
+            tabIndex="0"
         >
         </canvas>
     );

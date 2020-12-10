@@ -24,7 +24,6 @@ function Dashboard() {
 
     const [structs, setStructs] = useState([]);
     const [series, setSeries] = useState(null);
-    const [sliceNum, setSliceNum] = useState(0);
     const dirPath = useSelector(state => state.directory.folderDirectory, shallowEqual);
 
     function genStructList() {
@@ -39,33 +38,14 @@ function Dashboard() {
         dispatch(setFolderDirectory('/home/lucashzhang/Personal-Projects/duke-radiology/Patient-DICOM/01'))
     }
 
-    function initKeyListener() {
-        window.addEventListener('keydown', handleUserKeyPress);
-        return () => {
-            window.removeEventListener('keydown', handleUserKeyPress);
-        };
-    }
-
-    function handleUserKeyPress(e) {
-        if (series == null) return;
-        const key = e.key.toUpperCase();
-
-        if ((key === 'ARROWRIGHT' || key === 'ARROWUP')) {
-            setSliceNum(prevState => prevState < series.images.length - 1 ? prevState + 1 : series.images.length - 1);
-        } else if ((key === 'ARROWLEFT' || key === 'ARROWDOWN')) {
-            setSliceNum(prevState => prevState > 0 ? prevState - 1 : 0);
-        }
-    }
-
     useEffect(initPath, []);
     useEffect(genStructList, [dirPath]);
-    useEffect(initKeyListener, [series]);
 
     return (
         <div className={classes.frame}>
             <StructMenu structs={structs}></StructMenu>
             <div className={classes.viewport}>
-                <CTCanvas image={series ? series.images[sliceNum] : null}></CTCanvas>
+                <CTCanvas images={series ? series.images : null}></CTCanvas>
             </div>
         </div>
     );
