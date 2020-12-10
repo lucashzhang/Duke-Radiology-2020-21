@@ -47,16 +47,16 @@ function buildObjects(dirResults) {
         switch (type) {
             case 'RS':
                 if (output.hasOwnProperty('RS')) {
-                    output['RS'].push(new RS(file.contents))
+                    output['RS'].push(new RS(file.filename, file.contents))
                 } else {
-                    output['RS'] = [new RS(file.contents)]
+                    output['RS'] = [new RS(file.filename, file.contents)]
                 }
                 break;
             case 'CT':
                 if (output.hasOwnProperty('CT')) {
-                    output['CT'].push(new CT(file.contents))
+                    output['CT'].push(new CT(file.filename, file.contents))
                 } else {
-                    output['CT'] = [new CT(file.contents)]
+                    output['CT'] = [new CT(file.filename, file.contents)]
                 }
                 break;
             default:

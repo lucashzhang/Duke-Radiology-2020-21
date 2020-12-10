@@ -3,12 +3,13 @@ import * as daikon from 'daikon';
 import { TAG_DICT } from './dicomDict';
 
 export class DCM {
-    constructor(buffer) {
+    constructor(filename, buffer) {
         try {
             this.imageData = daikon.Series.parseImage(new DataView(this.toArrayBuffer(buffer)));
+            this.filename = filename;
         }
         catch (err) {
-            console.log(err)
+            console.log(err);
         }
     }
 
