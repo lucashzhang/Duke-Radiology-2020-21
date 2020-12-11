@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { useDebounce } from '../../Utilities/customHooks';
 
 const useStyles = makeStyles(() => ({
     canvas: {
@@ -121,8 +122,8 @@ function CTCanvas(props) {
         }
     }
 
-    function handleClick(e) {
-        if (!isHold) return;
+    function handleCrosshair(e, override = false) {
+        if (!isHold && !override) return;
         let x = e.clientX - e.target.offsetLeft;
         let y = e.clientY - e.target.offsetTop;
         props.handleSlice(equiv.x, x);
@@ -140,10 +141,10 @@ function CTCanvas(props) {
             className={classes.canvas}
             onKeyDown={handleUserKeyPress}
             onWheel={handleUserScroll}
-            onMouseDown={() => setIsHold(true)}
+            onMouseDown={(e) => { setIsHold(true); handleCrosshair(e, true) }}
             onMouseUp={() => setIsHold(false)}
             onMouseLeave={() => setIsHold(false)}
-            onMouseMove={handleClick}
+            onMouseMove={handleCrosshair}
             tabIndex="0"
         >
         </canvas>
