@@ -42,6 +42,24 @@ function CTCanvas(props) {
         }
     }
 
+    function setMiddle() {
+        // Initializes the views to the middle every time the series changes
+        if (props.series == null) return;
+        switch (props.view.toUpperCase()) {
+            case 'AXIAL':
+                setSliceNum(Math.round(series.depth / 2));
+                break;
+            case 'CORONAL':
+                setSliceNum(Math.round(series.height / 2));
+                break;
+            case 'SAGITTAL':
+                setSliceNum(Math.round(series.width / 2));
+                break;
+            default:
+                break;
+        }
+    }
+
     function canvasReset() {
         const ctx = canvasRef.current.getContext('2d');
         ctx.fillStyle = "#000000";
@@ -93,6 +111,7 @@ function CTCanvas(props) {
     }
 
     useEffect(drawCanvas, [series, sliceNum]);
+    useEffect(setMiddle, [series])
 
     return (
         <canvas

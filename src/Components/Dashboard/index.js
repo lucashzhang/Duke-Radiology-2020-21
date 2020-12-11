@@ -15,6 +15,21 @@ const useStyles = makeStyles(() => ({
     viewport: {
         width: 'calc(100vw - 270px)',
         height: '100vh',
+        display: 'grid',
+        gridTemplateColumns: '512px 1fr',
+        gridTemplateRows: '512px 1fr',
+    },
+    viewCenter: {
+        gridRow: '1',
+        gridColumn: '1',
+    },
+    viewRight: {
+        gridRow: '1',
+        gridColumn: '2',
+    },
+    viewBottom: {
+        gridRow: '2',
+        gridColumn: '1',
     }
 }));
 
@@ -35,7 +50,7 @@ function Dashboard() {
     }
 
     function initPath() {
-        dispatch(setFolderDirectory('/home/lucashzhang/Personal-Projects/duke-radiology/Patient-DICOM/02'))
+        dispatch(setFolderDirectory('/home/lucashzhang/Personal-Projects/duke-radiology/Patient-DICOM/09'))
     }
 
     useEffect(initPath, []);
@@ -45,9 +60,9 @@ function Dashboard() {
         <div className={classes.frame}>
             <StructMenu structs={structs}></StructMenu>
             <div className={classes.viewport}>
-                <CTCanvas series={series} view='AXIAL'></CTCanvas>
-                <CTCanvas series={series} view='CORONAL'></CTCanvas>
-                <CTCanvas series={series} view='SAGITTAL'></CTCanvas>
+                <div className={classes.viewCenter}><CTCanvas series={series} view='AXIAL'></CTCanvas></div>
+                <div className={classes.viewRight}><CTCanvas series={series} view='SAGITTAL'></CTCanvas></div>
+                <div className={classes.viewBottom}><CTCanvas series={series} view='CORONAL'></CTCanvas></div>
             </div>
         </div>
     );
