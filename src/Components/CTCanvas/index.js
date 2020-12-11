@@ -17,7 +17,8 @@ function CTCanvas(props) {
 
     const [imgArray, setImgArray] = useState(new Uint8ClampedArray([]));
     const [maxSlices, setMaxSlices] = useState(1);
-    const [equiv, setEquiv] = useState({ x: '', y: '', z: '' })
+    const [equiv, setEquiv] = useState({ x: '', y: '', z: '' });
+    const [isHold, setIsHold] = useState(false);
 
     function buildCTCanvas() {
         if (series == null) return;
@@ -107,6 +108,14 @@ function CTCanvas(props) {
         }
     }
 
+    function handleClick(e) {
+        if (!isHold) return;
+        let x = e.clientX - e.target.offsetLeft;
+        let y = e.clientY - e.target.offsetTop;
+        props.handleSlice(equiv.x, x);
+        props.handleSlice(equiv.y, y);
+    }
+
     useEffect(buildCTCanvas, [series, props.view, props.sliceNum]);
     useEffect(drawCanvas, [imgArray]);
 
@@ -116,6 +125,10 @@ function CTCanvas(props) {
             className={classes.canvas}
             onKeyDown={handleUserKeyPress}
             onWheel={handleUserScroll}
+            onMouseDown={() => setIsHold(true)}
+            onMouseUp={() => setIsHold(false)}
+            onMouseLeave={() => setIsHold(false)}
+            onMouseMove={handleClick}
             tabIndex="0"
         >
         </canvas>
