@@ -83,6 +83,19 @@ function CTCanvas(props) {
         ctx.putImageData(imgData, 0, 0);
     }
 
+    function drawCrosshairs(x, y) {
+        const ctx = canvasRef.current.getContext('2d');
+        ctx.strokeStyle = "#FFFFFF";
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvasRef.current.height);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvasRef.current.width, y);
+        ctx.stroke();
+    }
+
     function handleUserKeyPress(e) {
         if (props.series == null) return;
         const key = e.key.toUpperCase();
@@ -114,6 +127,8 @@ function CTCanvas(props) {
         let y = e.clientY - e.target.offsetTop;
         props.handleSlice(equiv.x, x);
         props.handleSlice(equiv.y, y);
+        drawCanvas();
+        drawCrosshairs(x, y);
     }
 
     useEffect(buildCTCanvas, [series, props.view, props.sliceNum]);
