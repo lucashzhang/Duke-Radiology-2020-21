@@ -41,16 +41,38 @@ function Dashboard() {
     const [series, setSeries] = useState(null);
     const dirPath = useSelector(state => state.directory.folderDirectory, shallowEqual);
 
+    const [sliceX, setSliceX] = useState(0);
+    const [sliceY, setSliceY] = useState(0);
+    const [sliceZ, setSliceZ] = useState(0);
+
     function genStructList() {
         if (dirPath === '' || dirPath == null) return;
         readDir(dirPath).then(fileData => {
             setStructs(fileData['RS'][0].structList);
             setSeries(fileData['SERIES']);
+            setSliceX(Math.round(fileData['SERIES'].width / 2));
+            setSliceY(Math.round(fileData['SERIES'].height / 2));
+            setSliceZ(Math.round(fileData['SERIES'].depth / 2));
         });
     }
 
     function initPath() {
         dispatch(setFolderDirectory('/home/lucashzhang/Personal-Projects/duke-radiology/Patient-DICOM/09'))
+    }
+
+    function handleSlice(plane, value) {
+        console.log(plane)
+        switch (plane) {
+            case 'X':
+                setSliceX(value);
+                break;
+            case 'Y':
+                setSliceY(value);
+                break;
+            case 'Z':
+                setSliceZ(value);
+                break;
+        }
     }
 
     useEffect(initPath, []);
@@ -60,9 +82,9 @@ function Dashboard() {
         <div className={classes.frame}>
             <StructMenu structs={structs}></StructMenu>
             <div className={classes.viewport}>
-                <div className={classes.viewCenter}><CTCanvas series={series} view='AXIAL'></CTCanvas></div>
-                <div className={classes.viewRight}><CTCanvas series={series} view='SAGITTAL'></CTCanvas></div>
-                <div className={classes.viewBottom}><CTCanvas series={series} view='CORONAL'></CTCanvas></div>
+                <div className={classes.viewCenter}><CTCanvas series={series} view='AXIAL' handleSlice={handleSlice} sliceNum={sliceZ}></CTCanvas></div>
+                <div className={classes.viewRight}><CTCanvas series={series} view='SAGITTAL' handleSlice={handleSlice} sliceNum={sliceX}></CTCanvas></div>
+                <div className={classes.viewBottom}><CTCanvas series={series} view='CORONAL' handleSlice={handleSlice} sliceNum={sliceY}></CTCanvas></div>
             </div>
         </div>
     );

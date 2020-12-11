@@ -13,50 +13,47 @@ function CTCanvas(props) {
     const classes = useStyles();
     const canvasRef = useRef(null);
     const series = props.series;
-    let sliceDepth = 1;
-    const [sliceNum, setSliceNum] = useState(0);
+    const sliceNum = props.sliceNum;
 
-    function drawCanvas() {
-        if (props.series == null) return;
+    const [imgArray, setImgArray] = useState(new Uint8ClampedArray([]));
+    const [maxSlices, setMaxSlices] = useState(1);
+    const [equiv, setEquiv] = useState({ x: '', y: '', z: '' })
+
+    function buildCTCanvas() {
+        if (series == null) return;
         switch (props.view.toUpperCase()) {
             case 'AXIAL':
                 canvasRef.current.width = series.width;
                 canvasRef.current.height = series.height;
-                sliceDepth = series.depth;
-                drawCT(series.getAxialSlice(sliceNum));
+                setMaxSlices(series.depth);
+                setImgArray(series.getAxialSlice(sliceNum));
                 break;
             case 'CORONAL':
                 canvasRef.current.width = series.width;
                 canvasRef.current.height = series.depth;
-                sliceDepth = series.height;
-                drawCT(series.getCoronalSlice(sliceNum));
+                setMaxSlices(series.height);
+                setImgArray(series.getCoronalSlice(sliceNum));
                 break;
             case 'SAGITTAL':
                 canvasRef.current.width = series.depth;
                 canvasRef.current.height = series.height;
-                sliceDepth = series.width;
-                drawCT(series.getSagittalSlice(sliceNum));
-                break;
-            default:
+                setMaxSlices(series.width);
+                setImgArray(series.getSagittalSlice(sliceNum));
                 break;
         }
+        setEquiv(getCoordEquiv())
     }
 
-    function setMiddle() {
-        // Initializes the views to the middle every time the series changes
-        if (props.series == null) return;
+    function getCoordEquiv() {
         switch (props.view.toUpperCase()) {
             case 'AXIAL':
-                setSliceNum(Math.round(series.depth / 2));
-                break;
+                return { x: 'X', y: 'Y', z: 'Z' }
             case 'CORONAL':
-                setSliceNum(Math.round(series.height / 2));
-                break;
+                return { x: 'X', y: 'Z', z: 'Y' }
             case 'SAGITTAL':
-                setSliceNum(Math.round(series.width / 2));
-                break;
+                return { x: 'Z', y: 'Y', z: 'X' }
             default:
-                break;
+                return { x: '', y: '', z: '' }
         }
     }
 
@@ -66,7 +63,7 @@ function CTCanvas(props) {
         ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     }
 
-    function drawCT(imgArray) {
+    function drawCanvas() {
         canvasReset();
         const ctx = canvasRef.current.getContext('2d');
         // Create new image data object
@@ -91,10 +88,10 @@ function CTCanvas(props) {
 
         if ((key === 'ARROWRIGHT' || key === 'ARROWUP')) {
             // Increments forward
-            setSliceNum(prevState => prevState < sliceDepth - 1 ? prevState + 1 : sliceDepth - 1);
+            props.handleSlice(equiv.z, props.sliceNum < maxSlices - 1 ? props.sliceNum + 1 : maxSlices - 1);
         } else if ((key === 'ARROWLEFT' || key === 'ARROWDOWN')) {
             // Increments backward
-            setSliceNum(prevState => prevState > 0 ? prevState - 1 : 0);
+            props.handleSlice(equiv.z, props.sliceNum > 0 ? props.sliceNum - 1 : 0);
         }
     }
 
@@ -103,15 +100,15 @@ function CTCanvas(props) {
         const direction = e.deltaY;
         if (direction > 0) {
             // On scroll down
-            setSliceNum(prevState => prevState > 0 ? prevState - 1 : 0);
+            props.handleSlice(equiv.z, props.sliceNum > 0 ? props.sliceNum - 1 : 0);
         } else if (direction < 0) {
             // On scroll up
-            setSliceNum(prevState => prevState < sliceDepth - 1 ? prevState + 1 : sliceDepth - 1);
+            props.handleSlice(equiv.z, props.sliceNum < maxSlices - 1 ? props.sliceNum + 1 : maxSlices - 1);
         }
     }
 
-    useEffect(drawCanvas, [series, sliceNum]);
-    useEffect(setMiddle, [series])
+    useEffect(buildCTCanvas, [series, props.view, props.sliceNum]);
+    useEffect(drawCanvas, [imgArray]);
 
     return (
         <canvas
