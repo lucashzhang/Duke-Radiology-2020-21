@@ -16,7 +16,8 @@ function CTCanvas(props) {
     const series = props.series;
     const sliceNum = props.sliceNum;
 
-    const [imgArray, setImgArray] = useState(new Uint8ClampedArray([]));
+    // const [imgArray, setImgArray] = useState(new Uint8ClampedArray([]));
+    const [imgData, setImgData] = useState(null);
     const [maxSlices, setMaxSlices] = useState(1);
     const [equiv, setEquiv] = useState({ x: '', y: '', z: '' });
     const [isHold, setIsHold] = useState(false);
@@ -28,19 +29,19 @@ function CTCanvas(props) {
                 canvasRef.current.width = series.width;
                 canvasRef.current.height = series.height;
                 setMaxSlices(series.depth);
-                setImgArray(series.getAxialSlice(sliceNum));
+                createImageData(series.getAxialSlice(sliceNum));
                 break;
             case 'CORONAL':
                 canvasRef.current.width = series.width;
                 canvasRef.current.height = series.depth;
                 setMaxSlices(series.height);
-                setImgArray(series.getCoronalSlice(sliceNum));
+                createImageData(series.getCoronalSlice(sliceNum));
                 break;
             case 'SAGITTAL':
                 canvasRef.current.width = series.depth;
                 canvasRef.current.height = series.height;
                 setMaxSlices(series.width);
-                setImgArray(series.getSagittalSlice(sliceNum));
+                createImageData(series.getSagittalSlice(sliceNum));
                 break;
         }
         setEquiv(getCoordEquiv())
@@ -65,8 +66,7 @@ function CTCanvas(props) {
         ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     }
 
-    function drawCanvas() {
-        canvasReset();
+    function createImageData(imgArray) {
         const ctx = canvasRef.current.getContext('2d');
         // Create new image data object
         let imgData = ctx.createImageData(canvasRef.current.width, canvasRef.current.height);
@@ -82,6 +82,27 @@ function CTCanvas(props) {
             data[i - 3] = data[i - 2] = data[i - 1] = imgArray[k]
             data[i] = 255;
         }
+        setImgData(imgData)
+    }
+
+    function drawCanvas() {
+        if (imgData == null) return;
+        canvasReset();
+        const ctx = canvasRef.current.getContext('2d');
+        // Create new image data object
+        // let imageData = ctx.createImageData(canvasRef.current.width, canvasRef.current.height);
+        // let data = imageData.data;
+        // Fill image data object
+        // for (let i = 3, k = 0; i < data.byteLength; i += 4, k++) {
+            //convert 16-bit to 8-bit, because we cannot render a 16-bit value to the canvas.
+            // let result = ((array[k + 1] & 0xFF) << 8) | (array[k] & 0xFF);
+            // result = (result & 0xFFFF) >> 8;
+            // data[i] = 255 - result;
+
+            // data[i] = 255 - imgArray[k];
+        //     data[i - 3] = data[i - 2] = data[i - 1] = imgArray[k]
+        //     data[i] = 255;
+        // }
         // set image data object
         ctx.putImageData(imgData, 0, 0);
     }
@@ -135,7 +156,7 @@ function CTCanvas(props) {
     }
 
     useEffect(buildCTCanvas, [series, props.view, props.sliceNum]);
-    useEffect(drawCanvas, [imgArray]);
+    useEffect(drawCanvas, [imgData]);
 
     return (
         <canvas
