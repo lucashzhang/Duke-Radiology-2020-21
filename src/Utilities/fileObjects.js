@@ -53,18 +53,21 @@ export class CT extends DCM {
         if (this.imageData.hasPixelData()) {
             return this.imageData.getPixelData();
         }
+        return {};
     }
 
     get rows() {
         if (this.imageData.hasPixelData()) {
             return this.imageData.getRows();
         }
+        return 0;
     }
 
     get columns() {
         if (this.imageData.hasPixelData()) {
             return this.imageData.getCols();
         }
+        return 0;
     }
 }
 

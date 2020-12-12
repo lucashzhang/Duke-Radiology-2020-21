@@ -78,7 +78,9 @@ function CTCanvas(props) {
             // result = (result & 0xFFFF) >> 8;
             // data[i] = 255 - result;
 
-            data[i] = 255 - imgArray[k]
+            // data[i] = 255 - imgArray[k];
+            data[i - 3] = data[i - 2] = data[i - 1] = imgArray[k]
+            data[i] = 255;
         }
         // set image data object
         ctx.putImageData(imgData, 0, 0);

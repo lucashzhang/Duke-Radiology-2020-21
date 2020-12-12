@@ -18,6 +18,7 @@ const useStyles = makeStyles(() => ({
         display: 'grid',
         gridTemplateColumns: '512px 1fr',
         gridTemplateRows: '512px 1fr',
+        background: 'black'
     },
     viewCenter: {
         gridRow: '1',
