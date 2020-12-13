@@ -62,7 +62,6 @@ function Dashboard() {
     }
 
     function handleSlice(plane, value) {
-        console.log(plane)
         switch (plane) {
             case 'X':
                 setSliceX(value);

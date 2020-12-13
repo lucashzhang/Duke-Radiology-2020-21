@@ -18,36 +18,47 @@ function CTCanvas(props) {
 
     // const [imgArray, setImgArray] = useState(new Uint8ClampedArray([]));
     const [imgData, setImgData] = useState(null);
-    const [maxSlices, setMaxSlices] = useState(1);
-    const [equiv, setEquiv] = useState({ x: '', y: '', z: '' });
+    const maxSlices = getMaxSlices();
+    const equiv = getCoordEquiv();
     const [isHold, setIsHold] = useState(false);
 
     function buildCTCanvas() {
-        if (series == null) return;
+        if (series == null) return null;
         switch (props.view.toUpperCase()) {
             case 'AXIAL':
                 canvasRef.current.width = series.width;
                 canvasRef.current.height = series.height;
-                setMaxSlices(series.depth);
                 createImageData(series.getAxialSlice(sliceNum));
                 break;
             case 'CORONAL':
                 canvasRef.current.width = series.width;
                 canvasRef.current.height = series.depth;
-                setMaxSlices(series.height);
                 createImageData(series.getCoronalSlice(sliceNum));
                 break;
             case 'SAGITTAL':
                 canvasRef.current.width = series.depth;
                 canvasRef.current.height = series.height;
-                setMaxSlices(series.width);
                 createImageData(series.getSagittalSlice(sliceNum));
                 break;
         }
-        setEquiv(getCoordEquiv())
+    }
+
+    function getMaxSlices() {
+        if (series == null) return;
+        switch (props.view.toUpperCase()) {
+            case 'AXIAL':
+                return series.depth;
+            case 'CORONAL':
+                return series.height;
+            case 'SAGITTAL':
+                return series.width;
+            default:
+                return 1
+        }
     }
 
     function getCoordEquiv() {
+        if (series == null) return;
         switch (props.view.toUpperCase()) {
             case 'AXIAL':
                 return { x: 'X', y: 'Y', z: 'Z' }
