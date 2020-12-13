@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { useDebounce } from '../../Utilities/customHooks';
+// import { useDebounce } from '../../Utilities/customHooks';
 
 const useStyles = makeStyles(() => ({
     canvas: {
@@ -17,34 +17,37 @@ function CTCanvas(props) {
     const sliceNum = props.sliceNum;
 
     // const [imgArray, setImgArray] = useState(new Uint8ClampedArray([]));
-    const [imgData, setImgData] = useState(null);
+    // const [imgData, setImgData] = useState(null);
+    const imgData = useMemo(buildCTCanvas, [series, props.view, props.sliceNum])
     const maxSlices = getMaxSlices();
     const equiv = getCoordEquiv();
     const [isHold, setIsHold] = useState(false);
 
     function buildCTCanvas() {
         if (series == null) return null;
+        let imgData = null;
         switch (props.view.toUpperCase()) {
             case 'AXIAL':
                 canvasRef.current.width = series.width;
                 canvasRef.current.height = series.height;
-                createImageData(series.getAxialSlice(sliceNum));
+                imgData = createImageData(series.getAxialSlice(sliceNum));
                 break;
             case 'CORONAL':
                 canvasRef.current.width = series.width;
                 canvasRef.current.height = series.depth;
-                createImageData(series.getCoronalSlice(sliceNum));
+                imgData = createImageData(series.getCoronalSlice(sliceNum));
                 break;
             case 'SAGITTAL':
                 canvasRef.current.width = series.depth;
                 canvasRef.current.height = series.height;
-                createImageData(series.getSagittalSlice(sliceNum));
+                imgData = createImageData(series.getSagittalSlice(sliceNum));
                 break;
         }
+        return imgData;
     }
 
     function getMaxSlices() {
-        if (series == null) return;
+        if (series == null) return 1;
         switch (props.view.toUpperCase()) {
             case 'AXIAL':
                 return series.depth;
@@ -53,7 +56,7 @@ function CTCanvas(props) {
             case 'SAGITTAL':
                 return series.width;
             default:
-                return 1
+                return 1;
         }
     }
 
@@ -93,29 +96,18 @@ function CTCanvas(props) {
             data[i - 3] = data[i - 2] = data[i - 1] = imgArray[k]
             data[i] = 255;
         }
-        setImgData(imgData)
+        // setImgData(imgData)
+        drawCanvas(imgData);
+        return imgData;
     }
 
-    function drawCanvas() {
-        if (imgData == null) return;
+    function drawCanvas(data = null) {
+        if (data == null) data = imgData;
+        if (data == null) return;
+
         canvasReset();
         const ctx = canvasRef.current.getContext('2d');
-        // Create new image data object
-        // let imageData = ctx.createImageData(canvasRef.current.width, canvasRef.current.height);
-        // let data = imageData.data;
-        // Fill image data object
-        // for (let i = 3, k = 0; i < data.byteLength; i += 4, k++) {
-            //convert 16-bit to 8-bit, because we cannot render a 16-bit value to the canvas.
-            // let result = ((array[k + 1] & 0xFF) << 8) | (array[k] & 0xFF);
-            // result = (result & 0xFFFF) >> 8;
-            // data[i] = 255 - result;
-
-            // data[i] = 255 - imgArray[k];
-        //     data[i - 3] = data[i - 2] = data[i - 1] = imgArray[k]
-        //     data[i] = 255;
-        // }
-        // set image data object
-        ctx.putImageData(imgData, 0, 0);
+        ctx.putImageData(data, 0, 0);
     }
 
     function drawCrosshairs(x, y) {
@@ -165,9 +157,8 @@ function CTCanvas(props) {
         drawCanvas();
         drawCrosshairs(x, y);
     }
-
-    useEffect(buildCTCanvas, [series, props.view, props.sliceNum]);
-    useEffect(drawCanvas, [imgData]);
+    // useEffect(buildCTCanvas, [series, props.view, props.sliceNum]);
+    // useEffect(drawCanvas, [imgData]);
 
     return (
         <canvas
