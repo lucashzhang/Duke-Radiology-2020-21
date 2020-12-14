@@ -18,7 +18,7 @@ const useStyles = makeStyles(() => ({
         display: 'grid',
         gridTemplateColumns: '512px 1fr',
         gridTemplateRows: '512px 1fr',
-        background: 'black'
+        // background: 'black'
     },
     viewCenter: {
         gridRow: '1',
@@ -50,11 +50,12 @@ function Dashboard() {
         if (dirPath === '' || dirPath == null) return;
         readDir(dirPath).then(fileData => {
             setStructs(fileData['RS'][0].structList);
-            setSeries(fileData['SERIES']);
-            setSliceX(Math.round(fileData['SERIES'].width / 2));
-            setSliceY(Math.round(fileData['SERIES'].height / 2));
-            setSliceZ(Math.round(fileData['SERIES'].depth / 2));
-        });
+            const newSeries = fileData['SERIES']
+            setSeries(newSeries);
+            setSliceX(Math.round(newSeries.width / 2));
+            setSliceY(Math.round(newSeries.height / 2));
+            setSliceZ(Math.round(newSeries.depth / 2));
+        })
     }
 
     function initPath() {
@@ -75,8 +76,13 @@ function Dashboard() {
         }
     }
 
+    async function genDetailSeries() {
+
+    }
+
     useEffect(initPath, []);
     useEffect(genStructList, [dirPath]);
+    // useEffect(() => genDetailSeries(), [series]);
 
     return (
         <div className={classes.frame}>

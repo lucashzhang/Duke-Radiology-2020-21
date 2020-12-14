@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { ThemeProvider, makeStyles } from '@material-ui/core/styles';
-import theme from '../../Utilities/theme';
+import { makeStyles } from '@material-ui/core/styles';
 
-import { List, ListItem, ListItemText } from '@material-ui/core';
+import { List, ListItem, FormControlLabel, Checkbox } from '@material-ui/core';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -19,22 +18,23 @@ const useStyles = makeStyles((theme) => ({
 function StructMenu(props) {
 
     const classes = useStyles();
-    const structs = props.structs;
+    const structs = props.structs; 
 
     return (
-        <ThemeProvider theme={theme}>
-            <div className={classes.drawerContainer}>
-                <List>
-                    {
-                        structs.map((struct) => (
-                            <ListItem button key={`${struct.name}${struct.roi}`}>
-                                <ListItemText primary={struct.name} />
-                            </ListItem>
-                        ))
-                    }
-                </List>
-            </div>
-        </ThemeProvider>
+        <div className={classes.drawerContainer}>
+            <List>
+                {
+                    structs.map((struct) => (
+                        <ListItem button key={`${struct.name}${struct.roi}`}>
+                            <FormControlLabel
+                                control={<Checkbox name={`${struct.roi}`} />}
+                                label={struct.name}
+                            />
+                        </ListItem>
+                    ))
+                }
+            </List>
+        </div>
     );
 }
 

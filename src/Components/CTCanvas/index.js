@@ -1,6 +1,7 @@
-import React, { useEffect, useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 // import { useDebounce } from '../../Utilities/customHooks';
+import theme from '../../Utilities/theme';
 
 const useStyles = makeStyles(() => ({
     canvas: {
@@ -18,12 +19,36 @@ function CTCanvas(props) {
 
     // const [imgArray, setImgArray] = useState(new Uint8ClampedArray([]));
     // const [imgData, setImgData] = useState(null);
-    const imgData = useMemo(buildCTCanvas, [series, props.view, props.sliceNum])
     const maxSlices = getMaxSlices();
     const equiv = getCoordEquiv();
     const [isHold, setIsHold] = useState(false);
+    const drawCT = useCallback(drawCanvas, []);
+    const imgData = useMemo(buildCTCanvas, [series, props.view, sliceNum, drawCT])
 
     function buildCTCanvas() {
+
+        function createImageData(imgArray) {
+            if (imgArray == null) return null;
+            const ctx = canvasRef.current.getContext('2d');
+            // Create new image data object
+            let imgData = ctx.createImageData(canvasRef.current.width, canvasRef.current.height);
+            let data = imgData.data;
+            // Fill image data object
+            for (let i = 3, k = 0; i < data.byteLength; i += 4, k++) {
+                //convert 16-bit to 8-bit, because we cannot render a 16-bit value to the canvas.
+                // let result = ((array[k + 1] & 0xFF) << 8) | (array[k] & 0xFF);
+                // result = (result & 0xFFFF) >> 8;
+                // data[i] = 255 - result;
+    
+                // data[i] = 255 - imgArray[k];
+                data[i - 3] = data[i - 2] = data[i - 1] = imgArray[k]
+                data[i] = 255;
+            }
+            // setImgData(imgData)
+            drawCT(imgData);
+            return imgData;
+        }
+
         if (series == null) return null;
         let imgData = null;
         switch (props.view.toUpperCase()) {
@@ -42,6 +67,8 @@ function CTCanvas(props) {
                 canvasRef.current.height = series.height;
                 imgData = createImageData(series.getSagittalSlice(sliceNum));
                 break;
+            default: 
+                imgData = null;
         }
         return imgData;
     }
@@ -80,29 +107,7 @@ function CTCanvas(props) {
         ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     }
 
-    function createImageData(imgArray) {
-        const ctx = canvasRef.current.getContext('2d');
-        // Create new image data object
-        let imgData = ctx.createImageData(canvasRef.current.width, canvasRef.current.height);
-        let data = imgData.data;
-        // Fill image data object
-        for (let i = 3, k = 0; i < data.byteLength; i += 4, k++) {
-            //convert 16-bit to 8-bit, because we cannot render a 16-bit value to the canvas.
-            // let result = ((array[k + 1] & 0xFF) << 8) | (array[k] & 0xFF);
-            // result = (result & 0xFFFF) >> 8;
-            // data[i] = 255 - result;
-
-            // data[i] = 255 - imgArray[k];
-            data[i - 3] = data[i - 2] = data[i - 1] = imgArray[k]
-            data[i] = 255;
-        }
-        // setImgData(imgData)
-        drawCanvas(imgData);
-        return imgData;
-    }
-
     function drawCanvas(data = null) {
-        if (data == null) data = imgData;
         if (data == null) return;
 
         canvasReset();
@@ -112,7 +117,7 @@ function CTCanvas(props) {
 
     function drawCrosshairs(x, y) {
         const ctx = canvasRef.current.getContext('2d');
-        ctx.strokeStyle = "#FFFFFF";
+        ctx.strokeStyle = theme.palette.secondary.light;
         ctx.beginPath();
         ctx.moveTo(x, 0);
         ctx.lineTo(x, canvasRef.current.height);
@@ -150,11 +155,11 @@ function CTCanvas(props) {
 
     function handleCrosshair(e, override = false) {
         if (!isHold && !override) return;
-        let x = e.clientX - e.target.offsetLeft;
-        let y = e.clientY - e.target.offsetTop;
+        let x = e.clientX - e.target.offsetLeft > 0 ? e.clientX - e.target.offsetLeft : 0;
+        let y = e.clientY - e.target.offsetTop > 0 ? e.clientY - e.target.offsetTop : 0;
         props.handleSlice(equiv.x, x);
         props.handleSlice(equiv.y, y);
-        drawCanvas();
+        drawCT(imgData);
         drawCrosshairs(x, y);
     }
     // useEffect(buildCTCanvas, [series, props.view, props.sliceNum]);

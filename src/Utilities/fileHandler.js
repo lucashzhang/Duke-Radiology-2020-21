@@ -9,9 +9,9 @@ export async function readDir(absDir, include = { 'ALL': true }) {
     // Accepts object that dictates what should be included, if the object is not included as a parameter, will read all of the files and creates a series
     if (!absDir.endsWith('/')) absDir += '/';
 
-    if (include['SERIES']) include['CT'] = true
+    if (include['SERIES']) include['CT'] = true;
 
-    let filePromises = []
+    let filePromises = [];
     fs.readdirSync(absDir).forEach(file => {
         const { type, extension } = parseFileName(file);
         if ((include[type] || include['ALL']) && extension === 'dcm') {
@@ -19,7 +19,7 @@ export async function readDir(absDir, include = { 'ALL': true }) {
                 filePromises.push(new Promise((resolve, reject) => {
                     fs.readFile(`${absDir}${file}`, (err, content) => {
                         if (err) return reject(err);
-                        return resolve({ filename: file, contents: content })
+                        return resolve({ filename: file, contents: content });
                     });
                 }));
             } catch (error) {

@@ -1,5 +1,6 @@
 // import * as dicomParser from 'dicom-parser';
 import * as daikon from 'daikon';
+import * as _ from 'underscore';
 import { TAG_DICT } from './dicomDict';
 
 // These objects are all wrappers for daikon image/series objects, they supply the necessary functions to manipulate the data
@@ -24,14 +25,14 @@ export class DCM {
         let key = `(${asString.substring(0, 4)},${asString.substring(4, asString.length)})`;
         return TAG_DICT[key];
     }
-    
+
     convertToID(id) {
         return `x${id}`;
     }
 }
 
 export class RS extends DCM {
-    
+
     get structList() {
         let structs = [];
         let observations = this.imageData.tags['30060080'].value;
@@ -42,7 +43,7 @@ export class RS extends DCM {
                 roi: parseInt(dataVals.find(obj => obj.id === "30060084").value[0]),
             })
         }
-    
+
         return structs;
     }
 }
@@ -77,30 +78,55 @@ export class CTSeries {
         this.series = this.buildSeries(ctArray);
         this.width = this.series.images[0].getCols();
         this.height = this.series.images[0].getRows();
-        this.depth = this.series.images.length;
-        this.imageArray = this.buildImageArray()
+        this.thickness = this.series.images[0].getSliceThickness();
+        this.depth = (this.series.images.length - 1) * this.thickness + 1;
+        this.imageArray = this.buildDetailedArray();
     }
 
     buildImageArray() {
         let res = [];
-        for (let i = 0; i < this.depth; i++) {
-            res.push(this.getSlice(i))
+        for (let i = 0; i < this.series.images.length - 1; i++) {
+            for (let j = 0; j < this.thickness; j++) {
+                res.push(this.getSlice(i));
+            }
         }
+        res.push(this.getSlice(this.series.images.length - 1));
+        return res;
+    }
+
+    buildDetailedArray() {
+
+        function weightedAverage(array1, array2, weight, thickness) {
+            let res = array1.map((a, i) => {
+                let b = array2[i];
+                return a * (thickness - weight) / thickness + b * weight / thickness;
+            });
+            return res;
+        }
+
+        let res = [];
+        for (let i = 0; i < this.series.images.length - 1; i++) {
+            res.push(this.getSlice(i));
+            for (let j = 1; j < this.thickness; j++) {
+                let slice = weightedAverage(this.getSlice(i), this.getSlice(i + 1), j, this.thickness);
+                res.push(slice);
+            }
+        }
+        res.push(this.getSlice(this.series.images.length - 1));
         return res;
     }
 
     buildSeries(images) {
         let series = new daikon.Series();
-    
+
         for (let image of images) {
             let data = image.imageData;
             if (series.matchesSeries(data)) {
                 series.addImage(data);
             }
-    
         }
         series.buildSeries();
-    
+
         return series
     }
 
@@ -136,7 +162,7 @@ export class CTSeries {
             for (let j = 0; j < this.depth; j++) {
                 temp.push(this.imageArray[j][sliceNum + this.width * i]);
             }
-        } 
+        }
         return new Uint8ClampedArray(temp);
     }
 }
