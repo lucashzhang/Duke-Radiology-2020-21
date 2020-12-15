@@ -18,22 +18,45 @@ const useStyles = makeStyles((theme) => ({
 function StructMenu(props) {
 
     const classes = useStyles();
-    const structs = props.structs; 
+    const structs = props.structs;
+
+    const [checked, setChecked] = useState(null);
+
+    function initChecks() {
+        let checkBoxes = {};
+        for (let struct of structs) {
+            checkBoxes[struct.roi] = false;
+        }
+        setChecked(checkBoxes)
+    }
+
+    function toggleChecked(roi) {
+        const newState = { ...checked, [roi]: !checked[roi] }
+        setChecked(newState);
+        let res = [];
+        Object.keys(newState).forEach((key) => {
+            if (newState[key]) res.push(Number(key))
+        })
+        props.handleChecked(res);
+    }
+
+    useEffect(initChecks, [structs]);
 
     return (
         <div className={classes.drawerContainer}>
-            <List>
+            {checked != null && Object.keys(checked).length !== 0 ? <List>
                 {
                     structs.map((struct) => (
-                        <ListItem button key={`${struct.name}${struct.roi}`}>
+                        <ListItem key={`${struct.name}${struct.roi}`}>
                             <FormControlLabel
-                                control={<Checkbox name={`${struct.roi}`} />}
+                                control={<Checkbox name={`${struct.roi}`} checked={checked[struct.roi]} onChange={() => toggleChecked(struct.roi)} />}
                                 label={struct.name}
                             />
                         </ListItem>
                     ))
                 }
-            </List>
+
+            </List> : null}
         </div>
     );
 }

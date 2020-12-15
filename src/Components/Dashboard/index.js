@@ -3,6 +3,7 @@ import { shallowEqual, useSelector, useDispatch } from "react-redux";
 import StructMenu from '../Drawer';
 import { makeStyles } from '@material-ui/core/styles';
 import CTCanvas from '../CTCanvas';
+import { CTSeries } from '../../Utilities/fileObjects';
 
 import { readDir } from '../../Utilities/fileHandler';
 import { setFolderDirectory } from '../../Redux/actions';
@@ -40,22 +41,28 @@ function Dashboard() {
 
     const [structs, setStructs] = useState([]);
     const [series, setSeries] = useState(null);
+    const [doses, setDoses] = useState([]);
     const dirPath = useSelector(state => state.directory.folderDirectory, shallowEqual);
 
     const [sliceX, setSliceX] = useState(0);
     const [sliceY, setSliceY] = useState(0);
     const [sliceZ, setSliceZ] = useState(0);
 
-    function genStructList() {
+    function readFiles() {
         if (dirPath === '' || dirPath == null) return;
         readDir(dirPath).then(fileData => {
-            setStructs(fileData['RS'][0].structList);
-            const newSeries = fileData['SERIES']
+            initSeries(fileData['CT']);
+            setStructs(fileData['RS'].structList);
+        })
+    }
+
+    function initSeries(ctArray) {
+        CTSeries.build(ctArray).then(newSeries => {
             setSeries(newSeries);
             setSliceX(Math.round(newSeries.width / 2));
             setSliceY(Math.round(newSeries.height / 2));
             setSliceZ(Math.round(newSeries.depth / 2));
-        })
+        });
     }
 
     function initPath() {
@@ -76,17 +83,17 @@ function Dashboard() {
         }
     }
 
-    async function genDetailSeries() {
-
+    function handleChecked(checkedList) {
+        setDoses(checkedList);
     }
 
     useEffect(initPath, []);
-    useEffect(genStructList, [dirPath]);
+    useEffect(readFiles, [dirPath]);
     // useEffect(() => genDetailSeries(), [series]);
 
     return (
         <div className={classes.frame}>
-            <StructMenu structs={structs}></StructMenu>
+            <StructMenu structs={structs} handleChecked={handleChecked}></StructMenu>
             <div className={classes.viewport}>
                 <div className={classes.viewCenter}><CTCanvas series={series} view='AXIAL' handleSlice={handleSlice} sliceNum={sliceZ}></CTCanvas></div>
                 <div className={classes.viewRight}><CTCanvas series={series} view='SAGITTAL' handleSlice={handleSlice} sliceNum={sliceX}></CTCanvas></div>

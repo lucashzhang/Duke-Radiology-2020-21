@@ -133,7 +133,7 @@ export class CTSeries {
         let thickness = series.images[0].getSliceThickness();
         let depth = (series.images.length - 1) * thickness + 1;
         let imageArray = await buildInterpolatedArray(series, thickness);
-        return { type: "SERIES", content: new CTSeries(series, width, height, thickness, depth, imageArray)}
+        return new CTSeries(series, width, height, thickness, depth, imageArray)
     }
 
     getAxialSlice(sliceNum) {
