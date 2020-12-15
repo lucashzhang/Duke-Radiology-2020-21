@@ -7,6 +7,7 @@ const fs = window.require('fs'); // Load the File System to execute our common t
 export async function readDir(absDir, include = { 'ALL': true }) {
 
     // Accepts object that dictates what should be included, if the object is not included as a parameter, will read all of the files and creates a series
+    let start = Date.now()
     if (!absDir.endsWith('/')) absDir += '/';
 
     if (include['SERIES']) include['CT'] = true;
@@ -31,11 +32,23 @@ export async function readDir(absDir, include = { 'ALL': true }) {
     let dirResults = await Promise.all(filePromises);
     let output = buildObjects(dirResults);
 
+    let specialPromises = []
     // Builds a series if specified in the parameters
     if ((include['SERIES'] || include['ALL']) && output['CT'] && output['CT'].length > 0) {
-        output['SERIES'] = new CTSeries(output['CT']);
+        specialPromises.push(CTSeries.build(output['CT']));
     }
+    let resolvedSpecial = await Promise.all(specialPromises);
 
+    for (let resolved of resolvedSpecial) {
+        switch (resolved.type) {
+            case 'SERIES':
+                output['SERIES'] = resolved.content;
+                break;
+            default:
+                break;
+        }
+    }
+    console.log(Date.now() - start)
     return output;
 }
 
