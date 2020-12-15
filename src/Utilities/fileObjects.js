@@ -99,7 +99,7 @@ export class CTSeries {
             return series
         }
 
-        function buildInterpolatedArray(series, thickness) {
+        async function buildInterpolatedArray(series, thickness) {
 
             function weightedAverage(array1, array2, weight) {
                 let res = array1.map((a, i) => {
@@ -115,23 +115,16 @@ export class CTSeries {
                 return new Uint8ClampedArray(ctImg.data);
             }
 
-            return new Promise((resolve, reject) => {
-                let res = [];
-                try {
-                    for (let i = 0; i < series.images.length - 1; i++) {
-                        res.push(getSlice(series, i));
-                        for (let j = 1; j < thickness; j++) {
-                            let slice = weightedAverage(getSlice(series, i), getSlice(series, i + 1), j);
-                            res.push(slice);
-                        }
-                    }
-                    res.push(getSlice(series, series.images.length - 1));
-                    return resolve(res)
-                } catch (error) {
-                    return reject(error)
+            let res = [];
+            for (let i = 0; i < series.images.length - 1; i++) {
+                res.push(getSlice(series, i));
+                for (let j = 1; j < thickness; j++) {
+                    let slice = weightedAverage(getSlice(series, i), getSlice(series, i + 1), j);
+                    res.push(slice);
                 }
-
-            });
+            }
+            res.push(getSlice(series, series.images.length - 1));
+            return res;
         }
 
         let series = buildSeries(ctArray);
