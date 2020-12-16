@@ -57,15 +57,11 @@ function Dashboard() {
     }
 
     function initSeries(ctArray) {
-        let newSeries = new CTSeries(ctArray)
-        setSeries(newSeries);
-        setSliceX(Math.round(newSeries.width / 2));
-        setSliceY(Math.round(newSeries.height / 2));
-        setSliceZ(Math.round(newSeries.depth / 2));
+
     }
 
     function initPath() {
-        dispatch(setFolderDirectory('/home/lucashzhang/Personal-Projects/duke-radiology/Patient-DICOM/09'))
+        dispatch(setFolderDirectory('/home/lucashzhang/Personal-Projects/duke-radiology/Patient-DICOM/09'));
     }
 
     function handleSlice(plane, value) {

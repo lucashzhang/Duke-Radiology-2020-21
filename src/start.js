@@ -1,3 +1,15 @@
+const express = require('express')
+const server = express()
+const port = 8878
+
+server.get('/', (req, res) => {
+  res.send('Hello World!')
+})
+
+server.listen(port, () => {
+  console.log(`Backend Setup at http://localhost:${port}`)
+})
+
 const electron = require('electron')
 const app = electron.app
 const path = require('path')
