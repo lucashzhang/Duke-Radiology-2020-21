@@ -1,7 +1,7 @@
 // import * as dicomParser from 'dicom-parser';
 import * as daikon from 'daikon';
 import { TAG_DICT } from './dicomDict';
-import greenlet from 'greenlet';
+// import greenlet from 'greenlet';
 
 // These objects are all wrappers for daikon image/series objects, they supply the necessary functions to manipulate the data
 
@@ -125,7 +125,7 @@ export class CTSeries {
             return res;
         }
 
-        const interpolate = greenlet(buildInterpolatedArray);
+        // const interpolate = greenlet(buildInterpolatedArray);
 
         let series = buildSeries(ctArray);
         let width = series.images[0].getCols();
@@ -133,7 +133,7 @@ export class CTSeries {
         let thickness = series.images[0].getSliceThickness();
         let depth = (series.images.length - 1) * thickness + 1;
         let interpreted = interpret(series);
-        let imageArray = await interpolate(interpreted, thickness);
+        let imageArray = buildInterpolatedArray(interpreted, thickness);
 
         return new CTSeries(series, width, height, thickness, depth, imageArray);
     }

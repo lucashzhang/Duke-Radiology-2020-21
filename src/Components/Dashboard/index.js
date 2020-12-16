@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import CTCanvas from '../CTCanvas';
 
 import { setFolderDirectory } from '../../Redux/actions';
-import { readDir } from '../../Backend/fileHandler';
+import { readDir, threadRead } from '../../Backend/fileHandler';
 import { CircularProgress } from "@material-ui/core";
 import { CTSeries } from '../../Backend/fileObjects';
 
@@ -55,9 +55,13 @@ function Dashboard() {
             setStructs(res['RS'].structList);
             initSeries(res['CT'])
         })
+
     }
 
     function initSeries(ctArray) {
+
+        threadRead(ctArray);
+
         CTSeries.build(ctArray).then(res => {
             setSeries(res)
         })

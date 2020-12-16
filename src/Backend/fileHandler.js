@@ -1,5 +1,7 @@
 // import daikon from 'daikon';
 import { CT, RS } from './fileObjects';
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import Worker from 'worker-loader!./test.worker.js'
 const fs = window.require('fs'); // Load the File System to execute our common tasks (CRUD)
 
 export async function readDir(absDir, include = { 'ALL': true }) {
@@ -80,4 +82,9 @@ function parseFileName(filename) {
     let parts = filename.split('.');
 
     return { type: parts[0], extension: parts[parts.length - 1] }
+}
+
+export function threadRead(array) {
+    const inst = new Worker();
+    inst.postMessage(array)
 }
