@@ -2,7 +2,6 @@ const electron = require('electron')
 const app = electron.app
 const path = require('path')
 const isDev = require('electron-is-dev')
-const server = require('./Backend/server');
 
 const BrowserWindow = electron.BrowserWindow
 

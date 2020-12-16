@@ -1,6 +1,7 @@
 // import * as dicomParser from 'dicom-parser';
-// import * as daikon from 'daikon';
-// import { TAG_DICT } from './dicomDict';
+import * as daikon from 'daikon';
+import { TAG_DICT } from './dicomDict';
+import greenlet from 'greenlet';
 
 // These objects are all wrappers for daikon image/series objects, they supply the necessary functions to manipulate the data
 
@@ -30,7 +31,7 @@ class DCM {
     }
 }
 
-class RS extends DCM {
+export class RS extends DCM {
 
     get structList() {
         let structs = [];
@@ -47,7 +48,7 @@ class RS extends DCM {
     }
 }
 
-class CT extends DCM {
+export class CT extends DCM {
 
     get pixelData() {
         if (this.imageData.hasPixelData()) {
@@ -71,9 +72,19 @@ class CT extends DCM {
     }
 }
 
-class CTSeries {
+export class CTSeries {
 
-    constructor(ctArray) {
+    constructor(series, width, height, thickness, depth, imageArray) {
+        this.series = series;
+        this.width = width;
+        this.height = height;
+        this.thickness = thickness;
+        this.depth = depth;
+        this.imageArray = imageArray
+    }
+
+    static async build(ctArray) {
+
         function buildSeries(images) {
             let series = new daikon.Series();
 
@@ -88,7 +99,11 @@ class CTSeries {
             return series
         }
 
-        function buildInterpolatedArray(series, thickness) {
+        function interpret(series) {
+            return series.images.map(image => new Uint8ClampedArray(image.getInterpretedData(false, true).data))
+        }
+
+        function buildInterpolatedArray(interpreted, thickness) {
 
             function weightedAverage(array1, array2, weight) {
                 let res = array1.map((a, i) => {
@@ -98,30 +113,29 @@ class CTSeries {
                 return res;
             }
 
-            function getSlice(series, sliceNum) {
-                let image = series.images[sliceNum];
-                let ctImg = image.getInterpretedData(false, true);
-                return new Uint8ClampedArray(ctImg.data);
-            }
-
             let res = [];
-            for (let i = 0; i < series.images.length - 1; i++) {
-                res.push(getSlice(series, i));
+            for (let i = 0; i < interpreted.length - 1; i++) {
+                res.push(interpreted[i]);
                 for (let j = 1; j < thickness; j++) {
-                    let slice = weightedAverage(getSlice(series, i), getSlice(series, i + 1), j);
+                    let slice = weightedAverage(interpreted[i], interpreted[i + 1], j);
                     res.push(slice);
                 }
             }
-            res.push(getSlice(series, series.images.length - 1));
+            res.push(interpreted[interpreted.length - 1]);
             return res;
         }
 
-        this.series = buildSeries(ctArray);
-        this.width = this.series.images[0].getCols();
-        this.height = this.series.images[0].getRows();
-        this.thickness = this.series.images[0].getSliceThickness();
-        this.depth = (this.series.images.length - 1) * this.thickness + 1;
-        this.imageArray = buildInterpolatedArray(this.series, this.thickness);
+        const interpolate = greenlet(buildInterpolatedArray);
+
+        let series = buildSeries(ctArray);
+        let width = series.images[0].getCols();
+        let height = series.images[0].getRows();
+        let thickness = series.images[0].getSliceThickness();
+        let depth = (series.images.length - 1) * thickness + 1;
+        let interpreted = interpret(series);
+        let imageArray = await interpolate(interpreted, thickness);
+
+        return new CTSeries(series, width, height, thickness, depth, imageArray);
     }
 
     getAxialSlice(sliceNum) {

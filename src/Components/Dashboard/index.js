@@ -5,6 +5,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import CTCanvas from '../CTCanvas';
 
 import { setFolderDirectory } from '../../Redux/actions';
+import { readDir } from '../../Backend/fileHandler';
+import { CircularProgress } from "@material-ui/core";
+import { CTSeries } from '../../Backend/fileObjects';
 
 const useStyles = makeStyles(() => ({
     frame: {
@@ -48,10 +51,16 @@ function Dashboard() {
 
     function readFiles() {
         if (dirPath === '' || dirPath == null) return;
+        readDir(dirPath).then(res => {
+            setStructs(res['RS'].structList);
+            initSeries(res['CT'])
+        })
     }
 
     function initSeries(ctArray) {
-
+        CTSeries.build(ctArray).then(res => {
+            setSeries(res)
+        })
     }
 
     function initPath() {
@@ -87,6 +96,7 @@ function Dashboard() {
                 <div className={classes.viewCenter}><CTCanvas series={series} view='AXIAL' handleSlice={handleSlice} sliceNum={sliceZ}></CTCanvas></div>
                 <div className={classes.viewRight}><CTCanvas series={series} view='SAGITTAL' handleSlice={handleSlice} sliceNum={sliceX}></CTCanvas></div>
                 <div className={classes.viewBottom}><CTCanvas series={series} view='CORONAL' handleSlice={handleSlice} sliceNum={sliceY}></CTCanvas></div>
+                <CircularProgress></CircularProgress>
             </div>
         </div>
     );

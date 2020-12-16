@@ -1,8 +1,8 @@
 // import daikon from 'daikon';
-const DCM = require('./fileObjects');
-const fs = require('fs'); // Load the File System to execute our common tasks (CRUD)
+import { CT, RS } from './fileObjects';
+const fs = window.require('fs'); // Load the File System to execute our common tasks (CRUD)
 
-async function readDir(absDir, include = { 'ALL': true }) {
+export async function readDir(absDir, include = { 'ALL': true }) {
 
     // Accepts object that dictates what should be included, if the object is not included as a parameter, will read all of the files and creates a series
     // let start = Date.now()
@@ -81,5 +81,3 @@ function parseFileName(filename) {
 
     return { type: parts[0], extension: parts[parts.length - 1] }
 }
-
-module.exports.readDir = readDir;
