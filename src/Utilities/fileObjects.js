@@ -73,18 +73,7 @@ export class CT extends DCM {
 
 export class CTSeries {
 
-    constructor(series, width, height, thickness, depth, imageArray) {
-        Object.assign(this, { series, width, height, thickness, depth, imageArray })
-        // this.series = this.buildSeries(ctArray);
-        // this.width = this.series.images[0].getCols();
-        // this.height = this.series.images[0].getRows();
-        // this.thickness = this.series.images[0].getSliceThickness();
-        // this.depth = (this.series.images.length - 1) * this.thickness + 1;
-        // this.imageArray = this.buildDetailedArray();
-    }
-
-    static async build(ctArray) {
-
+    constructor(ctArray) {
         function buildSeries(images) {
             let series = new daikon.Series();
 
@@ -99,7 +88,7 @@ export class CTSeries {
             return series
         }
 
-        async function buildInterpolatedArray(series, thickness) {
+        function buildInterpolatedArray(series, thickness) {
 
             function weightedAverage(array1, array2, weight) {
                 let res = array1.map((a, i) => {
@@ -127,13 +116,12 @@ export class CTSeries {
             return res;
         }
 
-        let series = buildSeries(ctArray);
-        let width = series.images[0].getCols();
-        let height = series.images[0].getRows();
-        let thickness = series.images[0].getSliceThickness();
-        let depth = (series.images.length - 1) * thickness + 1;
-        let imageArray = await buildInterpolatedArray(series, thickness);
-        return new CTSeries(series, width, height, thickness, depth, imageArray)
+        this.series = buildSeries(ctArray);
+        this.width = this.series.images[0].getCols();
+        this.height = this.series.images[0].getRows();
+        this.thickness = this.series.images[0].getSliceThickness();
+        this.depth = (this.series.images.length - 1) * this.thickness + 1;
+        this.imageArray = buildInterpolatedArray(this.series, this.thickness);
     }
 
     getAxialSlice(sliceNum) {

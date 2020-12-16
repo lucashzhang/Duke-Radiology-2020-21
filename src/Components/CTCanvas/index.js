@@ -23,7 +23,7 @@ function CTCanvas(props) {
     const equiv = getCoordEquiv();
     const [isHold, setIsHold] = useState(false);
     const drawCT = useCallback(drawCanvas, []);
-    const imgData = useMemo(buildCTCanvas, [series, props.view, sliceNum, drawCT])
+    const imgData = useMemo(buildCTCanvas, [series, props.view, sliceNum, drawCT, canvasRef])
 
     function buildCTCanvas() {
 
@@ -41,7 +41,7 @@ function CTCanvas(props) {
                 // data[i] = 255 - result;
     
                 // data[i] = 255 - imgArray[k];
-                data[i - 3] = data[i - 2] = data[i - 1] = imgArray[k]
+                data[i - 3] = data[i - 2] = data[i - 1] = imgArray[k];
                 data[i] = 255;
             }
             // setImgData(imgData)
@@ -49,7 +49,7 @@ function CTCanvas(props) {
             return imgData;
         }
 
-        if (series == null) return null;
+        if (series == null || canvasRef.current == null) return null;
         let imgData = null;
         switch (props.view.toUpperCase()) {
             case 'AXIAL':

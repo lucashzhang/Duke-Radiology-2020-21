@@ -57,12 +57,11 @@ function Dashboard() {
     }
 
     function initSeries(ctArray) {
-        CTSeries.build(ctArray).then(newSeries => {
-            setSeries(newSeries);
-            setSliceX(Math.round(newSeries.width / 2));
-            setSliceY(Math.round(newSeries.height / 2));
-            setSliceZ(Math.round(newSeries.depth / 2));
-        });
+        let newSeries = new CTSeries(ctArray)
+        setSeries(newSeries);
+        setSliceX(Math.round(newSeries.width / 2));
+        setSliceY(Math.round(newSeries.height / 2));
+        setSliceZ(Math.round(newSeries.depth / 2));
     }
 
     function initPath() {
