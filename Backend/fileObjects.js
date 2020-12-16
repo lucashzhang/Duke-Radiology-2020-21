@@ -1,10 +1,10 @@
 // import * as dicomParser from 'dicom-parser';
-import * as daikon from 'daikon';
-import { TAG_DICT } from './dicomDict';
+// import * as daikon from 'daikon';
+// import { TAG_DICT } from './dicomDict';
 
 // These objects are all wrappers for daikon image/series objects, they supply the necessary functions to manipulate the data
 
-export class DCM {
+class DCM {
     constructor(filename, buffer) {
         try {
             this.imageData = daikon.Series.parseImage(new DataView(this.toArrayBuffer(buffer)));
@@ -30,7 +30,7 @@ export class DCM {
     }
 }
 
-export class RS extends DCM {
+class RS extends DCM {
 
     get structList() {
         let structs = [];
@@ -47,7 +47,7 @@ export class RS extends DCM {
     }
 }
 
-export class CT extends DCM {
+class CT extends DCM {
 
     get pixelData() {
         if (this.imageData.hasPixelData()) {
@@ -71,7 +71,7 @@ export class CT extends DCM {
     }
 }
 
-export class CTSeries {
+class CTSeries {
 
     constructor(ctArray) {
         function buildSeries(images) {

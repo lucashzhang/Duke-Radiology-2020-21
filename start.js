@@ -1,19 +1,8 @@
-const express = require('express')
-const server = express()
-const port = 8878
-
-server.get('/', (req, res) => {
-  res.send('Hello World!')
-})
-
-server.listen(port, () => {
-  console.log(`Backend Setup at http://localhost:${port}`)
-})
-
 const electron = require('electron')
 const app = electron.app
 const path = require('path')
 const isDev = require('electron-is-dev')
+const server = require('./Backend/server');
 
 const BrowserWindow = electron.BrowserWindow
 
@@ -33,7 +22,7 @@ function createWindow() {
     mainWindow.loadURL(
         isDev
             ? 'http://localhost:3000'
-            : `file://${path.join(__dirname, '../build/index.html')}`,
+            : `file://${path.join(__dirname, './build/index.html')}`,
     )
 
     mainWindow.on('closed', () => {

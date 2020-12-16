@@ -3,9 +3,7 @@ import { shallowEqual, useSelector, useDispatch } from "react-redux";
 import StructMenu from '../Drawer';
 import { makeStyles } from '@material-ui/core/styles';
 import CTCanvas from '../CTCanvas';
-import { CTSeries } from '../../Utilities/fileObjects';
 
-import { readDir } from '../../Utilities/fileHandler';
 import { setFolderDirectory } from '../../Redux/actions';
 
 const useStyles = makeStyles(() => ({
@@ -50,10 +48,6 @@ function Dashboard() {
 
     function readFiles() {
         if (dirPath === '' || dirPath == null) return;
-        readDir(dirPath).then(fileData => {
-            initSeries(fileData['CT']);
-            setStructs(fileData['RS'].structList);
-        })
     }
 
     function initSeries(ctArray) {
