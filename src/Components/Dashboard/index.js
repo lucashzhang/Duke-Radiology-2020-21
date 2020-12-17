@@ -4,10 +4,11 @@ import StructMenu from '../Drawer';
 import { makeStyles } from '@material-ui/core/styles';
 import CTCanvas from '../CTCanvas';
 
-import { setFolderDirectory } from '../../Redux/actions';
+import { setFolderDirectory, createSeries } from '../../Redux/actions';
 import { readDir } from '../../Backend/fileHandler';
 import { CircularProgress } from "@material-ui/core";
-import { CTSeries } from '../../Backend/fileObjects';
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import Worker from 'workerize-loader!../../Backend/file.worker.js';
 
 const useStyles = makeStyles(() => ({
     frame: {
@@ -43,7 +44,7 @@ function Dashboard() {
     const [structs, setStructs] = useState([]);
     const [series, setSeries] = useState(null);
     const [doses, setDoses] = useState([]);
-    const dirPath = useSelector(state => state.directory.folderDirectory, shallowEqual);
+    const dirPath = useSelector(state => state.files.folderDirectory, shallowEqual);
 
     const [sliceX, setSliceX] = useState(0);
     const [sliceY, setSliceY] = useState(0);
@@ -51,9 +52,11 @@ function Dashboard() {
 
     function readFiles() {
         if (dirPath === '' || dirPath == null) return;
+        const myWorker = new Worker();
         readDir(dirPath).then(res => {
             setStructs(res['RS'].structList);
-            setSeries(new CTSeries(res['CT']));
+            dispatch(createSeries(res['CT']))
+            // myWorker.buildSeries(res['CT']).then(newSeries => setSeries(newSeries));
         })
 
     }

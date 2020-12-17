@@ -3,10 +3,21 @@ import { combineReducers } from 'redux';
 
 export const folderDirectory = (state = '', action) => {
     switch (action.type) {
-        case C['DIRECTORY'].SET_DIRECTORY:
+        case C['FILES'].SET_DIRECTORY:
             return action.payload;
-        case C['DIRECTORY'].CLEAR_DIRECTORY:
+        case C['FILES'].CLEAR_DIRECTORY:
             return '';
+        default:
+            return state;
+    }
+}
+
+export const Series = (state = null, action) => {
+    switch (action.type) {
+        case C['FILES'].SET_SERIES:
+            return action.payload;
+        case C['FILES'].CLEAR_SERIES:
+            return null;
         default:
             return state;
     }
@@ -46,8 +57,9 @@ export const patientLast = (state = '', action) => {
 }
 
 export default combineReducers({
-    directory: combineReducers({
-        folderDirectory: folderDirectory
+    files: combineReducers({
+        folderDirectory: folderDirectory,
+        series: Series
     }),
     patient: combineReducers({
         patientFirst,

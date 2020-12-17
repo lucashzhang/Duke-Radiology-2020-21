@@ -60,7 +60,7 @@ export class CT extends DCM {
     }
 }
 
-export class CTSeries {
+export class Series {
 
     constructor(ctArray) {
 
@@ -92,6 +92,13 @@ export class CTSeries {
         this.height = ctArray[0].rows;
         this.depth = (ctArray.length - 1) * this.thickness + 1;
         this.imageArray = buildInterpolatedArray(this.images, this.thickness);
+    }
+}
+
+// Casts the Series object to add some useful methods
+export class CTSeries {
+    constructor(series) {
+        Object.assign(this, series);
     }
 
     getAxialSlice(sliceNum) {

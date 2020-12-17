@@ -1,5 +1,5 @@
 export default {
-    DIRECTORY: {
+    FILES: {
         SET_DIRECTORY: 'SET_DIRECTORY',
         CLEAR_DIRECTORY: 'CLEAR_DIRECTORY',
         SET_SERIES: 'SET_SERIES',

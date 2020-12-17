@@ -1,5 +1,7 @@
 import React, { useState, useRef, useMemo, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { shallowEqual, useSelector } from "react-redux";
+import { CTSeries } from '../../Backend/fileObjects';
 // import { useDebounce } from '../../Utilities/customHooks';
 import theme from '../../Utilities/theme';
 
@@ -14,16 +16,17 @@ function CTCanvas(props) {
 
     const classes = useStyles();
     const canvasRef = useRef(null);
-    const series = props.series;
     const sliceNum = props.sliceNum;
 
     // const [imgArray, setImgArray] = useState(new Uint8ClampedArray([]));
     // const [imgData, setImgData] = useState(null);
+    // const series = props.series;
+    const series = useSelector(state => state.files.series, shallowEqual)
     const maxSlices = getMaxSlices();
     const equiv = getCoordEquiv();
     const [isHold, setIsHold] = useState(false);
     const drawCT = useCallback(drawCanvas, []);
-    const imgData = useMemo(buildCTCanvas, [series, props.view, sliceNum, drawCT, canvasRef])
+    const imgData = useMemo(buildCTCanvas, [series, props.view, sliceNum, drawCT, canvasRef]);
 
     function buildCTCanvas() {
 
@@ -39,7 +42,7 @@ function CTCanvas(props) {
                 // let result = ((array[k + 1] & 0xFF) << 8) | (array[k] & 0xFF);
                 // result = (result & 0xFFFF) >> 8;
                 // data[i] = 255 - result;
-    
+
                 // data[i] = 255 - imgArray[k];
                 data[i - 3] = data[i - 2] = data[i - 1] = imgArray[k];
                 data[i] = 255;
@@ -49,28 +52,56 @@ function CTCanvas(props) {
             return imgData;
         }
 
-        if (series == null || canvasRef.current == null) return null;
+        function getAxialSlice(sliceNum) {
+            return series.imageArray[sliceNum];
+        }
+    
+        function getCoronalSlice(sliceNum) {
+            let temp = [];
+    
+            for (let i = 0; i < series.depth; i++) {
+                for (let j = 0; j < series.width; j++) {
+                    temp.push(series.imageArray[i][sliceNum * series.width + j])
+                }
+            }
+            return new Uint8ClampedArray(temp);
+        }
+    
+        function getSagittalSlice(sliceNum) {
+            let temp = [];
+    
+            for (let i = 0; i < series.height - 1; i++) {
+                for (let j = 0; j < series.depth; j++) {
+                    temp.push(series.imageArray[j][sliceNum + series.width * i]);
+                }
+            }
+            return new Uint8ClampedArray(temp);
+        }
+
+        if (series == null || canvasRef.current == null) return;
+        // const ctSeries = new CTSeries(series);
         let imgData = null;
         switch (props.view.toUpperCase()) {
             case 'AXIAL':
                 canvasRef.current.width = series.width;
                 canvasRef.current.height = series.height;
-                imgData = createImageData(series.getAxialSlice(sliceNum));
+                imgData = createImageData(getAxialSlice(sliceNum));
                 break;
             case 'CORONAL':
                 canvasRef.current.width = series.width;
                 canvasRef.current.height = series.depth;
-                imgData = createImageData(series.getCoronalSlice(sliceNum));
+                imgData = createImageData(getCoronalSlice(sliceNum));
                 break;
             case 'SAGITTAL':
                 canvasRef.current.width = series.depth;
                 canvasRef.current.height = series.height;
-                imgData = createImageData(series.getSagittalSlice(sliceNum));
+                imgData = createImageData(getSagittalSlice(sliceNum));
                 break;
-            default: 
+            default:
                 imgData = null;
         }
         return imgData;
+
     }
 
     function getMaxSlices() {
