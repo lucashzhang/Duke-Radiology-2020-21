@@ -2,8 +2,6 @@ import * as dicomParser from 'dicom-parser';
 import { TAG_DICT } from './dicomDict';
 // import greenlet from 'greenlet';
 
-// These objects are all wrappers for daikon image/series objects, they supply the necessary functions to manipulate the data
-
 class DCM {
     constructor(filename, buffer) {
         try {
