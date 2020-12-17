@@ -1,6 +1,5 @@
 // import daikon from 'daikon';
-import { RS } from './fileObjects';
-import { CT } from './ctObjects';
+import { RS, CT } from './fileObjects';
 const fs = window.require('fs'); // Load the File System to execute our common tasks (CRUD)
 
 export async function readDir(absDir, include = { 'ALL': true }) {
