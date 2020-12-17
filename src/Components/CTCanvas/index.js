@@ -1,7 +1,7 @@
 import React, { useState, useRef, useMemo, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { shallowEqual, useSelector } from "react-redux";
-import { CTSeries } from '../../Backend/fileObjects';
+import { SeriesWrapper } from '../../Backend/fileObjects';
 // import { useDebounce } from '../../Utilities/customHooks';
 import theme from '../../Utilities/theme';
 
@@ -160,7 +160,7 @@ function CTCanvas(props) {
     }
 
     function handleUserKeyPress(e) {
-        if (props.series == null) return;
+        if (series == null) return;
         const key = e.key.toUpperCase();
 
         if ((key === 'ARROWRIGHT' || key === 'ARROWUP')) {
@@ -173,7 +173,7 @@ function CTCanvas(props) {
     }
 
     function handleUserScroll(e) {
-        if (props.series == null) return;
+        if (series == null) return;
         const direction = e.deltaY;
         if (direction > 0) {
             // On scroll down

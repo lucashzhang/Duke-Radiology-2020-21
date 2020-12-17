@@ -1,4 +1,4 @@
-import { Series } from './fileObjects'
+import { Series } from './ctObjects'
 
 export function buildSeries(ctArray) {
     console.log('building Series')

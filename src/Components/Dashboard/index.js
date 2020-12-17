@@ -42,7 +42,6 @@ function Dashboard() {
     const dispatch = useDispatch();
 
     const [structs, setStructs] = useState([]);
-    const [series, setSeries] = useState(null);
     const [doses, setDoses] = useState([]);
     const dirPath = useSelector(state => state.files.folderDirectory, shallowEqual);
 
@@ -52,7 +51,6 @@ function Dashboard() {
 
     function readFiles() {
         if (dirPath === '' || dirPath == null) return;
-        const myWorker = new Worker();
         readDir(dirPath).then(res => {
             setStructs(res['RS'].structList);
             dispatch(createSeries(res['CT']))
@@ -62,7 +60,7 @@ function Dashboard() {
     }
 
     function initPath() {
-        dispatch(setFolderDirectory('/home/lucashzhang/Personal-Projects/duke-radiology/Patient-DICOM/09'));
+        dispatch(setFolderDirectory('/home/lucashzhang/Personal-Projects/duke-radiology/Patient-DICOM/01'));
     }
 
     function handleSlice(plane, value) {
@@ -91,9 +89,9 @@ function Dashboard() {
         <div className={classes.frame}>
             <StructMenu structs={structs} handleChecked={handleChecked}></StructMenu>
             <div className={classes.viewport}>
-                <div className={classes.viewCenter}><CTCanvas series={series} view='AXIAL' handleSlice={handleSlice} sliceNum={sliceZ}></CTCanvas></div>
-                <div className={classes.viewRight}><CTCanvas series={series} view='SAGITTAL' handleSlice={handleSlice} sliceNum={sliceX}></CTCanvas></div>
-                <div className={classes.viewBottom}><CTCanvas series={series} view='CORONAL' handleSlice={handleSlice} sliceNum={sliceY}></CTCanvas></div>
+                <div className={classes.viewCenter}><CTCanvas view='AXIAL' handleSlice={handleSlice} sliceNum={sliceZ}></CTCanvas></div>
+                <div className={classes.viewRight}><CTCanvas view='SAGITTAL' handleSlice={handleSlice} sliceNum={sliceX}></CTCanvas></div>
+                <div className={classes.viewBottom}><CTCanvas view='CORONAL' handleSlice={handleSlice} sliceNum={sliceY}></CTCanvas></div>
                 <CircularProgress></CircularProgress>
             </div>
         </div>
