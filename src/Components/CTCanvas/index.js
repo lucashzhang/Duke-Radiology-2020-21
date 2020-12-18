@@ -1,8 +1,7 @@
 import React, { useState, useRef, useMemo, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { shallowEqual, useSelector } from "react-redux";
-import { SeriesWrapper } from '../../Backend/wrapperObjects';
-// import { useDebounce } from '../../Utilities/customHooks';
+import { shallowEqual } from "react-redux";
+import { useWrapperSelector } from '../../Utilities/customHooks';
 import theme from '../../Utilities/theme';
 
 const useStyles = makeStyles(() => ({
@@ -17,12 +16,11 @@ function CTCanvas(props) {
     const classes = useStyles();
     const canvasRef = useRef(null);
     const sliceNum = props.sliceNum;
-    const baseSeries = useSelector(state => state.files.series, shallowEqual)
-    const series = useMemo(() => new SeriesWrapper(baseSeries), [baseSeries])
+    const series = useWrapperSelector(state => state.files.series, shallowEqual, 'SERIES');
     const maxSlices = getMaxSlices();
     const equiv = getCoordEquiv();
     const drawCT = useCallback(drawCanvas, []);
-    const imgData = useMemo(buildCTCanvas, [baseSeries, props.view, sliceNum, drawCT, canvasRef]);
+    const imgData = useMemo(buildCTCanvas, [series, props.view, sliceNum, drawCT, canvasRef]);
     const [isHold, setIsHold] = useState(false);
 
     function buildCTCanvas() {

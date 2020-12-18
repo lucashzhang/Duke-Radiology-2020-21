@@ -1,6 +1,17 @@
-class Wrapper {
+export class Wrapper {
     constructor(obj) {
         Object.assign(this, obj);
+    }
+
+    static factory(obj, type) {
+        // Wraps objects in specified wrapper
+        switch (type.toUpperCase()) {
+            case 'SERIESWRAPPER':
+            case 'SERIES':
+                return new SeriesWrapper(obj);   
+            default:
+                return obj;
+        }
     }
 }
 // Casts the Series object to add some useful methods

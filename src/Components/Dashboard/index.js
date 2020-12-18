@@ -7,8 +7,6 @@ import CTCanvas from '../CTCanvas';
 import { setFolderDirectory, createSeries } from '../../Redux/actions';
 import { readDir } from '../../Backend/fileHandler';
 import { CircularProgress } from "@material-ui/core";
-// eslint-disable-next-line import/no-webpack-loader-syntax
-import Worker from 'workerize-loader!../../Backend/file.worker.js';
 
 const useStyles = makeStyles(() => ({
     frame: {
