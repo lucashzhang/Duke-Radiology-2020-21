@@ -1,17 +1,23 @@
-export class Wrapper {
-    constructor(obj) {
-        Object.assign(this, obj);
-    }
+export class Factory {
 
-    static factory(obj, type) {
+    static createWrapper(obj, type) {
         // Wraps objects in specified wrapper
         switch (type.toUpperCase()) {
             case 'SERIESWRAPPER':
             case 'SERIES':
-                return new SeriesWrapper(obj);   
+                return new SeriesWrapper(obj);
+            case 'RSWRAPPER':
+            case 'RS':
+                return new RSWrapper(obj);
             default:
                 return obj;
         }
+    }
+}
+
+class Wrapper {
+    constructor(obj) {
+        Object.assign(this, obj);
     }
 }
 // Casts the Series object to add some useful methods
@@ -41,5 +47,22 @@ export class SeriesWrapper extends Wrapper {
             }
         }
         return new Uint8ClampedArray(temp);
+    }
+}
+
+export class RSWrapper extends Wrapper {
+
+    get structList() {
+        let structs = [];
+        let observations = this.imageData.tags['30060080'].value;
+        for (let obs of observations) {
+            let dataVals = obs.value;
+            structs.push({
+                name: String(dataVals.find(obj => obj.id === "30060085").value[0]),
+                roi: Number(dataVals.find(obj => obj.id === "30060084").value[0]),
+            })
+        }
+
+        return structs;
     }
 }

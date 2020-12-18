@@ -4,9 +4,11 @@ import StructMenu from '../Drawer';
 import { makeStyles } from '@material-ui/core/styles';
 import CTCanvas from '../CTCanvas';
 
-import { setFolderDirectory, createSeries } from '../../Redux/actions';
-import { readDir } from '../../Backend/fileHandler';
+import { setFolderDirectory } from '../../Redux/actions';
+import { readRS } from '../../Backend/fileHandler';
 import { CircularProgress } from "@material-ui/core";
+
+import { useSeries } from '../../Utilities/customHooks';
 
 const useStyles = makeStyles(() => ({
     frame: {
@@ -42,6 +44,7 @@ function Dashboard() {
     const [structs, setStructs] = useState([]);
     const [doses, setDoses] = useState([]);
     const dirPath = useSelector(state => state.files.folderDirectory, shallowEqual);
+    const series = useSeries();
 
     const [sliceX, setSliceX] = useState(0);
     const [sliceY, setSliceY] = useState(0);
@@ -49,12 +52,9 @@ function Dashboard() {
 
     function readFiles() {
         if (dirPath === '' || dirPath == null) return;
-        readDir(dirPath).then(res => {
-            setStructs(res['RS'].structList);
-            dispatch(createSeries(res['CT']))
-            // myWorker.buildSeries(res['CT']).then(newSeries => setSeries(newSeries));
-        })
-
+        readRS(dirPath).then(rs => {
+            setStructs(rs[0].structList);
+        });
     }
 
     function initPath() {
@@ -87,9 +87,9 @@ function Dashboard() {
         <div className={classes.frame}>
             <StructMenu structs={structs} handleChecked={handleChecked}></StructMenu>
             <div className={classes.viewport}>
-                <div className={classes.viewCenter}><CTCanvas view='AXIAL' handleSlice={handleSlice} sliceNum={sliceZ}></CTCanvas></div>
-                <div className={classes.viewRight}><CTCanvas view='SAGITTAL' handleSlice={handleSlice} sliceNum={sliceX}></CTCanvas></div>
-                <div className={classes.viewBottom}><CTCanvas view='CORONAL' handleSlice={handleSlice} sliceNum={sliceY}></CTCanvas></div>
+                <div className={classes.viewCenter}><CTCanvas series={series} view='AXIAL' handleSlice={handleSlice} sliceNum={sliceZ}></CTCanvas></div>
+                <div className={classes.viewRight}><CTCanvas series={series} view='SAGITTAL' handleSlice={handleSlice} sliceNum={sliceX}></CTCanvas></div>
+                <div className={classes.viewBottom}><CTCanvas series={series} view='CORONAL' handleSlice={handleSlice} sliceNum={sliceY}></CTCanvas></div>
                 <CircularProgress></CircularProgress>
             </div>
         </div>

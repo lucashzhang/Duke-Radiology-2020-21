@@ -1,20 +1,19 @@
 // import daikon from 'daikon';
-import { RS, CT } from './fileObjects';
-const fs = window.require('fs'); // Load the File System to execute our common tasks (CRUD)
+import { Factory } from './wrapperObjects';
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import Worker from 'workerize-loader!./file.worker.js'
+const fs = window.require('fs'); // Load the File System to execute our common tasks (CRUD);
 
-export async function readDir(absDir, include = { 'ALL': true }) {
+const rsWorker = new Worker();
+const ctWorker = new Worker();
+const seriesWorker = new Worker();
 
-    // Accepts object that dictates what should be included, if the object is not included as a parameter, will read all of the files and creates a series
-    // let start = Date.now()
+async function getFiles(absDir, fileType) {
     if (!absDir.endsWith('/')) absDir += '/';
-
-    if (include['SERIES']) include['CT'] = true;
-
     let filePromises = [];
     fs.readdirSync(absDir).forEach(file => {
         const { type, extension } = parseFileName(file);
-        if ((include[type] || include['ALL']) && extension === 'dcm') {
-            // Don't read the dose file in this
+        if (fileType === type && extension === 'dcm') {
             try {
                 filePromises.push(new Promise((resolve, reject) => {
                     fs.readFile(`${absDir}${file}`, (err, content) => {
@@ -29,60 +28,31 @@ export async function readDir(absDir, include = { 'ALL': true }) {
     });
 
     let dirResults = await Promise.all(filePromises);
-    let output = buildObjects(dirResults);
-
-    // let specialPromises = []
-    // // Builds a series if specified in the parameters
-    // if ((include['SERIES'] || include['ALL']) && output['CT'] && output['CT'].length > 0) {
-    //     specialPromises.push(CTSeries.build(output['CT']));
-    // }
-    // // Build a dose object if specified;
-    // if ((include['RD'] || include['ALL'])) {
-    //     let rdFile = dirResults.find(file => file.type === 'RD');
-    // }
-    // let resolvedSpecial = await Promise.all(specialPromises);
-
-    // for (let resolved of resolvedSpecial) {
-    //     switch (resolved.type) {
-    //         case 'SERIES':
-    //             output['SERIES'] = resolved.content;
-    //             break;
-    //         default:
-    //             break;
-    //     }
-    // }
-    // console.log(Date.now() - start)
-    return output;
+    return dirResults
 }
 
-function buildObjects(dirResults) {
-    let output = {}
-    for (let file of dirResults) {
-        switch (file.type) {
-            case 'RS':
-                output['RS'] = new RS(file.filename, file.contents)
-                break;
-            case 'CT':
-                if (output.hasOwnProperty('CT')) {
-                    output['CT'].push(new CT(file.filename, file.contents))
-                } else {
-                    output['CT'] = [new CT(file.filename, file.contents)]
-                }
-                break;
-            default:
-                break;
-        }
-    }
-    return output;
+export async function readRS(absDir) {
+    let rawRS = await getFiles(absDir, 'RS');
+    let builtRS = await rsWorker.buildRS(rawRS);
+    let wrappedRS = builtRS.map(rs => Factory.createWrapper(rs, 'RS'));
+    return wrappedRS;
+}
+
+export async function readCT(absDir) {
+    let rawCT = await getFiles(absDir, 'CT');
+    let builtCT = await ctWorker.buildCT(rawCT);
+    return builtCT;
+}
+
+export async function readSeries(absDir) {
+
+    let ctImages = await readCT(absDir);
+    let builtSeries = await seriesWorker.buildSeries(ctImages);
+    return Factory.createWrapper(builtSeries, 'SERIES');
 }
 
 function parseFileName(filename) {
     let parts = filename.split('.');
 
     return { type: parts[0], extension: parts[parts.length - 1] }
-}
-
-export function threadRead(array) {
-    const inst = new Worker();
-    inst.postMessage(array)
 }
