@@ -12,17 +12,6 @@ export const folderDirectory = (state = '', action) => {
     }
 }
 
-export const Series = (state = null, action) => {
-    switch (action.type) {
-        case C['FILES'].SET_SERIES:
-            return action.payload;
-        case C['FILES'].CLEAR_SERIES:
-            return null;
-        default:
-            return state;
-    }
-}
-
 export const patientFirst = (state = '', action) => {
     switch (action.type) {
         case C['PATIENT'].SET_PATIENT_FIRST:
@@ -59,7 +48,6 @@ export const patientLast = (state = '', action) => {
 export default combineReducers({
     files: combineReducers({
         folderDirectory: folderDirectory,
-        series: Series
     }),
     patient: combineReducers({
         patientFirst,
