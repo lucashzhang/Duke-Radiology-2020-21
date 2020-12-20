@@ -1,7 +1,5 @@
 import React, { useState, useRef, useMemo, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { shallowEqual } from "react-redux";
-import { useWrapperSelector, useSeries } from '../../Utilities/customHooks';
 import theme from '../../Utilities/theme';
 
 const useStyles = makeStyles(() => ({
@@ -18,6 +16,8 @@ function CTCanvas(props) {
     const sliceNum = props.sliceNum;
     const series = props.series;
     const maxSlices = getMaxSlices();
+    const maxWidth = getMaxWidth();
+    const maxHeight = getMaxHeight();
     const equiv = getCoordEquiv();
     const drawCT = useCallback(drawCanvas, []);
     const imgData = useMemo(buildCTCanvas, [series, props.view, sliceNum, drawCT, canvasRef]);
@@ -29,7 +29,7 @@ function CTCanvas(props) {
             if (imgArray == null) return null;
             const ctx = canvasRef.current.getContext('2d');
             // Create new image data object
-            let imgData = ctx.createImageData(canvasRef.current.width, canvasRef.current.height);
+            let imgData = ctx.createImageData(maxWidth, maxHeight);
             let data = imgData.data;
             // Fill image data object
             for (let i = 3, k = 0; i < data.byteLength; i += 4, k++) {
@@ -50,21 +50,17 @@ function CTCanvas(props) {
         if (series == null || canvasRef.current == null) return;
         // const ctSeries = new CTSeries(series);
         let imgData = null;
+        canvasRef.current.width = series.width;
+        canvasRef.current.height = series.height;
         switch (props.view.toUpperCase()) {
             case 'AXIAL':
-                canvasRef.current.width = series.width;
-                canvasRef.current.height = series.height;
-                imgData = createImageData(series.getAxialSlice(sliceNum));
+                imgData = createImageData(series.getAxialSlice(sliceNum), series.width, series.height);
                 break;
             case 'CORONAL':
-                canvasRef.current.width = series.width;
-                canvasRef.current.height = series.depth;
-                imgData = createImageData(series.getCoronalSlice(sliceNum));
+                imgData = createImageData(series.getCoronalSlice(sliceNum), series.width, series.depth);
                 break;
             case 'SAGITTAL':
-                canvasRef.current.width = series.depth;
-                canvasRef.current.height = series.height;
-                imgData = createImageData(series.getSagittalSlice(sliceNum));
+                imgData = createImageData(series.getSagittalSlice(sliceNum), series.depth, series.height);
                 break;
             default:
                 imgData = null;
@@ -84,6 +80,34 @@ function CTCanvas(props) {
                 return series.width;
             default:
                 return 1;
+        }
+    }
+
+    function getMaxWidth() {
+        if (series == null) return 512;
+        switch (props.view.toUpperCase()) {
+            case 'AXIAL':
+                return series.width;
+            case 'CORONAL':
+                return series.width;
+            case 'SAGITTAL':
+                return series.depth;
+            default:
+                return 512;
+        }
+    }
+
+    function getMaxHeight() {
+        if (series == null) return 512;
+        switch (props.view.toUpperCase()) {
+            case 'AXIAL':
+                return series.height;
+            case 'CORONAL':
+                return series.depth;
+            case 'SAGITTAL':
+                return series.height;
+            default:
+                return 512;
         }
     }
 
@@ -159,6 +183,7 @@ function CTCanvas(props) {
         let y = e.clientY - e.target.offsetTop > 0 ? e.clientY - e.target.offsetTop : 0;
         props.handleSlice(equiv.x, x);
         props.handleSlice(equiv.y, y);
+        canvasReset();
         drawCT(imgData);
         drawCrosshairs(x, y);
     }

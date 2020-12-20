@@ -34,7 +34,7 @@ async function getFiles(absDir, fileType) {
 export async function readRS(absDir) {
     let rawRS = await getFiles(absDir, 'RS');
     let builtRS = await rsWorker.buildRS(rawRS);
-    let wrappedRS = builtRS.map(rs => Factory.createWrapper(rs, 'RS'));
+    let wrappedRS = Factory.createWrapper(builtRS[0], 'RS');
     return wrappedRS;
 }
 

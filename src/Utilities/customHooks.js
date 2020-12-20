@@ -1,7 +1,7 @@
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useSelector, shallowEqual } from "react-redux";
 import { Factory } from '../Backend/wrapperObjects';
-import { readSeries } from '../Backend/fileHandler';
+import { readRS, readSeries } from '../Backend/fileHandler';
 
 
 export function useDebounce(value, delay) {
@@ -31,7 +31,7 @@ export function useWrapperSelector(selectorFunction, equality, objectType) {
 
 export function useSeries() {
   const absDir = useSelector(state => state.files.folderDirectory, shallowEqual);
-  const [series, setSeries] = useState(null);
+  const [series, setSeries] = useState({});
 
   async function handleSeries() {
     if (absDir == null || absDir === '') return;
@@ -39,5 +39,18 @@ export function useSeries() {
   }
 
   useEffect(() => handleSeries(), [absDir]);
-  return series
+  return series;
+}
+
+export function useRS() {
+  const absDir = useSelector(state => state.files.folderDirectory, shallowEqual);
+  const [rs, setRS] = useState({});
+
+  async function handleSeries() {
+    if (absDir == null || absDir === '') return;
+    readRS(absDir).then(newSeries => setRS(newSeries));
+  }
+
+  useEffect(() => handleSeries(), [absDir]);
+  return rs;
 }

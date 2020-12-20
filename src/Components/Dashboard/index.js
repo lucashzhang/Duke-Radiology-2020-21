@@ -4,9 +4,8 @@ import StructMenu from '../Drawer';
 import { makeStyles } from '@material-ui/core/styles';
 import CTCanvas from '../CTCanvas'; 
 import { setFolderDirectory } from '../../Redux/actions';
-import { readRS } from '../../Backend/fileHandler';
 import { CircularProgress } from "@material-ui/core";
-import { useSeries } from '../../Utilities/customHooks';
+import { useSeries, useRS } from '../../Utilities/customHooks';
 
 const useStyles = makeStyles(() => ({
     frame: {
@@ -17,21 +16,23 @@ const useStyles = makeStyles(() => ({
         width: 'calc(100vw - 270px)',
         height: '100vh',
         display: 'grid',
-        gridTemplateColumns: '512px 1fr',
+        gridTemplateColumns: '512px 512px',
         gridTemplateRows: '512px 1fr',
-        // background: 'black'
     },
     viewCenter: {
         gridRow: '1',
         gridColumn: '1',
+        background: 'black'
     },
     viewRight: {
         gridRow: '1',
         gridColumn: '2',
+        background: 'black'
     },
     viewBottom: {
         gridRow: '2',
         gridColumn: '1',
+        background: 'black'
     }
 }));
 
@@ -39,21 +40,14 @@ function Dashboard() {
     const classes = useStyles();
     const dispatch = useDispatch();
 
-    const [structs, setStructs] = useState([]);
     const [doses, setDoses] = useState([]);
     const dirPath = useSelector(state => state.files.folderDirectory, shallowEqual);
     const series = useSeries();
+    const rs = useRS();
 
     const [sliceX, setSliceX] = useState(0);
     const [sliceY, setSliceY] = useState(0);
     const [sliceZ, setSliceZ] = useState(0);
-
-    function readFiles() {
-        if (dirPath === '' || dirPath == null) return;
-        readRS(dirPath).then(rs => {
-            setStructs(rs[0].structList);
-        });
-    }
 
     function initPath() {
         dispatch(setFolderDirectory('/home/lucashzhang/Personal-Projects/duke-radiology/Patient-DICOM/01'));
@@ -74,16 +68,16 @@ function Dashboard() {
     }
 
     function handleChecked(checkedList) {
+        console.log(rs.getSpecificContours(checkedList))
         setDoses(checkedList);
     }
 
     useEffect(initPath, []);
-    useEffect(readFiles, [dirPath]);
     // useEffect(() => genDetailSeries(), [series]);
 
     return (
         <div className={classes.frame}>
-            <StructMenu structs={structs} handleChecked={handleChecked}></StructMenu>
+            <StructMenu structs={rs.structList} handleChecked={handleChecked}></StructMenu>
             <div className={classes.viewport}>
                 <div className={classes.viewCenter}><CTCanvas series={series} view='AXIAL' handleSlice={handleSlice} sliceNum={sliceZ}></CTCanvas></div>
                 <div className={classes.viewRight}><CTCanvas series={series} view='SAGITTAL' handleSlice={handleSlice} sliceNum={sliceX}></CTCanvas></div>

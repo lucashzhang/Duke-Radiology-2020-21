@@ -23,11 +23,12 @@ function StructMenu(props) {
     const [checked, setChecked] = useState(null);
 
     function initChecks() {
+        if (structs == null) return;
         let checkBoxes = {};
         for (let struct of structs) {
             checkBoxes[struct.roi] = false;
         }
-        setChecked(checkBoxes)
+        setChecked(checkBoxes);
     }
 
     function toggleChecked(roi) {

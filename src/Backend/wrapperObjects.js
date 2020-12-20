@@ -24,45 +24,40 @@ class Wrapper {
 export class SeriesWrapper extends Wrapper {
 
     getAxialSlice(sliceNum) {
+        if (sliceNum > this.height) return [];
         return this.imageArray[sliceNum];
     }
 
     getCoronalSlice(sliceNum) {
         let temp = [];
-
+        if (sliceNum > this.height) return temp;
         for (let i = 0; i < this.depth; i++) {
             for (let j = 0; j < this.width; j++) {
                 temp.push(this.imageArray[i][sliceNum * this.width + j])
             }
         }
-        return new Uint8ClampedArray(temp);
+        return temp;
     }
 
     getSagittalSlice(sliceNum) {
         let temp = [];
-
+        if (sliceNum > this.width) return temp;
         for (let i = 0; i < this.height - 1; i++) {
             for (let j = 0; j < this.depth; j++) {
                 temp.push(this.imageArray[j][sliceNum + this.width * i]);
             }
         }
-        return new Uint8ClampedArray(temp);
+        return temp;
     }
 }
 
 export class RSWrapper extends Wrapper {
 
-    get structList() {
-        let structs = [];
-        let observations = this.imageData.tags['30060080'].value;
-        for (let obs of observations) {
-            let dataVals = obs.value;
-            structs.push({
-                name: String(dataVals.find(obj => obj.id === "30060085").value[0]),
-                roi: Number(dataVals.find(obj => obj.id === "30060084").value[0]),
-            })
+    getSpecificContours(contourArray) {
+        let newObj = {};
+        for (let cont of contourArray) {
+            newObj[cont] = this.contourData[cont]
         }
-
-        return structs;
+        return newObj;
     }
 }
