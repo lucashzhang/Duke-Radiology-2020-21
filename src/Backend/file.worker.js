@@ -1,4 +1,3 @@
-import { object } from 'underscore';
 import { CT, RS, Series } from './fileObjects';
 
 export function buildSeries(ctArray) {

@@ -8,15 +8,13 @@ export function useDebounce(value, delay) {
   // Allows for debouncing
   const [debouncedValue, setDebouncedValue] = useState(value);
 
-  function init() {
+  useEffect(() => {
     const dbHandler = setTimeout(() => {
       setDebouncedValue(value)
     }, delay);
 
     return () => clearTimeout(dbHandler);
-  }
-
-  useEffect(init, [value]);
+  }, [value, delay]);
 
   return debouncedValue;
 }
@@ -33,12 +31,10 @@ export function useSeries() {
   const absDir = useSelector(state => state.files.folderDirectory, shallowEqual);
   const [series, setSeries] = useState({});
 
-  async function handleSeries() {
+  useEffect(() => {
     if (absDir == null || absDir === '') return;
     readSeries(absDir).then(newSeries => setSeries(newSeries));
-  }
-
-  useEffect(() => handleSeries(), [absDir]);
+  }, [absDir]);
   return series;
 }
 
@@ -46,11 +42,9 @@ export function useRS() {
   const absDir = useSelector(state => state.files.folderDirectory, shallowEqual);
   const [rs, setRS] = useState({});
 
-  async function handleSeries() {
+  useEffect(() => {
     if (absDir == null || absDir === '') return;
     readRS(absDir).then(newSeries => setRS(newSeries));
-  }
-
-  useEffect(() => handleSeries(), [absDir]);
+  }, [absDir]);
   return rs;
 }

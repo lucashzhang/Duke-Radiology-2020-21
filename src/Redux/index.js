@@ -2,7 +2,7 @@ import { createStore, applyMiddleware } from 'redux'
 import appReducer from './reducers'
 import thunk from 'redux-thunk'
 
-export default () => {
+const create = () => {
 	return createStore(appReducer, applyMiddleware(thunk));
 }
 
@@ -27,3 +27,5 @@ export const saveState = (state) => {
 		// ignore write errors
 	}
 };
+
+export default create;
