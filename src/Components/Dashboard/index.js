@@ -16,8 +16,9 @@ const useStyles = makeStyles(() => ({
         width: 'calc(100vw - 270px)',
         height: '100vh',
         display: 'grid',
-        gridTemplateColumns: '512px 512px',
+        gridTemplateColumns: '512px 512px 512px',
         gridTemplateRows: '512px 1fr',
+        overflow: 'auto'
     },
     viewCenter: {
         gridRow: '1',
@@ -30,8 +31,8 @@ const useStyles = makeStyles(() => ({
         background: 'black'
     },
     viewBottom: {
-        gridRow: '2',
-        gridColumn: '1',
+        gridRow: '1',
+        gridColumn: '3',
         background: 'black'
     }
 }));
