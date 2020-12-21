@@ -173,7 +173,7 @@ function CTCanvas(props) {
         const ctx = canvasRef.current.getContext('2d');
         ctx.font = '16px sans-serif';
         ctx.textAlign = "center";
-        ctx.fillStyle = "#FFFFFF";
+        ctx.fillStyle = "#00FFFF";
         ctx.fillText(props.view.toUpperCase(), 256, 24);
         ctx.fillText(`Slice Number: ${props.sliceNum}`, 256, 500);
     }
