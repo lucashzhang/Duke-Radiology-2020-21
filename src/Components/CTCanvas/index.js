@@ -175,7 +175,7 @@ function CTCanvas(props) {
         ctx.textAlign = "center";
         ctx.fillStyle = "#00FFFF";
         ctx.fillText(props.view.toUpperCase(), 256, 24);
-        ctx.fillText(`Slice Number: ${props.sliceNum}`, 256, 500);
+        ctx.fillText(`Slice Number: ${props.sliceNum + 1}`, 256, 500);
     }
 
     function handleUserKeyPress(e) {
