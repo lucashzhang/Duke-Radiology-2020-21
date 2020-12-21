@@ -48,7 +48,8 @@ export class RS extends DCM {
                     for (let contSeq of contourSequence.value) {
                         let seqObj = {
                             numberPoints: contSeq.value.find(obj => obj.id === "30060046").value[0],
-                            contours: contSeq.value.find(obj => obj.id === "30060050").value
+                            contours: contSeq.value.find(obj => obj.id === "30060050").value,
+                            zIndex: contSeq.value.find(obj => obj.id === "30060050").value[2]
                         };
                         tempSeq.push(seqObj)
                     }
