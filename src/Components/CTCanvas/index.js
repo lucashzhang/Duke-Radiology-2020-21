@@ -3,8 +3,23 @@ import { makeStyles } from '@material-ui/core/styles';
 import theme from '../../Utilities/theme';
 
 const useStyles = makeStyles(() => ({
+    canvasContainer: {
+        display: 'grid',
+        gridTemplateColumns: '2rem 1fr 2rem',
+        gridTemplateRows: '2rem 1fr 2rem',
+    },
+    canvasTitle: {
+        gridColumn: '2',
+        gridRow: '1',
+        color: 'white',
+        zIndex: '10',
+        padding: '4px',
+        textAlign: 'center'
+    },
     canvas: {
         cursor: 'pointer',
+        gridColumn: '1 / 4',
+        gridRow: '1 / 4',
     }
 }));
 
@@ -19,8 +34,9 @@ function CTCanvas(props) {
     const maxWidth = getMaxWidth();
     const maxHeight = getMaxHeight();
     const equiv = getCoordEquiv();
-    const drawCT = useCallback(drawCanvas, []);
-    const imgData = useMemo(buildCTCanvas, [series, props.view, sliceNum, drawCT, canvasRef]);
+    const drawText = useCallback(drawTextOverlay, [props.sliceNum, props.view])
+    const drawCT = useCallback(drawCanvas, [drawText]);
+    const imgData = useMemo(buildCTCanvas, [series, props.view, sliceNum, drawCT, canvasRef, maxHeight, maxWidth]);
     const [isHold, setIsHold] = useState(false);
 
     function buildCTCanvas() {
@@ -137,6 +153,7 @@ function CTCanvas(props) {
         canvasReset();
         const ctx = canvasRef.current.getContext('2d');
         ctx.putImageData(data, 0, 0);
+        drawText();
     }
 
     function drawCrosshairs(x, y) {
@@ -150,6 +167,15 @@ function CTCanvas(props) {
         ctx.moveTo(0, y);
         ctx.lineTo(canvasRef.current.width, y);
         ctx.stroke();
+    }
+
+    function drawTextOverlay() {
+        const ctx = canvasRef.current.getContext('2d');
+        ctx.font = '16px sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillText(props.view.toUpperCase(), 256, 24);
+        ctx.fillText(`Slice Number: ${props.sliceNum}`, 256, 500);
     }
 
     function handleUserKeyPress(e) {
@@ -178,7 +204,7 @@ function CTCanvas(props) {
     }
 
     function handleCrosshair(e, override = false) {
-        if (!isHold && !override) return;
+        if ((!isHold && !override) || series == null) return;
         let x = e.clientX - e.target.offsetLeft > 0 ? e.clientX - e.target.offsetLeft : 0;
         let y = e.clientY - e.target.offsetTop > 0 ? e.clientY - e.target.offsetTop : 0;
         props.handleSlice(equiv.x, x);
@@ -191,18 +217,22 @@ function CTCanvas(props) {
     // useEffect(drawCanvas, [imgData]);
 
     return (
-        <canvas
-            ref={canvasRef}
-            className={classes.canvas}
-            onKeyDown={handleUserKeyPress}
-            onWheel={handleUserScroll}
-            onMouseDown={(e) => { setIsHold(true); handleCrosshair(e, true) }}
-            onMouseUp={() => setIsHold(false)}
-            onMouseLeave={() => setIsHold(false)}
-            onMouseMove={handleCrosshair}
-            tabIndex="0"
+        <div
+            className={classes.canvasContainer}
         >
-        </canvas>
+            <canvas
+                ref={canvasRef}
+                className={classes.canvas}
+                onKeyDown={handleUserKeyPress}
+                onWheel={handleUserScroll}
+                onMouseDown={(e) => { setIsHold(true); handleCrosshair(e, true) }}
+                onMouseUp={() => setIsHold(false)}
+                onMouseLeave={() => setIsHold(false)}
+                onMouseMove={handleCrosshair}
+                tabIndex="0"
+            >
+            </canvas>
+        </div>
     );
 }
 
