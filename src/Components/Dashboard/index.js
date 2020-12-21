@@ -7,7 +7,7 @@ import { setFolderDirectory } from '../../Redux/actions';
 import { CircularProgress } from "@material-ui/core";
 import { useSeries, useRS } from '../../Utilities/customHooks';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
     frame: {
         display: 'flex',
         flexDirection: 'row'
@@ -23,7 +23,9 @@ const useStyles = makeStyles(() => ({
     viewCenter: {
         gridRow: '1',
         gridColumn: '1',
-        background: 'black'
+        background: 'black',
+        borderColor: theme.palette.primary.main,
+        borderWidth: 'thick'
     },
     viewRight: {
         gridRow: '1',
@@ -41,7 +43,6 @@ function Dashboard() {
     const classes = useStyles();
     const dispatch = useDispatch();
 
-    const [doses, setDoses] = useState([]);
     const series = useSeries();
     const rs = useRS();
 
@@ -70,8 +71,9 @@ function Dashboard() {
     }
 
     function handleChecked(checkedList) {
-        console.log(rs.getSpecificContours(checkedList))
-        setDoses(checkedList);
+        let contours = rs.getSpecificContours(checkedList)
+        console.log(contours)
+        console.log(rs.getContourAtZ(contours, -135));
     }
 
     useEffect(initPath, [dispatch]);

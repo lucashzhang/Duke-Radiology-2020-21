@@ -4,7 +4,7 @@ import theme from '../../Utilities/theme';
 
 const useStyles = makeStyles(() => ({
     canvas: {
-        cursor: 'pointer'
+        cursor: 'pointer',
     }
 }));
 

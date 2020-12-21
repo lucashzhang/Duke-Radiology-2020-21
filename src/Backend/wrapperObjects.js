@@ -33,7 +33,7 @@ export class SeriesWrapper extends Wrapper {
         if (sliceNum > this.height) return temp;
         for (let i = 0; i < this.depth; i++) {
             for (let j = 0; j < this.width; j++) {
-                temp.push(this.imageArray[i][sliceNum * this.width + j])
+                temp.push(this.imageArray[i][sliceNum * this.height + j])
             }
         }
         return temp;
@@ -59,5 +59,14 @@ export class RSWrapper extends Wrapper {
             newObj[cont] = this.contourData[cont]
         }
         return newObj;
+    }
+
+    getContourAtZ(contourObj, z) {
+        for (let roi in contourObj) {
+            if (contourObj[roi].sequences.length > 0) {
+                contourObj[roi].sequences = contourObj[roi].sequences.filter(item => item.zIndex === z)
+            }
+        }
+        return contourObj;
     }
 }
