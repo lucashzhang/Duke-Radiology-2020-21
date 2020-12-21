@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { shallowEqual, useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import StructMenu from '../Drawer';
 import { makeStyles } from '@material-ui/core/styles';
 import CTCanvas from '../CTCanvas'; 
@@ -41,7 +41,6 @@ function Dashboard() {
     const dispatch = useDispatch();
 
     const [doses, setDoses] = useState([]);
-    const dirPath = useSelector(state => state.files.folderDirectory, shallowEqual);
     const series = useSeries();
     const rs = useRS();
 
@@ -64,6 +63,8 @@ function Dashboard() {
             case 'Z':
                 setSliceZ(value);
                 break;
+            default:
+                break;
         }
     }
 
@@ -72,7 +73,7 @@ function Dashboard() {
         setDoses(checkedList);
     }
 
-    useEffect(initPath, []);
+    useEffect(initPath, [dispatch]);
     // useEffect(() => genDetailSeries(), [series]);
 
     return (
