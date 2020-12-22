@@ -34,6 +34,10 @@ async function getFiles(absDir, fileType) {
 
 export async function readRS(absDir) {
     let rawRS = await getFiles(absDir, 'RS');
+    if (rawRS.length <= 0) {
+        alert("Please make sure to include an RS File directory");
+        return {};
+    }
     let builtRS = await rsWorker.buildRS(rawRS);
     let wrappedRS = Factory.createWrapper(builtRS[0], 'RS');
     return wrappedRS;
