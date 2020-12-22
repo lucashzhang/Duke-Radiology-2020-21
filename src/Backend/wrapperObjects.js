@@ -24,13 +24,13 @@ class Wrapper {
 export class SeriesWrapper extends Wrapper {
 
     getAxialSlice(sliceNum) {
-        if (sliceNum > this.height) return [];
+        if (sliceNum > this.height || sliceNum < 0) return [];
         return this.imageArray[sliceNum];
     }
 
     getCoronalSlice(sliceNum) {
         let temp = [];
-        if (sliceNum > this.height) return temp;
+        if (sliceNum > this.height || sliceNum < 0) return temp;
         for (let i = 0; i < this.depth; i++) {
             for (let j = 0; j < this.width; j++) {
                 temp.push(this.imageArray[i][sliceNum * this.height + j])
@@ -41,7 +41,7 @@ export class SeriesWrapper extends Wrapper {
 
     getSagittalSlice(sliceNum) {
         let temp = [];
-        if (sliceNum > this.width) return temp;
+        if (sliceNum > this.width || sliceNum < 0) return temp;
         for (let j = 0; j < this.depth; j++) {
             for (let i = 0; i < this.height; i++) {
                 temp.push(this.imageArray[j][sliceNum + this.width * i]);

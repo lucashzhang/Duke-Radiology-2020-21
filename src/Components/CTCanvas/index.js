@@ -33,9 +33,11 @@ function CTCanvas(props) {
     const maxSlices = getMaxSlices();
     const maxWidth = getMaxWidth();
     const maxHeight = getMaxHeight();
+    const xOffset = Number(series.width - maxWidth) / 2
+    const yOffset = Number(series.height - maxHeight) / 2;
     const equiv = getCoordEquiv();
     const drawText = useCallback(drawTextOverlay, [props.sliceNum, props.view])
-    const drawCT = useCallback(drawCanvas, [drawText]);
+    const drawCT = useCallback(drawCanvas, [drawText, xOffset, yOffset]);
     const imgData = useMemo(buildCTCanvas, [series, props.view, sliceNum, drawCT, canvasRef, maxHeight, maxWidth]);
     const [isHold, setIsHold] = useState(false);
 
@@ -152,7 +154,7 @@ function CTCanvas(props) {
 
         canvasReset();
         const ctx = canvasRef.current.getContext('2d');
-        ctx.putImageData(data, 0, 0);
+        ctx.putImageData(data, xOffset, yOffset);
         drawText();
     }
 
@@ -207,8 +209,8 @@ function CTCanvas(props) {
         if ((!isHold && !override) || series == null) return;
         let x = e.clientX - e.target.offsetLeft > 0 ? e.clientX - e.target.offsetLeft : 0;
         let y = e.clientY - e.target.offsetTop > 0 ? e.clientY - e.target.offsetTop : 0;
-        props.handleSlice(equiv.x, x);
-        props.handleSlice(equiv.y, y);
+        props.handleSlice(equiv.x, x - xOffset);
+        props.handleSlice(equiv.y, y - yOffset);
         canvasReset();
         drawCT(imgData);
         drawCrosshairs(x, y);
