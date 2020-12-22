@@ -33,8 +33,8 @@ function CTCanvas(props) {
     const maxSlices = getMaxSlices();
     const maxWidth = getMaxWidth();
     const maxHeight = getMaxHeight();
-    const xOffset = Number(series.width - maxWidth) / 2
-    const yOffset = Number(series.height - maxHeight) / 2;
+    const xOffset = Math.round((series.width - maxWidth) / 2)
+    const yOffset = Math.round((series.height - maxHeight) / 2);
     const equiv = getCoordEquiv();
     const drawText = useCallback(drawTextOverlay, [props.sliceNum, props.view])
     const drawCT = useCallback(drawCanvas, [drawText, xOffset, yOffset]);

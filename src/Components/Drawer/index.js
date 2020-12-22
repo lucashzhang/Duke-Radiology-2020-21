@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
 function StructMenu(props) {
 
     const classes = useStyles();
-    const structs = props.structs;
+    const structs = props.rs != null ? props.rs.structList : null;
 
     const [checked, setChecked] = useState(null);
 
@@ -45,10 +45,10 @@ function StructMenu(props) {
 
     return (
         <div className={classes.drawerContainer}>
-            {checked != null && Object.keys(checked).length !== 0 ? <List>
+            {structs != null && checked != null && Object.keys(checked).length !== 0 ? <List>
                 {
                     structs.map((struct) => (
-                        <ListItem key={`${struct.name}${struct.roi}`}>
+                        <ListItem key={`${struct.name}${struct.roi}${props.rs.filename}`}>
                             <FormControlLabel
                                 control={<Checkbox name={`${struct.roi}`} checked={checked[struct.roi]} onChange={() => toggleChecked(struct.roi)} />}
                                 label={struct.name}

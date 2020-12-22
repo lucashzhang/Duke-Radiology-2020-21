@@ -93,7 +93,7 @@ function Dashboard() {
 
     return (
         <div className={classes.frame}>
-            <StructMenu structs={rs.structList} handleChecked={handleChecked}></StructMenu>
+            <StructMenu rs={rs} handleChecked={handleChecked}></StructMenu>
             <div className={classes.viewport}>
                 <div className={classes.viewCenter}><CTCanvas series={series} view='AXIAL' handleSlice={handleSlice} sliceNum={sliceZ}></CTCanvas></div>
                 <div className={classes.viewRight}><CTCanvas series={series} view='CORONAL' handleSlice={handleSlice} sliceNum={sliceY}></CTCanvas></div>
