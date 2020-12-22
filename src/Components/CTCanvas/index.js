@@ -72,13 +72,13 @@ function CTCanvas(props) {
         canvasRef.current.height = series.height;
         switch (props.view.toUpperCase()) {
             case 'AXIAL':
-                imgData = createImageData(series.getAxialSlice(sliceNum), series.width, series.height);
+                imgData = createImageData(series.getAxialSlice(sliceNum));
                 break;
             case 'CORONAL':
-                imgData = createImageData(series.getCoronalSlice(sliceNum), series.width, series.depth);
+                imgData = createImageData(series.getCoronalSlice(sliceNum));
                 break;
             case 'SAGITTAL':
-                imgData = createImageData(series.getSagittalSlice(sliceNum), series.depth, series.height);
+                imgData = createImageData(series.getSagittalSlice(sliceNum));
                 break;
             default:
                 imgData = null;
@@ -207,8 +207,8 @@ function CTCanvas(props) {
 
     function handleCrosshair(e, override = false) {
         if ((!isHold && !override) || series == null) return;
-        let x = e.clientX - e.target.offsetLeft > 0 ? e.clientX - e.target.offsetLeft : 0;
-        let y = e.clientY - e.target.offsetTop > 0 ? e.clientY - e.target.offsetTop : 0;
+        let x = e.clientX - e.target.offsetLeft;
+        let y = e.clientY - e.target.offsetTop;
         props.handleSlice(equiv.x, x - xOffset);
         props.handleSlice(equiv.y, y - yOffset);
         canvasReset();

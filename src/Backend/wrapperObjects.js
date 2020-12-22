@@ -24,7 +24,7 @@ class Wrapper {
 export class SeriesWrapper extends Wrapper {
 
     getAxialSlice(sliceNum) {
-        if (sliceNum > this.height || sliceNum < 0) return [];
+        if (sliceNum > this.depth || sliceNum < 0) return [];
         return this.imageArray[sliceNum];
     }
 
