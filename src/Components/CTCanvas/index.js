@@ -105,9 +105,9 @@ function CTCanvas(props) {
             case 'AXIAL':
                 return series.width;
             case 'CORONAL':
-                return series.width;
+                // return series.width;
             case 'SAGITTAL':
-                return series.depth;
+                return series.width;
             default:
                 return 512;
         }
@@ -119,9 +119,9 @@ function CTCanvas(props) {
             case 'AXIAL':
                 return series.height;
             case 'CORONAL':
-                return series.depth;
+                // return series.depth;
             case 'SAGITTAL':
-                return series.height;
+                return series.depth;
             default:
                 return 512;
         }
@@ -135,7 +135,7 @@ function CTCanvas(props) {
             case 'CORONAL':
                 return { x: 'X', y: 'Z', z: 'Y' }
             case 'SAGITTAL':
-                return { x: 'Z', y: 'Y', z: 'X' }
+                return { x: 'Y', y: 'Z', z: 'X' }
             default:
                 return { x: '', y: '', z: '' }
         }

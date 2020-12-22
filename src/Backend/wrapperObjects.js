@@ -42,8 +42,8 @@ export class SeriesWrapper extends Wrapper {
     getSagittalSlice(sliceNum) {
         let temp = [];
         if (sliceNum > this.width) return temp;
-        for (let i = 0; i < this.height - 1; i++) {
-            for (let j = 0; j < this.depth; j++) {
+        for (let j = 0; j < this.depth; j++) {
+            for (let i = 0; i < this.height; i++) {
                 temp.push(this.imageArray[j][sliceNum + this.width * i]);
             }
         }
