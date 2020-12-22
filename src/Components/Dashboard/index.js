@@ -4,8 +4,9 @@ import StructMenu from '../Drawer';
 import { makeStyles } from '@material-ui/core/styles';
 import CTCanvas from '../CTCanvas'; 
 import { setFolderDirectory } from '../../Redux/actions';
-import { CircularProgress } from "@material-ui/core";
+import { Button, CircularProgress } from "@material-ui/core";
 import { useSeries, useRS } from '../../Utilities/customHooks';
+import  { pickDirectoryPath } from '../../Backend/fileHandler';
 
 const useStyles = makeStyles((theme) => ({
     frame: {
@@ -36,6 +37,10 @@ const useStyles = makeStyles((theme) => ({
         gridRow: '1',
         gridColumn: '3',
         background: 'black'
+    },
+    files: {
+        gridRow: '2',
+        gridColumn: '1 / 4'
     }
 }));
 
@@ -76,6 +81,13 @@ function Dashboard() {
         console.log(rs.getContourAtZ(contours, -135));
     }
 
+    async function dirButton() {
+        const newPathObj = await pickDirectoryPath();
+        if (newPathObj.canceled || newPathObj.filePaths[0] == null) return;
+        const newPath = newPathObj.filePaths[0];
+        dispatch(setFolderDirectory(newPath));
+    }
+
     useEffect(initPath, [dispatch]);
     // useEffect(() => genDetailSeries(), [series]);
 
@@ -86,7 +98,9 @@ function Dashboard() {
                 <div className={classes.viewCenter}><CTCanvas series={series} view='AXIAL' handleSlice={handleSlice} sliceNum={sliceZ}></CTCanvas></div>
                 <div className={classes.viewRight}><CTCanvas series={series} view='CORONAL' handleSlice={handleSlice} sliceNum={sliceY}></CTCanvas></div>
                 <div className={classes.viewBottom}><CTCanvas series={series} view='SAGITTAL' handleSlice={handleSlice} sliceNum={sliceX}></CTCanvas></div>
-                <CircularProgress></CircularProgress>
+                <div className={classes.files}>
+                    <Button variant="contained" onClick={dirButton}>Click to select new Folder</Button>
+                </div>
             </div>
         </div>
     );

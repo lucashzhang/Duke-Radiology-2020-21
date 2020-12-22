@@ -3,6 +3,7 @@ import { Factory } from './wrapperObjects';
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import Worker from 'workerize-loader!./file.worker.js'
 const fs = window.require('fs'); // Load the File System to execute our common tasks (CRUD);
+const { dialog } = window.require('electron').remote;
 
 const rsWorker = new Worker();
 const ctWorker = new Worker();
@@ -55,4 +56,11 @@ function parseFileName(filename) {
     let parts = filename.split('.');
 
     return { type: parts[0], extension: parts[parts.length - 1] }
+}
+
+export async function pickDirectoryPath() {
+    let path = await dialog.showOpenDialog({
+        properties: ['openDirectory']
+    });
+    return path;
 }
