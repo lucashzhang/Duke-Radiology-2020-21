@@ -65,7 +65,7 @@ function CTCanvas(props) {
             return imgData;
         }
 
-        if (series == null || canvasRef.current == null) return;
+        if (series == null || series.getAxialSlice == null || canvasRef.current == null) return;
         // const ctSeries = new CTSeries(series);
         let imgData = null;
         canvasRef.current.width = series.width;

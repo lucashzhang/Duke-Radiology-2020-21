@@ -48,8 +48,17 @@ export async function readCT(absDir) {
 export async function readSeries(absDir) {
 
     let ctImages = await readCT(absDir);
+    if (ctImages.length <= 0) {
+        alert("Please make sure to include CT Images in the directory");
+        return {};
+    }
     let builtSeries = await seriesWorker.buildSeries(ctImages);
-    return Factory.createWrapper(builtSeries, 'SERIES');
+    let wrappedSeries = Factory.createWrapper(builtSeries, 'SERIES');
+    if (wrappedSeries.isSeries()) return wrappedSeries;
+    else {
+        alert("Please check that your CT images are all from the same series");
+        return {};
+    };
 }
 
 function parseFileName(filename) {

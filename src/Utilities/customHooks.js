@@ -24,7 +24,9 @@ export function useSeries() {
 
   useEffect(() => {
     if (absDir == null || absDir === '') return;
-    readSeries(absDir).then(newSeries => setSeries(newSeries));
+    readSeries(absDir).then(newSeries => {
+      if (newSeries != {} && newSeries != null) setSeries(newSeries)
+    });
   }, [absDir]);
   return series;
 }
