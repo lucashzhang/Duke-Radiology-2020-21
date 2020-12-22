@@ -45,10 +45,6 @@ export async function readRS(absDir) {
 
 export async function readCT(absDir) {
     let rawCT = await getFiles(absDir, 'CT');
-    if (rawCT.length <= 0) {
-        alert("Please make sure to include CT Images in the directory");
-        return {};
-    }
     let builtCT = await ctWorker.buildCT(rawCT);
     return builtCT;
 }
@@ -56,12 +52,16 @@ export async function readCT(absDir) {
 export async function readSeries(absDir) {
 
     let ctImages = await readCT(absDir);
+    if (ctImages.length <= 0) {
+        alert("Please make sure to include CT Images in the directory");
+        return {};
+    }
     let builtSeries = await seriesWorker.buildSeries(ctImages);
     let wrappedSeries = Factory.createWrapper(builtSeries, 'SERIES');
     if (!wrappedSeries.isSeries()) {
         alert("Please check that your CT images are all from the same series");
         return {};
-    } 
+    };
     return wrappedSeries;
 }
 
