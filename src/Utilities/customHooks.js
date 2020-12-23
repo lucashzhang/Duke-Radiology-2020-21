@@ -25,7 +25,7 @@ export function useSeries() {
   useEffect(() => {
     if (absDir == null || absDir === '') return;
     readSeries(absDir).then(newSeries => {
-      if (newSeries != {} && newSeries != null) setSeries(newSeries)
+      if (newSeries !== {} && newSeries != null) setSeries(newSeries)
     });
   }, [absDir]);
   return series;
@@ -37,7 +37,8 @@ export function useRS() {
 
   useEffect(() => {
     if (absDir == null || absDir === '') return;
-    readRS(absDir).then(newSeries => setRS(newSeries));
+    readRS(absDir).then(newRS => {
+      if (newRS !== {} && newRS != null) setRS(newRS)});
   }, [absDir]);
   return rs;
 }
