@@ -70,7 +70,6 @@ export class RSWrapper extends Wrapper {
             Object.assign(newObj[cont], this.contourData[cont])
             // newObj[cont] = this.contourData[cont]
         }
-        console.log('SpecificContours', newObj)
         return newObj;
     }
 
@@ -88,7 +87,6 @@ export class RSWrapper extends Wrapper {
                 contourObj[roi].sequences = contourObj[roi].sequences.filter(item => item.zIndex === z)
             }
         }
-        console.log('AtZ', contourObj)
         return contourObj;
     }
 }

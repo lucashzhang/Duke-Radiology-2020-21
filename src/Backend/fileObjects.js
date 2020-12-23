@@ -84,7 +84,6 @@ export class RS extends DCM {
 
         this.contourData = getContour();
         this.structList = getStructList();
-        console.log(this.contourData)
     }
 }
 
@@ -136,7 +135,6 @@ export class Series {
         }
 
         this.images = ctArray.sort((a, b) => a.position[2] - b.position[2]);
-        console.log(this.images)
         this.thickness = ctArray[0].thickness;
         this.width = ctArray[0].cols;
         this.height = ctArray[0].imageData.tags["00280010"].value[0];
