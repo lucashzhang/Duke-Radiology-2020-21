@@ -46,9 +46,14 @@ export class RS extends DCM {
                 let contourSequence = roiSeq.value.find(obj => obj.id === "30060040")
                 if (contourSequence) {
                     for (let contSeq of contourSequence.value) {
+                        let rawContours = contSeq.value.find(obj => obj.id === "30060050").value;
+                        let tempContours = [];
+                        for (let i = 2; i < rawContours.length; i+=3) {
+                            tempContours.push([rawContours[i - 2], rawContours[i - 1],  rawContours[i]])
+                        }
                         let seqObj = {
                             numberPoints: contSeq.value.find(obj => obj.id === "30060046").value[0],
-                            contours: contSeq.value.find(obj => obj.id === "30060050").value,
+                            contours: tempContours,
                             zIndex: contSeq.value.find(obj => obj.id === "30060050").value[2]
                         };
                         tempSeq.push(seqObj)
