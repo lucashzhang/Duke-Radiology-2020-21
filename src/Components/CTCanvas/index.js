@@ -36,10 +36,17 @@ function CTCanvas(props) {
     const xOffset = Math.round((series.width - maxWidth) / 2)
     const yOffset = Math.round((series.height - maxHeight) / 2);
     const equiv = getCoordEquiv();
+
+    const rs = props.rs;
+    const selected = props.selected;
+    const contours = useMemo(() => rs.getSpecificContours != null ? rs.getSpecificContours(selected) : null, [rs, selected]);
+    const slicedContours = useMemo(createContours, [rs, sliceNum, contours, props.view]);
+
     const drawText = useCallback(drawTextOverlay, [props.sliceNum, props.view])
     const drawCT = useCallback(drawCanvas, [drawText, xOffset, yOffset]);
     const imgData = useMemo(buildCTCanvas, [series, props.view, sliceNum, drawCT, canvasRef, maxHeight, maxWidth]);
     const [isHold, setIsHold] = useState(false);
+
 
     function buildCTCanvas() {
 
@@ -87,6 +94,26 @@ function CTCanvas(props) {
 
     }
 
+    function createContours() {
+        if (rs.getContourAtZ == null) return;
+        let contourData = null;
+        switch (props.view.toUpperCase()) {
+            case 'AXIAL':
+                contourData = rs.getContourAtZ(contours, sliceNum)
+                break;
+            case 'CORONAL':
+                contourData = rs.getContourAtY(contours, sliceNum)
+                break;
+            case 'SAGITTAL':
+                contourData = rs.getContourAtX(contours, sliceNum)
+                break;
+            default:
+                break;
+        }
+
+        return contourData
+    }
+
     function getMaxSlices() {
         if (series == null) return 1;
         switch (props.view.toUpperCase()) {
@@ -107,7 +134,6 @@ function CTCanvas(props) {
             case 'AXIAL':
                 return series.width;
             case 'CORONAL':
-                // return series.width;
             case 'SAGITTAL':
                 return series.width;
             default:
@@ -121,7 +147,6 @@ function CTCanvas(props) {
             case 'AXIAL':
                 return series.height;
             case 'CORONAL':
-                // return series.depth;
             case 'SAGITTAL':
                 return series.depth;
             default:
@@ -156,6 +181,14 @@ function CTCanvas(props) {
         const ctx = canvasRef.current.getContext('2d');
         ctx.putImageData(data, xOffset, yOffset);
         drawText();
+        drawContour();
+    }
+
+    function drawContour() {
+        if (slicedContours == null || slicedContours === {}) return;
+        for (let roi in slicedContours) {
+            console.log(slicedContours[roi])
+        }
     }
 
     function drawCrosshairs(x, y) {
@@ -215,8 +248,7 @@ function CTCanvas(props) {
         drawCT(imgData);
         drawCrosshairs(x, y);
     }
-    // useEffect(buildCTCanvas, [series, props.view, props.sliceNum]);
-    // useEffect(drawCanvas, [imgData]);
+
 
     return (
         <div

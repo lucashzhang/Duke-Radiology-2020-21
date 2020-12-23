@@ -54,6 +54,8 @@ function Dashboard() {
     const [sliceX, setSliceX] = useState(0);
     const [sliceY, setSliceY] = useState(0);
     const [sliceZ, setSliceZ] = useState(0);
+    const [selected, setSelected] = useState([]);
+    const [contours, setContours] = useState({});
 
     function initPath() {
         dispatch(setFolderDirectory('/home/lucashzhang/Personal-Projects/duke-radiology/Patient-DICOM/01'));
@@ -76,9 +78,7 @@ function Dashboard() {
     }
 
     function handleChecked(checkedList) {
-        let contours = rs.getSpecificContours(checkedList)
-        console.log(contours)
-        console.log(rs.getContourAtZ(contours, -135));
+        setSelected(checkedList)
     }
 
     async function dirButton() {
@@ -95,9 +95,9 @@ function Dashboard() {
         <div className={classes.frame}>
             <StructMenu rs={rs} handleChecked={handleChecked}></StructMenu>
             <div className={classes.viewport}>
-                <div className={classes.viewCenter}><CTCanvas series={series} view='AXIAL' handleSlice={handleSlice} sliceNum={sliceZ}></CTCanvas></div>
-                <div className={classes.viewRight}><CTCanvas series={series} view='CORONAL' handleSlice={handleSlice} sliceNum={sliceY}></CTCanvas></div>
-                <div className={classes.viewBottom}><CTCanvas series={series} view='SAGITTAL' handleSlice={handleSlice} sliceNum={sliceX}></CTCanvas></div>
+                <div className={classes.viewCenter}><CTCanvas series={series} view='AXIAL' handleSlice={handleSlice} sliceNum={sliceZ} rs={rs} selected={selected}></CTCanvas></div>
+                <div className={classes.viewRight}><CTCanvas series={series} view='CORONAL' handleSlice={handleSlice} sliceNum={sliceY} rs={rs} selected={selected}></CTCanvas></div>
+                <div className={classes.viewBottom}><CTCanvas series={series} view='SAGITTAL' handleSlice={handleSlice} sliceNum={sliceX} rs={rs} selected={selected}></CTCanvas></div>
                 <div className={classes.files}>
                     <Button variant="contained" onClick={dirButton}>Click to select new Folder</Button>
                 </div>

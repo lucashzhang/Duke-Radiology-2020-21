@@ -135,8 +135,5 @@ export class Series {
         this.height = ctArray[0].imageData.tags["00280010"].value[0];
         this.depth = (ctArray.length - 1) * this.thickness + 1;
         this.imageArray = buildInterpolatedArray(this.images, this.thickness);
-        // let tempBuffer = ctArray[0].imageData.tags["7FE00010"].value.buffer;
-        // console.log(new Uint16Array(tempBuffer))
-
     }
 }

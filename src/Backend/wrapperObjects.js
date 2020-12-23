@@ -71,6 +71,14 @@ export class RSWrapper extends Wrapper {
         return newObj;
     }
 
+    getContourAtX(contourObj, x) {
+
+    }
+
+    getContourAtY(contourObj, y) {
+
+    }
+
     getContourAtZ(contourObj, z) {
         for (let roi in contourObj) {
             if (contourObj[roi].sequences.length > 0) {
