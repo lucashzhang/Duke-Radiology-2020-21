@@ -32,12 +32,12 @@ function StructMenu(props) {
     }
 
     function toggleChecked(roi) {
-        const newState = { ...checked, [roi]: !checked[roi] }
+        const newState = { ...checked, [roi]: !checked[roi] };
         setChecked(newState);
         let res = [];
         Object.keys(newState).forEach((key) => {
             if (newState[key]) res.push(Number(key))
-        })
+        });
         props.handleChecked(res);
     }
 

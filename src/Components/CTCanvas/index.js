@@ -37,6 +37,10 @@ function CTCanvas(props) {
     const yOffset = Math.round((series.height - maxHeight) / 2);
     const equiv = getCoordEquiv();
 
+    const rs = props.rs;
+    const contours= getSelectedContours();
+    const slicedContours = createContourPoints();
+
     const drawText = useCallback(drawTextOverlay, [props.sliceNum, props.view])
     const drawCT = useCallback(drawCanvas, [drawText, xOffset, yOffset,]);
     const imgData = useMemo(buildCTCanvas, [series, props.view, sliceNum, drawCT, canvasRef, maxHeight, maxWidth]);
@@ -87,6 +91,28 @@ function CTCanvas(props) {
         }
         return imgData;
 
+    }
+
+    function getSelectedContours() {
+        if (rs.getSpecificContours == null) return null;
+        return rs.getSpecificContours(props.selected);
+    }
+
+    function createContourPoints() {
+        if (rs.getContourAtZ == null) return null;
+        let contourData = {};
+        switch (props.view.toUpperCase()) {
+            case 'AXIAL':
+                contourData = rs.getContourAtZ(contours, sliceNum + series.minZ);
+                break;
+            case 'CORONAL':
+                break;
+            case 'SAGITTAL':
+                break;
+            default:
+                break;
+        }
+        return contourData;
     }
 
     function getMaxSlices() {
@@ -156,6 +182,11 @@ function CTCanvas(props) {
         const ctx = canvasRef.current.getContext('2d');
         ctx.putImageData(data, xOffset, yOffset);
         drawText();
+    }
+
+    function drawContour(contourData = null) {
+        if (contourData = null || Object.keys(contourData).length == 0) return;
+        
     }
 
     function drawCrosshairs(x, y) {

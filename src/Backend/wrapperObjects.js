@@ -66,8 +66,11 @@ export class RSWrapper extends Wrapper {
     getSpecificContours(contourArray) {
         let newObj = {};
         for (let cont of contourArray) {
-            newObj[cont] = this.contourData[cont]
+            newObj[cont] = {};
+            Object.assign(newObj[cont], this.contourData[cont])
+            // newObj[cont] = this.contourData[cont]
         }
+        console.log('SpecificContours', newObj)
         return newObj;
     }
 
@@ -80,12 +83,12 @@ export class RSWrapper extends Wrapper {
     }
 
     getContourAtZ(contourObj, z) {
-        console.log(z)
         for (let roi in contourObj) {
             if (contourObj[roi].sequences.length > 0) {
                 contourObj[roi].sequences = contourObj[roi].sequences.filter(item => item.zIndex === z)
             }
         }
+        console.log('AtZ', contourObj)
         return contourObj;
     }
 }
