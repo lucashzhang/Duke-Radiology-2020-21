@@ -37,13 +37,8 @@ function CTCanvas(props) {
     const yOffset = Math.round((series.height - maxHeight) / 2);
     const equiv = getCoordEquiv();
 
-    const rs = props.rs;
-    const selected = props.selected;
-    const contours = useMemo(() => rs.getSpecificContours != null ? rs.getSpecificContours(selected) : null, [rs, selected]);
-    const slicedContours = useMemo(createContours, [rs, sliceNum, contours, props.view, series]);
-
     const drawText = useCallback(drawTextOverlay, [props.sliceNum, props.view])
-    const drawCT = useCallback(drawCanvas, [drawText, xOffset, yOffset, selected]);
+    const drawCT = useCallback(drawCanvas, [drawText, xOffset, yOffset,]);
     const imgData = useMemo(buildCTCanvas, [series, props.view, sliceNum, drawCT, canvasRef, maxHeight, maxWidth]);
     const [isHold, setIsHold] = useState(false);
 
@@ -92,26 +87,6 @@ function CTCanvas(props) {
         }
         return imgData;
 
-    }
-
-    function createContours() {
-        if (rs.getContourAtZ == null) return;
-        let contourData = null;
-        switch (props.view.toUpperCase()) {
-            case 'AXIAL':
-                contourData = rs.getContourAtZ(contours, sliceNum + series.minZ)
-                break;
-            case 'CORONAL':
-                contourData = rs.getContourAtY(contours, sliceNum)
-                break;
-            case 'SAGITTAL':
-                contourData = rs.getContourAtX(contours, sliceNum)
-                break;
-            default:
-                break;
-        }
-
-        return contourData
     }
 
     function getMaxSlices() {
@@ -181,14 +156,6 @@ function CTCanvas(props) {
         const ctx = canvasRef.current.getContext('2d');
         ctx.putImageData(data, xOffset, yOffset);
         drawText();
-        drawContour();
-    }
-
-    function drawContour() {
-        if (slicedContours == null || slicedContours === {}) return;
-        for (let roi in slicedContours) {
-            console.log(slicedContours[roi])
-        }
     }
 
     function drawCrosshairs(x, y) {
