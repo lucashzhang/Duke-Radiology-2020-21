@@ -55,7 +55,6 @@ function Dashboard() {
     const [sliceY, setSliceY] = useState(0);
     const [sliceZ, setSliceZ] = useState(0);
     const [selected, setSelected] = useState([]);
-    const [contours, setContours] = useState({});
 
     function initPath() {
         dispatch(setFolderDirectory('/home/lucashzhang/Personal-Projects/duke-radiology/Patient-DICOM/01'));

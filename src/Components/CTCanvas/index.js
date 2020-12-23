@@ -40,10 +40,10 @@ function CTCanvas(props) {
     const rs = props.rs;
     const selected = props.selected;
     const contours = useMemo(() => rs.getSpecificContours != null ? rs.getSpecificContours(selected) : null, [rs, selected]);
-    const slicedContours = useMemo(createContours, [rs, sliceNum, contours, props.view]);
+    const slicedContours = useMemo(createContours, [rs, sliceNum, contours, props.view, series]);
 
     const drawText = useCallback(drawTextOverlay, [props.sliceNum, props.view])
-    const drawCT = useCallback(drawCanvas, [drawText, xOffset, yOffset]);
+    const drawCT = useCallback(drawCanvas, [drawText, xOffset, yOffset, selected]);
     const imgData = useMemo(buildCTCanvas, [series, props.view, sliceNum, drawCT, canvasRef, maxHeight, maxWidth]);
     const [isHold, setIsHold] = useState(false);
 
@@ -99,7 +99,7 @@ function CTCanvas(props) {
         let contourData = null;
         switch (props.view.toUpperCase()) {
             case 'AXIAL':
-                contourData = rs.getContourAtZ(contours, sliceNum)
+                contourData = rs.getContourAtZ(contours, sliceNum + series.minZ)
                 break;
             case 'CORONAL':
                 contourData = rs.getContourAtY(contours, sliceNum)

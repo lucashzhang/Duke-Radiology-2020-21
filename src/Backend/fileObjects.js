@@ -53,6 +53,7 @@ export class RS extends DCM {
                         };
                         tempSeq.push(seqObj)
                     }
+                    tempSeq = tempSeq.sort((a, b) => a.zIndex - b.zIndex)
                 }
                 temp[roi] = {
                     displayColor: displayColor,
@@ -130,10 +131,13 @@ export class Series {
         }
 
         this.images = ctArray.sort((a, b) => a.position[2] - b.position[2]);
+        console.log(this.images)
         this.thickness = ctArray[0].thickness;
         this.width = ctArray[0].cols;
         this.height = ctArray[0].imageData.tags["00280010"].value[0];
         this.depth = (ctArray.length - 1) * this.thickness + 1;
         this.imageArray = buildInterpolatedArray(this.images, this.thickness);
+        this.minZ = this.images[0].position[2];
+        this.maxZ = this.images[this.images.length - 1].position[2];
     }
 }

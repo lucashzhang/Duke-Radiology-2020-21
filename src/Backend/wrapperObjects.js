@@ -80,6 +80,7 @@ export class RSWrapper extends Wrapper {
     }
 
     getContourAtZ(contourObj, z) {
+        console.log(z)
         for (let roi in contourObj) {
             if (contourObj[roi].sequences.length > 0) {
                 contourObj[roi].sequences = contourObj[roi].sequences.filter(item => item.zIndex === z)
