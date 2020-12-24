@@ -33,7 +33,7 @@ class DCM {
 
 export class RS extends DCM {
 
-    constructor(filename, buffer, pixelSpacing) {
+    constructor(filename, buffer, pixelSpacing, offsetX, offsetY) {
         super(filename, buffer);
 
         const getContour = () => {
@@ -48,8 +48,8 @@ export class RS extends DCM {
                     for (let contSeq of contourSequence.value) {
                         let rawContours = contSeq.value.find(obj => obj.id === "30060050").value;
                         let tempContours = [];
-                        for (let i = 2; i < rawContours.length; i+=3) {
-                            tempContours.push([rawContours[i - 2] / pixelSpacing[0], rawContours[i - 1] / pixelSpacing[1],  rawContours[i]])
+                        for (let i = 2; i < rawContours.length; i += 3) {
+                            tempContours.push([(rawContours[i - 2] / pixelSpacing[0]) + offsetX, (rawContours[i - 1] / pixelSpacing[1]) + offsetY, rawContours[i]])
                         }
                         let seqObj = {
                             numberPoints: contSeq.value.find(obj => obj.id === "30060046").value[0],
@@ -84,6 +84,9 @@ export class RS extends DCM {
 
         this.contourData = getContour();
         this.structList = getStructList();
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
+        this.pixelSpacing = pixelSpacing;
     }
 }
 

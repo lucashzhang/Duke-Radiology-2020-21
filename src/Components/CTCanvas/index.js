@@ -38,7 +38,7 @@ function CTCanvas(props) {
     const equiv = getCoordEquiv();
 
     const rs = props.rs;
-    const contours= useMemo(getSelectedContours, [rs, props.selected, sliceNum]);
+    const contours = useMemo(getSelectedContours, [rs, props.selected, sliceNum]);
     const slicedContours = useMemo(createContourPoints, [rs, contours, sliceNum, series, props.view]);
 
     const drawText = useCallback(drawTextOverlay, [props.sliceNum, props.view]);

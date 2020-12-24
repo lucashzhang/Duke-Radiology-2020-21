@@ -39,12 +39,14 @@ export async function readRS(absDir) {
         return {};
     }
     let pixelSpacing = ctImages[0].pixelSpacing;
+    let offsetX = ctImages[0].position[0];
+    let offsetY = ctImages[0].position[1];
     let rawRS = await getFiles(absDir, 'RS');
     if (rawRS.length <= 0) {
         alert("Please make sure to include an RS File directory");
         return {};
     }
-    let builtRS = await rsWorker.buildRS(rawRS, pixelSpacing);
+    let builtRS = await rsWorker.buildRS(rawRS, pixelSpacing, offsetX, offsetY);
     let wrappedRS = Factory.createWrapper(builtRS[0], 'RS');
     return wrappedRS;
 }

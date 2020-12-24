@@ -4,10 +4,10 @@ export function buildSeries(ctArray) {
     return new Series(ctArray);
 }
 
-export function buildRS(fileArray, spacing) {
+export function buildRS(fileArray, pixelSpacing, offsetX, offsetY) {
     let newRS = [];
     for (let file of fileArray) {
-        newRS.push(new RS(file.filename, file.contents, spacing));
+        newRS.push(new RS(file.filename, file.contents, pixelSpacing, offsetX, offsetY));
     }
     return newRS;
 }
