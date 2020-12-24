@@ -1,25 +1,31 @@
 import React, { useState, useRef, useMemo, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import theme from '../../Utilities/theme';
+import { CircularProgress } from '@material-ui/core';
 
 const useStyles = makeStyles(() => ({
     canvasContainer: {
         display: 'grid',
-        gridTemplateColumns: '2rem 1fr 2rem',
-        gridTemplateRows: '2rem 1fr 2rem',
-    },
-    canvasTitle: {
-        gridColumn: '2',
-        gridRow: '1',
-        color: 'white',
-        zIndex: '10',
-        padding: '4px',
-        textAlign: 'center'
+        gridTemplateColumns: '1fr',
+        gridTemplateRows: '1fr',
+        width: '100%',
+        height: '100%'
     },
     canvas: {
         cursor: 'pointer',
-        gridColumn: '1 / 4',
-        gridRow: '1 / 4',
+        gridColumn: '1',
+        gridRow: '1',
+    },
+    loading: {
+        gridColumn: '1',
+        gridRow: '1',
+        zIndex: '10',
+        backgroundColor: 'black',
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 }));
 
@@ -71,11 +77,7 @@ function CTCanvas(props) {
             drawCT(imgData);
             return imgData;
         }
-        if (canvasRef.current == null) return;
-        else if (series == null || series.getAxialSlice == null) {
-            canvasReset();
-            return;
-        }
+        if (canvasRef.current == null || series == null || series.getAxialSlice == null) return;
         // const ctSeries = new CTSeries(series);
         let imgData = null;
         canvasRef.current.width = series.width;
@@ -276,6 +278,9 @@ function CTCanvas(props) {
                 tabIndex="0"
             >
             </canvas>
+            {series == null || Object.keys(series).length === 0 ? <div className={classes.loading}>
+                <CircularProgress color='secondary'></CircularProgress>
+            </div> : null}
         </div>
     );
 }

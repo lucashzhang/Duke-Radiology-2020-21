@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
-import { List, ListItem, FormControlLabel, Checkbox } from '@material-ui/core';
+import { List, ListItem, FormControlLabel, Checkbox, CircularProgress } from '@material-ui/core';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -11,6 +11,13 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: theme.palette.primary.main,
         color: theme.palette.background.paper,
         overflow: 'auto'
+    },
+    loading: {
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 }));
 
@@ -57,7 +64,9 @@ function StructMenu(props) {
                     ))
                 }
 
-            </List> : null}
+            </List> : <div className={classes.loading}>
+                <CircularProgress color='secondary'></CircularProgress>
+            </div>}
         </div>
     );
 }
