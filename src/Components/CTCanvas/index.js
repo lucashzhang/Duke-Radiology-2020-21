@@ -95,7 +95,7 @@ function CTCanvas(props) {
     }
 
     function getSelectedContours() {
-        if (rs.getSpecificContours == null) return null;
+        if (rs.getSpecificContours == null && sliceNum >= 0) return null;
         return rs.getSpecificContours(props.selected);
     }
 
