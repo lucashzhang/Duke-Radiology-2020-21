@@ -33,8 +33,8 @@ function CTCanvas(props) {
     const maxSlices = getMaxSlices();
     const maxWidth = getMaxWidth();
     const maxHeight = getMaxHeight();
-    const xOffset = Math.round((series.width - maxWidth) / 2)
-    const yOffset = Math.round((series.height - maxHeight) / 2);
+    const xOffset = (series.width - maxWidth) / 2;
+    const yOffset = (series.height - maxHeight) / 2;
     const equiv = getCoordEquiv();
 
     const rs = props.rs;
@@ -188,7 +188,14 @@ function CTCanvas(props) {
         if (contourData == null || Object.keys(contourData).length == 0) return;
         const ctx = canvasRef.current.getContext('2d');
         for (let roi in contourData) {
-            console.log(contourData[roi])
+            const color = contourData[roi].displayColor
+            ctx.fillStyle = `rgb(${color[0]},${color[1]},${color[2]})`;
+            for (let sequence of contourData[roi].sequences) {
+                console.log(sequence)
+                for (let point of sequence.contours) {
+                    ctx.fillRect(point[0] + canvasRef.current.width / 2, point[1] + canvasRef.current.height / 2, 1, 1);
+                }
+            }
         }
     }
 

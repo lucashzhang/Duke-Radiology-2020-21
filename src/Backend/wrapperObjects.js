@@ -30,6 +30,7 @@ export class SeriesWrapper extends Wrapper {
     }
 
     getCoronalSlice(sliceNum) {
+        sliceNum = Math.floor(sliceNum)
         let temp = [];
         if (sliceNum > this.height || sliceNum < 0) return temp;
         for (let i = 0; i < this.depth; i++) {
@@ -41,6 +42,7 @@ export class SeriesWrapper extends Wrapper {
     }
 
     getSagittalSlice(sliceNum) {
+        sliceNum = Math.floor(sliceNum)
         let temp = [];
         if (sliceNum > this.width || sliceNum < 0) return temp;
         for (let j = 0; j < this.depth; j++) {
