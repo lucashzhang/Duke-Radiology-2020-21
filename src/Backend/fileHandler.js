@@ -33,12 +33,18 @@ async function getFiles(absDir, fileType) {
 }
 
 export async function readRS(absDir) {
+    let ctImages = await readCT(absDir);
+    if (ctImages.length <= 0) {
+        alert("Please make sure to include CT Images in the directory");
+        return {};
+    }
+    let pixelSpacing = ctImages[0].pixelSpacing;
     let rawRS = await getFiles(absDir, 'RS');
     if (rawRS.length <= 0) {
         alert("Please make sure to include an RS File directory");
         return {};
     }
-    let builtRS = await rsWorker.buildRS(rawRS);
+    let builtRS = await rsWorker.buildRS(rawRS, pixelSpacing);
     let wrappedRS = Factory.createWrapper(builtRS[0], 'RS');
     return wrappedRS;
 }
