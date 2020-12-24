@@ -53,6 +53,8 @@ function CTCanvas(props) {
     const imgData = useMemo(buildCTCanvas, [series, props.view, sliceNum, drawCT, canvasRef, maxHeight, maxWidth]);
     const [isHold, setIsHold] = useState(false);
 
+    const isLoading = props.loading != null ? props.loading : false;
+
 
     function buildCTCanvas() {
 
@@ -278,7 +280,7 @@ function CTCanvas(props) {
                 tabIndex="0"
             >
             </canvas>
-            {series == null || Object.keys(series).length === 0 ? <div className={classes.loading}>
+            {series == null || Object.keys(series).length === 0 || isLoading ? <div className={classes.loading}>
                 <CircularProgress color='secondary'></CircularProgress>
             </div> : null}
         </div>

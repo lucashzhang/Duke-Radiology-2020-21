@@ -26,6 +26,7 @@ function StructMenu(props) {
 
     const classes = useStyles();
     const structs = props.rs != null ? props.rs.structList : null;
+    const isLoading = props.loading != null ? props.loading : false;
 
     const [checked, setChecked] = useState({});
 
@@ -52,7 +53,7 @@ function StructMenu(props) {
 
     return (
         <div className={classes.drawerContainer}>
-            {structs != null && Object.keys(checked).length !== 0 ? <List>
+            {structs != null && Object.keys(checked).length !== 0 && !isLoading ? <List>
                 {
                     structs.map((struct) => (
                         <ListItem key={`${struct.name}${struct.roi}`}>

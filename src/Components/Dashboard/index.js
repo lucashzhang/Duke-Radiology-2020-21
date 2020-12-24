@@ -54,6 +54,7 @@ function Dashboard() {
     const [sliceY, setSliceY] = useState(0);
     const [sliceZ, setSliceZ] = useState(0);
     const [selected, setSelected] = useState([]);
+    const isLoading = Object.keys(rs).length === 0 || Object.keys(series).length === 0;
 
     function initPath() {
         dispatch(setFolderDirectory('/home/lucashzhang/Personal-Projects/duke-radiology/Patient-DICOM/01'));
@@ -85,11 +86,11 @@ function Dashboard() {
 
     return (
         <div className={classes.frame}>
-            <StructMenu rs={rs} handleChecked={handleChecked}></StructMenu>
+            <StructMenu rs={rs} handleChecked={handleChecked} loading={isLoading}></StructMenu>
             <div className={classes.viewport}>
-                <div className={classes.viewCenter}><CTCanvas series={series} view='AXIAL' handleSlice={handleSlice} sliceNum={sliceZ} rs={rs} selected={selected}></CTCanvas></div>
-                <div className={classes.viewRight}><CTCanvas series={series} view='CORONAL' handleSlice={handleSlice} sliceNum={sliceY} rs={rs} selected={selected}></CTCanvas></div>
-                <div className={classes.viewBottom}><CTCanvas series={series} view='SAGITTAL' handleSlice={handleSlice} sliceNum={sliceX} rs={rs} selected={selected}></CTCanvas></div>
+                <div className={classes.viewCenter}><CTCanvas series={series} view='AXIAL' handleSlice={handleSlice} sliceNum={sliceZ} rs={rs} selected={selected} loading={isLoading}></CTCanvas></div>
+                <div className={classes.viewRight}><CTCanvas series={series} view='CORONAL' handleSlice={handleSlice} sliceNum={sliceY} rs={rs} selected={selected} loading={isLoading}></CTCanvas></div>
+                <div className={classes.viewBottom}><CTCanvas series={series} view='SAGITTAL' handleSlice={handleSlice} sliceNum={sliceX} rs={rs} selected={selected} loading={isLoading}></CTCanvas></div>
             </div>
         </div>
     );
