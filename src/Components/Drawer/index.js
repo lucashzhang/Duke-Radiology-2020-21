@@ -23,7 +23,6 @@ function StructMenu(props) {
     const [checked, setChecked] = useState({});
 
     function initChecks() {
-        props.handleChecked([]);
         if (structs == null) return;
         let checkBoxes = {};
         for (let struct of structs) {
@@ -42,7 +41,7 @@ function StructMenu(props) {
         props.handleChecked(res);
     }
 
-    useEffect(initChecks, [props, structs]);
+    useEffect(initChecks, [structs]);
 
     return (
         <div className={classes.drawerContainer}>

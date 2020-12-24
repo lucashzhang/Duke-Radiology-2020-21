@@ -80,6 +80,7 @@ function Dashboard() {
     }
 
     useEffect(initPath, [dispatch]);
+    useEffect(() => setSelected([]), [rs])
     // useEffect(() => genDetailSeries(), [series]);
 
     return (
