@@ -38,8 +38,8 @@ function CTCanvas(props) {
     const equiv = getCoordEquiv();
 
     const rs = props.rs;
-    const contours= useMemo(getSelectedContours, [rs, props.selected]);
-    const slicedContours = useMemo(createContourPoints, [rs, contours, sliceNum, series.minZ, props.view]);
+    const contours= useMemo(getSelectedContours, [rs, props.selected, sliceNum]);
+    const slicedContours = useMemo(createContourPoints, [rs, contours, sliceNum, series, props.view]);
 
     const drawText = useCallback(drawTextOverlay, [props.sliceNum, props.view]);
     const drawContours = useCallback(drawContour, [canvasRef])
@@ -191,7 +191,6 @@ function CTCanvas(props) {
             const color = contourData[roi].displayColor
             ctx.fillStyle = `rgb(${color[0]},${color[1]},${color[2]})`;
             for (let sequence of contourData[roi].sequences) {
-                console.log(sequence)
                 for (let point of sequence.contours) {
                     ctx.fillRect(point[0] + canvasRef.current.width / 2, point[1] + canvasRef.current.height / 2, 1, 1);
                 }
