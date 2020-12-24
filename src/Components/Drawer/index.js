@@ -20,9 +20,10 @@ function StructMenu(props) {
     const classes = useStyles();
     const structs = props.rs != null ? props.rs.structList : null;
 
-    const [checked, setChecked] = useState(null);
+    const [checked, setChecked] = useState({});
 
     function initChecks() {
+        props.handleChecked([]);
         if (structs == null) return;
         let checkBoxes = {};
         for (let struct of structs) {
@@ -41,16 +42,16 @@ function StructMenu(props) {
         props.handleChecked(res);
     }
 
-    useEffect(initChecks, [structs]);
+    useEffect(initChecks, [props.rs]);
 
     return (
         <div className={classes.drawerContainer}>
-            {structs != null && checked != null && Object.keys(checked).length !== 0 ? <List>
+            {structs != null && Object.keys(checked).length !== 0 ? <List>
                 {
                     structs.map((struct) => (
-                        <ListItem key={`${struct.name}${struct.roi}${props.rs.filename}`}>
+                        <ListItem key={`${struct.name}${struct.roi}`}>
                             <FormControlLabel
-                                control={<Checkbox name={`${struct.roi}`} checked={checked[struct.roi]} onChange={() => toggleChecked(struct.roi)} style={{ color: `rgb(${struct.displayColor[0]},${struct.displayColor[1]},${struct.displayColor[2]})` }} />}
+                                control={<Checkbox name={`${struct.roi}`} checked={checked[struct.roi] || false} onChange={() => toggleChecked(struct.roi)} style={{ color: `rgb(${struct.displayColor[0]},${struct.displayColor[1]},${struct.displayColor[2]})` }} />}
                                 label={struct.name}
                             />
                         </ListItem>

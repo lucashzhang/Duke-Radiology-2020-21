@@ -3,6 +3,9 @@ import { ThemeProvider, makeStyles } from '@material-ui/core/styles';
 import theme from '../../Utilities/theme';
 
 import { Drawer, Divider, List, ListItem, ListItemIcon, ListItemText, Tooltip } from '@material-ui/core';
+import  { pickDirectoryPath } from '../../Backend/fileHandler';
+import { useDispatch } from "react-redux";
+import { setFolderDirectory } from '../../Redux/actions';
 import { FaHome, FaUser, FaCode, FaFile, FaAddressBook } from 'react-icons/fa';
 import { Link } from "react-router-dom";
 import clsx from 'clsx';
@@ -35,6 +38,14 @@ const useStyles = makeStyles((theme) => ({
 function WebsiteDrawer(props) {
 
     const classes = useStyles();
+    const dispatch = useDispatch();
+
+    async function dirButton() {
+        const newPathObj = await pickDirectoryPath();
+        if (newPathObj.canceled || newPathObj.filePaths[0] == null) return;
+        const newPath = newPathObj.filePaths[0];
+        dispatch(setFolderDirectory(newPath));
+    }
 
     return (
         <div>
@@ -47,9 +58,9 @@ function WebsiteDrawer(props) {
                     }}
                 >
                     <List>
-                        <ListItem button component={Link} to='/'>
-                            <Tooltip title='My Resume'><ListItemIcon><FaFile /></ListItemIcon></Tooltip>
-                            <ListItemText primary='My Resume' />
+                        <ListItem button onClick={dirButton}>
+                            <Tooltip title='Select Directory'><ListItemIcon><FaFile /></ListItemIcon></Tooltip>
+                            <ListItemText primary='Select Directory' />
                         </ListItem>
                     </List>
                     <Divider />
@@ -58,7 +69,7 @@ function WebsiteDrawer(props) {
                             <Tooltip title='Home'><ListItemIcon><FaHome /></ListItemIcon></Tooltip>
                             <ListItemText primary='Home' />
                         </ListItem>
-                        <ListItem button component={Link} to='/about'>
+                        {/* <ListItem button component={Link} to='/about'>
                             <Tooltip title='About Me'><ListItemIcon><FaUser /></ListItemIcon></Tooltip>
                             <ListItemText primary='About Me' />
                         </ListItem>
@@ -69,7 +80,7 @@ function WebsiteDrawer(props) {
                         <ListItem button component={Link} to='/contact'>
                             <Tooltip title='Contact Me'><ListItemIcon><FaAddressBook /></ListItemIcon></Tooltip>
                             <ListItemText primary='Contact Me' />
-                        </ListItem>
+                        </ListItem> */}
                     </List>
                 </Drawer>
             </ThemeProvider>
