@@ -192,7 +192,7 @@ function CTCanvas(props) {
             ctx.fillStyle = `rgb(${color[0]},${color[1]},${color[2]})`;
             for (let sequence of contourData[roi].sequences) {
                 for (let point of sequence.contours) {
-                    ctx.fillRect(point[0] + canvasRef.current.width / 2, point[1] + canvasRef.current.height / 2, 1, 1);
+                    ctx.fillRect(point[0] + canvasRef.current.width / 2 - 0.25, point[1] + canvasRef.current.height / 2 - 0.25, 2, 2);
                 }
             }
         }
@@ -238,10 +238,10 @@ function CTCanvas(props) {
         const direction = e.deltaY;
         if (direction > 0) {
             // On scroll down
-            props.handleSlice(equiv.z, props.sliceNum > 0 ? props.sliceNum - 1 : 0);
+            props.handleSlice(equiv.z, props.sliceNum > 0 ? props.sliceNum - 3 : 0);
         } else if (direction < 0) {
             // On scroll up
-            props.handleSlice(equiv.z, props.sliceNum < maxSlices - 1 ? props.sliceNum + 1 : maxSlices - 1);
+            props.handleSlice(equiv.z, props.sliceNum < maxSlices - 1 ? props.sliceNum + 3 : maxSlices - 1);
         }
     }
 
