@@ -42,7 +42,7 @@ function StructMenu(props) {
         props.handleChecked(res);
     }
 
-    useEffect(initChecks, [props.rs]);
+    useEffect(initChecks, [props, structs]);
 
     return (
         <div className={classes.drawerContainer}>
