@@ -192,7 +192,7 @@ function CTCanvas(props) {
             ctx.fillStyle = `rgb(${color[0]},${color[1]},${color[2]})`;
             for (let sequence of contourData[roi].sequences) {
                 for (let point of sequence.contours) {
-                    ctx.fillRect(point[0] + canvasRef.current.width / 2 - 0.25, point[1] + canvasRef.current.height / 2 - 0.25, 2, 2);
+                    ctx.fillRect(point[0] - 0.25, point[1] - 0.25, 2, 2);
                 }
             }
         }

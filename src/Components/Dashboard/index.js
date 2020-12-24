@@ -57,7 +57,7 @@ function Dashboard() {
     const [selected, setSelected] = useState([]);
 
     function initPath() {
-        dispatch(setFolderDirectory('/home/lucashzhang/Personal-Projects/duke-radiology/Patient-DICOM/02'));
+        dispatch(setFolderDirectory('/home/lucashzhang/Personal-Projects/duke-radiology/Patient-DICOM/01'));
     }
 
     function handleSlice(plane, value) {

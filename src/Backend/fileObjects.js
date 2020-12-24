@@ -49,7 +49,7 @@ export class RS extends DCM {
                         let rawContours = contSeq.value.find(obj => obj.id === "30060050").value;
                         let tempContours = [];
                         for (let i = 2; i < rawContours.length; i += 3) {
-                            tempContours.push([(rawContours[i - 2] / pixelSpacing[0]) + offsetX, (rawContours[i - 1] / pixelSpacing[1]) + offsetY, rawContours[i]])
+                            tempContours.push([((rawContours[i - 2] - offsetX) / pixelSpacing[0]), ((rawContours[i - 1] - offsetY) / pixelSpacing[1]), rawContours[i]])
                         }
                         let seqObj = {
                             numberPoints: contSeq.value.find(obj => obj.id === "30060046").value[0],
