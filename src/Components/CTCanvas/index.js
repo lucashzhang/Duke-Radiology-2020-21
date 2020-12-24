@@ -38,13 +38,13 @@ function CTCanvas(props) {
     const equiv = getCoordEquiv();
 
     const rs = props.rs;
-    const contours= getSelectedContours();
-    const slicedContours = createContourPoints();
+    const contours= useMemo(getSelectedContours, [rs, props.selected]);
+    const slicedContours = useMemo(createContourPoints, [rs, contours, sliceNum, series.minZ, props.view]);
 
-    const drawText = useCallback(drawTextOverlay, [props.sliceNum, props.view])
-    const drawCT = useCallback(drawCanvas, [drawText, xOffset, yOffset, slicedContours, drawContour]);
-    // const imgData = useMemo(buildCTCanvas, [series, props.view, sliceNum, drawCT, canvasRef, maxHeight, maxWidth]);
-    const imgData = useMemo(buildCTCanvas);
+    const drawText = useCallback(drawTextOverlay, [props.sliceNum, props.view]);
+    const drawContours = useCallback(drawContour, [canvasRef])
+    const drawCT = useCallback(drawCanvas, [drawText, xOffset, yOffset, slicedContours, drawContours]);
+    const imgData = useMemo(buildCTCanvas, [series, props.view, sliceNum, drawCT, canvasRef, maxHeight, maxWidth]);
     const [isHold, setIsHold] = useState(false);
 
 
@@ -180,12 +180,12 @@ function CTCanvas(props) {
         canvasReset();
         const ctx = canvasRef.current.getContext('2d');
         ctx.putImageData(data, xOffset, yOffset);
-        drawContour(slicedContours)
+        drawContours(slicedContours)
         drawText();
     }
 
     function drawContour(contourData = null) {
-        if (contourData == null || Object.keys(contourData).length == 0) return;
+        if (contourData == null || Object.keys(contourData).length === 0) return;
         const ctx = canvasRef.current.getContext('2d');
         for (let roi in contourData) {
             const color = contourData[roi].displayColor
