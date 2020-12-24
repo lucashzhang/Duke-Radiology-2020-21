@@ -73,9 +73,11 @@ export class RS extends DCM {
             let observations = this.imageData.tags['30060080'].value;
             for (let obs of observations) {
                 let dataVals = obs.value;
+                let roi = Number(dataVals.find(obj => obj.id === "30060084").value[0]);
                 structs.push({
                     name: String(dataVals.find(obj => obj.id === "30060085").value[0]),
-                    roi: Number(dataVals.find(obj => obj.id === "30060084").value[0]),
+                    roi: roi,
+                    displayColor: this.contourData[roi].displayColor
                 })
             }
 

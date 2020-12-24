@@ -50,7 +50,7 @@ function StructMenu(props) {
                     structs.map((struct) => (
                         <ListItem key={`${struct.name}${struct.roi}${props.rs.filename}`}>
                             <FormControlLabel
-                                control={<Checkbox name={`${struct.roi}`} checked={checked[struct.roi]} onChange={() => toggleChecked(struct.roi)} />}
+                                control={<Checkbox name={`${struct.roi}`} checked={checked[struct.roi]} onChange={() => toggleChecked(struct.roi)} style={{ color: `rgb(${struct.displayColor[0]},${struct.displayColor[1]},${struct.displayColor[2]})` }} />}
                                 label={struct.name}
                             />
                         </ListItem>
