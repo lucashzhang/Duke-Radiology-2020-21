@@ -1,24 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { ThemeProvider, makeStyles } from '@material-ui/core/styles';
+
+import {
+  HashRouter as Router,
+  Switch,
+  Route,
+  Redirect
+} from "react-router-dom";
+
+import Dashboard from './Components/Dashboard';
+import Navbar from './Components/Navbar';
+
+import theme from './Utilities/theme'
+
+const useStyles = makeStyles((theme) => ({
+  windowContainer: {
+    marginLeft: '57px'
+  }
+}));
 
 function App() {
+
+  const classes = useStyles();
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <Router>
+        {/* A <Switch> looks through its children <Route>s and
+            renders the first one that matches the current URL. */}
+        <Route><Navbar></Navbar></Route>
+        <div className={classes.windowContainer}>
+          <Switch>
+            <Route exact path="/"><Dashboard></Dashboard></Route>
+            <Route render={() => <Redirect to="/" />} />
+          </Switch>
+        </div>
+      </Router>
+    </ThemeProvider>
   );
 }
 
