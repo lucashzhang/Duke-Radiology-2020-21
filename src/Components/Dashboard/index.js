@@ -80,7 +80,7 @@ function Dashboard() {
         setSelected(checkedList)
     }
 
-    useEffect(initPath, [dispatch]);
+    // useEffect(initPath, [dispatch]);
     useEffect(() => setSelected([]), [rs])
     // useEffect(() => genDetailSeries(), [series]);
 
