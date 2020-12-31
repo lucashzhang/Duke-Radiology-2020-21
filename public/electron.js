@@ -11,7 +11,7 @@ function createWindow() {
         height: 680,
         webPreferences: {
             nodeIntegration: true, // <--- flag
-            // nodeIntegrationInWorker: true, // <---  for web workers
+            nodeIntegrationInWorker: true, // <---  for web workers
             enableRemoteModule: true
         }
     }); 
