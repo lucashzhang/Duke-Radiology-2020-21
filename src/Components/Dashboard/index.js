@@ -45,7 +45,6 @@ const useStyles = makeStyles((theme) => ({
 
 function Dashboard() {
     const classes = useStyles();
-    const dispatch = useDispatch();
 
     const series = useSeries();
     const rs = useRS();
@@ -56,8 +55,15 @@ function Dashboard() {
     const [selected, setSelected] = useState([]);
     const isLoading = Object.keys(rs).length === 0 || Object.keys(series).length === 0;
 
-    function initPath() {
-        dispatch(setFolderDirectory('/home/lucashzhang/Personal-Projects/duke-radiology/Patient-DICOM/01'));
+    // function initPath() {
+    //     dispatch(setFolderDirectory('/home/lucashzhang/Personal-Projects/duke-radiology/Patient-DICOM/01'));
+    // }
+
+    function initMiddle() {
+        if (series == null || Object.keys(series).length === 0) return;
+        setSliceX(Math.round(series.width / 2));
+        setSliceY(Math.round(series.height / 2));
+        setSliceZ(Math.round(series.depth / 2));
     }
 
     function handleSlice(plane, value) {
@@ -81,7 +87,8 @@ function Dashboard() {
     }
 
     // useEffect(initPath, [dispatch]);
-    useEffect(() => setSelected([]), [rs])
+    useEffect(() => setSelected([]), [rs]);
+    useEffect(initMiddle, [series])
     // useEffect(() => genDetailSeries(), [series]);
 
     return (
