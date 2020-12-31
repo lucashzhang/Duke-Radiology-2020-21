@@ -39,8 +39,8 @@ function CTCanvas(props) {
     const maxSlices = getMaxSlices();
     const maxWidth = getMaxWidth();
     const maxHeight = getMaxHeight();
-    const xOffset = (series.width - maxWidth) / 2;
-    const yOffset = (series.height - maxHeight) / 2;
+    const xOffset = Math.floor((series.width - maxWidth) / 2);
+    const yOffset = Math.floor((series.height - maxHeight) / 2);
     const equiv = getCoordEquiv();
 
     const rs = props.rs;
@@ -224,7 +224,7 @@ function CTCanvas(props) {
         ctx.textAlign = "center";
         ctx.fillStyle = "#00FFFF";
         ctx.fillText(props.view.toUpperCase(), 256, 24);
-        ctx.fillText(`Slice Number: ${props.sliceNum + 1}`, 256, 500);
+        ctx.fillText(`Slice Number: ${(props.sliceNum + 1)}`, series.width / 2, series.height - 12);
     }
 
     function handleUserKeyPress(e) {
