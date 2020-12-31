@@ -86,6 +86,7 @@ export class RS extends DCM {
 
         this.patientPosition = ct.position
         this.pixelSpacing = ct.pixelSpacing;
+        this.imageThickness = ct.thickness;
         this.contourData = getContour();
         this.structList = getStructList();
     }

@@ -5,10 +5,6 @@ import Worker from 'workerize-loader!./file.worker.js'
 const fs = window.require('fs'); // Load the File System to execute our common tasks (CRUD);
 const { dialog } = window.require('electron').remote;
 
-const rsWorker = new Worker();
-const ctWorker = new Worker();
-const seriesWorker = new Worker();
-
 async function getFiles(absDir, fileType) {
     if (!absDir.endsWith('/')) absDir += '/';
     let filePromises = [];
@@ -33,16 +29,13 @@ async function getFiles(absDir, fileType) {
 }
 
 export async function readRS(absDir) {
-    let ctImages = await readCT(absDir);
+    const rsWorker = new Worker();
+    let ctImages = await readCT(absDir, rsWorker);
     if (ctImages.length <= 0) {
         alert("Please make sure to include CT Images in the directory");
         return {};
     }
     let firstCT = ctImages[0];
-    let pixelSpacing = ctImages[0].pixelSpacing;
-    let thickness = ctImages[0].thickness;
-    let offsetX = ctImages[0].position[0];
-    let offsetY = ctImages[0].position[1];
     let rawRS = await getFiles(absDir, 'RS');
     if (rawRS.length <= 0) {
         alert("Please make sure to include an RS File directory");
@@ -50,18 +43,28 @@ export async function readRS(absDir) {
     }
     let builtRS = await rsWorker.buildRS(rawRS, firstCT);
     let wrappedRS = Factory.createWrapper(builtRS[0], 'RS');
+    rsWorker.terminate();
     return wrappedRS;
 }
 
-export async function readCT(absDir) {
+export async function readCT(absDir, ctWorker) {
+    let ownWorker = false;
+    if (ctWorker == null) {
+        ctWorker = new Worker();
+        ownWorker = true;
+    }
+
     let rawCT = await getFiles(absDir, 'CT');
     let builtCT = await ctWorker.buildCT(rawCT);
+
+    if (ownWorker) ctWorker.terminate();
     return builtCT;
 }
 
 export async function readSeries(absDir) {
 
-    let ctImages = await readCT(absDir);
+    const seriesWorker = new Worker();
+    let ctImages = await readCT(absDir, seriesWorker);
     if (ctImages.length <= 0) {
         alert("Please make sure to include CT Images in the directory");
         return {};
@@ -72,6 +75,7 @@ export async function readSeries(absDir) {
         alert("Please check that your CT images are all from the same series");
         return {};
     };
+    seriesWorker.terminate();
     return wrappedSeries;
 }
 
