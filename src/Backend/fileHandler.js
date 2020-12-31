@@ -38,7 +38,9 @@ export async function readRS(absDir) {
         alert("Please make sure to include CT Images in the directory");
         return {};
     }
+    let firstCT = ctImages[0];
     let pixelSpacing = ctImages[0].pixelSpacing;
+    let thickness = ctImages[0].thickness;
     let offsetX = ctImages[0].position[0];
     let offsetY = ctImages[0].position[1];
     let rawRS = await getFiles(absDir, 'RS');
@@ -46,7 +48,7 @@ export async function readRS(absDir) {
         alert("Please make sure to include an RS File directory");
         return {};
     }
-    let builtRS = await rsWorker.buildRS(rawRS, pixelSpacing, offsetX, offsetY);
+    let builtRS = await rsWorker.buildRS(rawRS, firstCT);
     let wrappedRS = Factory.createWrapper(builtRS[0], 'RS');
     return wrappedRS;
 }

@@ -245,10 +245,10 @@ function CTCanvas(props) {
         const direction = e.deltaY;
         if (direction > 0) {
             // On scroll down
-            props.handleSlice(equiv.z, props.sliceNum > 0 ? props.sliceNum - 3 : 0);
+            props.handleSlice(equiv.z, props.sliceNum > 0 ? props.sliceNum - 1 : 0);
         } else if (direction < 0) {
             // On scroll up
-            props.handleSlice(equiv.z, props.sliceNum < maxSlices - 1 ? props.sliceNum + 3 : maxSlices - 1);
+            props.handleSlice(equiv.z, props.sliceNum < maxSlices - 1 ? props.sliceNum + 1 : maxSlices - 1);
         }
     }
 
