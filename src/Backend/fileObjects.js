@@ -39,6 +39,7 @@ export class RS extends DCM {
         const getContour = () => {
             let temp = {}
             let roiContourSequence = this.imageData.tags["30060039"].value
+            if (roiContourSequence == null) return null;
             for (let roiSeq of roiContourSequence) {
                 let roi = Number(roiSeq.value.find(obj => obj.id === "30060084").value[0]);
                 let displayColor = roiSeq.value.find(obj => obj.id === "3006002A").value;
@@ -61,7 +62,7 @@ export class RS extends DCM {
                     tempSeq = tempSeq.sort((a, b) => a.zIndex - b.zIndex)
                 }
                 temp[roi] = {
-                    displayColor: displayColor,
+                    displayColor: displayColor != null ? displayColor : [0, 0, 0],
                     sequences: tempSeq
                 }
             }
@@ -71,6 +72,7 @@ export class RS extends DCM {
         const getStructList = () => {
             let structs = [];
             let observations = this.imageData.tags['30060080'].value;
+            if (observations == null) return structs;
             for (let obs of observations) {
                 let dataVals = obs.value;
                 let roi = Number(dataVals.find(obj => obj.id === "30060084").value[0]);
