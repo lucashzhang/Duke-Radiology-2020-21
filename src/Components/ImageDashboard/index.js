@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
 import StructMenu from '../Drawer';
 import { makeStyles } from '@material-ui/core/styles';
 import CTCanvas from '../CTCanvas';
-import  { pickDirectoryPath } from '../../Backend/fileHandler';
-import { setFolderDirectory } from '../../Redux/actions';
 import { useSeries, useRS } from '../../Utilities/customHooks';
 
 const useStyles = makeStyles((theme) => ({

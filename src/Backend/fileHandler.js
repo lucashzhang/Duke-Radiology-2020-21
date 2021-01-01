@@ -28,13 +28,15 @@ async function getFiles(absDir, fileType) {
     return dirResults
 }
 
-export async function readRS(absDir) {
-    const rsWorker = new Worker();
-    let ctImages = await readCT(absDir, rsWorker);
-    if (ctImages.length <= 0) {
-        alert("Please make sure to include CT Images in the directory");
-        return {};
+export async function readRS(absDir, rsWorker) {
+
+    let ownWorker = false;
+    if (rsWorker == null) {
+        rsWorker = new Worker();
+        ownWorker = true;
     }
+    
+    let ctImages = await readCT(absDir, rsWorker);
     let firstCT = ctImages[0];
     let rawRS = await getFiles(absDir, 'RS');
     if (rawRS.length <= 0) {
@@ -43,7 +45,8 @@ export async function readRS(absDir) {
     }
     let builtRS = await rsWorker.buildRS(rawRS, firstCT);
     let wrappedRS = Factory.createWrapper(builtRS[0], 'RS');
-    rsWorker.terminate();
+
+    if (ownWorker) rsWorker.terminate();
     return wrappedRS;
 }
 
@@ -56,26 +59,32 @@ export async function readCT(absDir, ctWorker) {
 
     let rawCT = await getFiles(absDir, 'CT');
     let builtCT = await ctWorker.buildCT(rawCT);
+    if (builtCT.length <= 0) {
+        alert("Please make sure to include CT Images in the directory");
+        return {};
+    }
 
     if (ownWorker) ctWorker.terminate();
     return builtCT;
 }
 
-export async function readSeries(absDir) {
+export async function readSeries(absDir, seriesWorker) {
 
-    const seriesWorker = new Worker();
-    let ctImages = await readCT(absDir, seriesWorker);
-    if (ctImages.length <= 0) {
-        alert("Please make sure to include CT Images in the directory");
-        return {};
+    let ownWorker = false;
+    if (seriesWorker == null) {
+        seriesWorker = new Worker();
+        ownWorker = true;
     }
+
+    let ctImages = await readCT(absDir, seriesWorker);
     let builtSeries = await seriesWorker.buildSeries(ctImages);
     let wrappedSeries = Factory.createWrapper(builtSeries, 'SERIES');
     if (!wrappedSeries.isSeries()) {
         alert("Please check that your CT images are all from the same series");
         return {};
-    };
-    seriesWorker.terminate();
+    }
+
+    if (ownWorker) seriesWorker.terminate();
     return wrappedSeries;
 }
 

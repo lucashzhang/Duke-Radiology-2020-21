@@ -3,7 +3,8 @@ import { useSelector, shallowEqual } from "react-redux";
 import { useDispatch } from "react-redux";
 import { readRS, readSeries } from '../Backend/fileHandler';
 import { setFolderDirectory } from '../Redux/actions';
-
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import Worker from 'workerize-loader!../Backend/file.worker.js';
 
 
 export function useDebounce(value, delay) {
@@ -27,10 +28,17 @@ export function useSeries() {
 
   useEffect(() => {
     if (absDir == null || absDir === '') return;
+
     setSeries({});
-    readSeries(absDir).then(newSeries => {
-      if (newSeries !== {} && newSeries != null) setSeries(newSeries)
+    const seriesWorker = new Worker();
+    readSeries(absDir, seriesWorker).then(newSeries => {
+      if (newSeries !== {} && newSeries != null) setSeries(newSeries);
+      seriesWorker.terminate();
     });
+
+    return function cleanup() { 
+      seriesWorker.terminate();
+    }
   }, [absDir]);
   return series;
 }
@@ -40,21 +48,28 @@ export function useRS() {
   const [rs, setRS] = useState({});
 
   useEffect(() => {
-    setRS({});
     if (absDir == null || absDir === '') return;
-    readRS(absDir).then(newRS => {
-      if (newRS !== {} && newRS != null) setRS(newRS)});
+    setRS({});
+    const rsWorker = new Worker();
+    readRS(absDir, rsWorker).then(newRS => {
+      if (newRS !== {} && newRS != null) setRS(newRS);
+      rsWorker.terminate();
+    });
+
+    return function cleanup() { 
+      rsWorker.terminate();
+    }
   }, [absDir]);
   return rs;
 }
 
 export function useDirectory() {
-    const absDir = useSelector(state => state.files.folderDirectory, shallowEqual);
-    const dispatch = useDispatch();
+  const absDir = useSelector(state => state.files.folderDirectory, shallowEqual);
+  const dispatch = useDispatch();
 
-    function setAbsDir(newPath) {
-        dispatch(setFolderDirectory(newPath))
-    }
+  function setAbsDir(newPath) {
+    dispatch(setFolderDirectory(newPath))
+  }
 
-    return [absDir, setAbsDir];
+  return [absDir, setAbsDir];
 }

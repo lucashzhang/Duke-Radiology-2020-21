@@ -8,10 +8,12 @@ import {
   Redirect
 } from "react-router-dom";
 
-import Dashboard from './Components/Dashboard';
+import ImageDashboard from './Components/ImageDashboard';
 import Navbar from './Components/Navbar';
+import Landing from './Components/Landing';
 
-import theme from './Utilities/theme'
+import theme from './Utilities/theme';
+import { useDirectory } from './Utilities/customHooks';
 
 const useStyles = makeStyles((theme) => ({
   windowContainer: {
@@ -22,17 +24,16 @@ const useStyles = makeStyles((theme) => ({
 function App() {
 
   const classes = useStyles();
+  const [absDir, setAbsDir] = useDirectory();
 
   return (
     <ThemeProvider theme={theme}>
       <Router>
-        {/* A <Switch> looks through its children <Route>s and
-            renders the first one that matches the current URL. */}
         <Route><Navbar></Navbar></Route>
         <div className={classes.windowContainer}>
           <Switch>
-            <Route exact path="/"><Dashboard></Dashboard></Route>
-            <Route render={() => <Redirect to="/" />} />
+            <Route exact path="/images"><ImageDashboard></ImageDashboard></Route>
+            <Route path="/"><Landing></Landing></Route>
           </Switch>
         </div>
       </Router>

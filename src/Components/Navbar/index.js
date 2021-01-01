@@ -5,7 +5,7 @@ import theme from '../../Utilities/theme';
 import { Drawer, Divider, List, ListItem, ListItemIcon, ListItemText, Tooltip } from '@material-ui/core';
 import  { pickDirectoryPath } from '../../Backend/fileHandler';
 import { useDirectory } from "../../Utilities/customHooks";
-import { FaHome, FaFolderOpen } from 'react-icons/fa';
+import { FaHome, FaFolderOpen, FaImages } from 'react-icons/fa';
 import { Link } from "react-router-dom";
 import clsx from 'clsx';
 
@@ -64,9 +64,13 @@ function WebsiteDrawer(props) {
                     </List>
                     <Divider />
                     <List>
-                        <ListItem button component={Link} to='/home'>
+                        <ListItem button component={Link} to='/'>
                             <Tooltip title='Home'><ListItemIcon><FaHome /></ListItemIcon></Tooltip>
                             <ListItemText primary='Home' />
+                        </ListItem>
+                        <ListItem button component={Link} to='/images'>
+                            <Tooltip title='Images'><ListItemIcon><FaImages /></ListItemIcon></Tooltip>
+                            <ListItemText primary='Images' />
                         </ListItem>
                         {/* <ListItem button component={Link} to='/about'>
                             <Tooltip title='About Me'><ListItemIcon><FaUser /></ListItemIcon></Tooltip>
