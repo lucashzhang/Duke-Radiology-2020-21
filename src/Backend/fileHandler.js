@@ -85,8 +85,9 @@ function parseFileName(filename) {
     return { type: parts[0], extension: parts[parts.length - 1] }
 }
 
-export async function pickDirectoryPath() {
+export async function pickDirectoryPath(defaultPath = '') {
     let path = await dialog.showOpenDialog({
+        defaultPath: defaultPath,
         properties: ['openDirectory']
     });
     return path;

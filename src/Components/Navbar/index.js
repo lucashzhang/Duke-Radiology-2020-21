@@ -4,8 +4,7 @@ import theme from '../../Utilities/theme';
 
 import { Drawer, Divider, List, ListItem, ListItemIcon, ListItemText, Tooltip } from '@material-ui/core';
 import  { pickDirectoryPath } from '../../Backend/fileHandler';
-import { useDispatch } from "react-redux";
-import { setFolderDirectory } from '../../Redux/actions';
+import { useDirectory } from "../../Utilities/customHooks";
 import { FaHome, FaUser, FaCode, FaFile, FaAddressBook } from 'react-icons/fa';
 import { Link } from "react-router-dom";
 import clsx from 'clsx';
@@ -38,13 +37,13 @@ const useStyles = makeStyles((theme) => ({
 function WebsiteDrawer(props) {
 
     const classes = useStyles();
-    const dispatch = useDispatch();
+    const [absDir, setAbsDir] = useDirectory();
 
     async function dirButton() {
-        const newPathObj = await pickDirectoryPath();
+        const newPathObj = await pickDirectoryPath(absDir);
         if (newPathObj.canceled || newPathObj.filePaths[0] == null) return;
         const newPath = newPathObj.filePaths[0];
-        dispatch(setFolderDirectory(newPath));
+        setAbsDir(newPath);
     }
 
     return (

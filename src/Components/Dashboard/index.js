@@ -95,9 +95,9 @@ function Dashboard() {
         <div className={classes.frame}>
             <StructMenu rs={rs} handleChecked={handleChecked} loading={isLoading}></StructMenu>
             <div className={classes.viewport}>
-                <div className={classes.viewCenter}><CTCanvas series={series} view='AXIAL' handleSlice={handleSlice} sliceNum={sliceZ} rs={rs} selected={selected} loading={isLoading}></CTCanvas></div>
-                <div className={classes.viewRight}><CTCanvas series={series} view='CORONAL' handleSlice={handleSlice} sliceNum={sliceY} rs={rs} selected={selected} loading={isLoading}></CTCanvas></div>
-                <div className={classes.viewBottom}><CTCanvas series={series} view='SAGITTAL' handleSlice={handleSlice} sliceNum={sliceX} rs={rs} selected={selected} loading={isLoading}></CTCanvas></div>
+                <div className={classes.viewCenter}><CTCanvas view='AXIAL' handleSlice={handleSlice} sliceNum={sliceZ} series={series}  rs={rs} selected={selected} loading={isLoading}></CTCanvas></div>
+                <div className={classes.viewRight}><CTCanvas view='CORONAL' handleSlice={handleSlice} sliceNum={sliceY} series={series} rs={rs} selected={selected} loading={isLoading}></CTCanvas></div>
+                <div className={classes.viewBottom}><CTCanvas view='SAGITTAL' handleSlice={handleSlice} sliceNum={sliceX} series={series} rs={rs} selected={selected} loading={isLoading}></CTCanvas></div>
             </div>
         </div>
     );

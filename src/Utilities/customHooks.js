@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useSelector, shallowEqual } from "react-redux";
+import { useDispatch } from "react-redux";
 import { readRS, readSeries } from '../Backend/fileHandler';
+import { setFolderDirectory } from '../Redux/actions';
+
 
 
 export function useDebounce(value, delay) {
@@ -43,4 +46,15 @@ export function useRS() {
       if (newRS !== {} && newRS != null) setRS(newRS)});
   }, [absDir]);
   return rs;
+}
+
+export function useDirectory() {
+    const absDir = useSelector(state => state.files.folderDirectory, shallowEqual);
+    const dispatch = useDispatch();
+
+    function setAbsDir(newPath) {
+        dispatch(setFolderDirectory(newPath))
+    }
+
+    return [absDir, setAbsDir];
 }
