@@ -13,7 +13,7 @@ import Navbar from './Components/Navbar';
 import Landing from './Components/Landing';
 
 import theme from './Utilities/theme';
-import { useDirectory } from './Utilities/customHooks';
+import { useDirectory } from './Backend/fileHooks';
 
 const useStyles = makeStyles((theme) => ({
   windowContainer: {

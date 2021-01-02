@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import StructMenu from '../Drawer';
 import { makeStyles } from '@material-ui/core/styles';
 import CTCanvas from '../CTCanvas';
-import { useSeries, useRS } from '../../Utilities/customHooks';
+import { useSeries, useRS } from '../../Backend/fileHooks';
 
 const useStyles = makeStyles((theme) => ({
     frame: {

@@ -4,7 +4,7 @@ import theme from '../../Utilities/theme';
 
 import { Drawer, Divider, List, ListItem, ListItemIcon, ListItemText, Tooltip } from '@material-ui/core';
 import  { pickDirectoryPath } from '../../Backend/fileHandler';
-import { useDirectory } from "../../Utilities/customHooks";
+import { useDirectory } from "../../Backend/fileHooks";
 import { FaHome, FaFolderOpen, FaImages } from 'react-icons/fa';
 import { Link } from "react-router-dom";
 import clsx from 'clsx';

@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useSelector, shallowEqual } from "react-redux";
 import { useDispatch } from "react-redux";
-import { readRS, readSeries } from '../Backend/fileHandler';
+import { readRS, readSeries } from './fileHandler';
 import { setFolderDirectory } from '../Redux/actions';
 // eslint-disable-next-line import/no-webpack-loader-syntax
-import Worker from 'workerize-loader!../Backend/file.worker.js';
+import Worker from 'workerize-loader!./file.worker.js';
 
 
 export function useDebounce(value, delay) {
@@ -36,7 +36,7 @@ export function useSeries() {
       seriesWorker.terminate();
     });
 
-    return function cleanup() { 
+    return function cleanup() {
       seriesWorker.terminate();
     }
   }, [absDir]);
@@ -56,7 +56,7 @@ export function useRS() {
       rsWorker.terminate();
     });
 
-    return function cleanup() { 
+    return function cleanup() {
       rsWorker.terminate();
     }
   }, [absDir]);
