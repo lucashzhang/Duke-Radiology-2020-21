@@ -6,6 +6,8 @@ import { Drawer, Divider, List, ListItem, ListItemIcon, ListItemText, Tooltip } 
 import { FaHome, FaImages } from 'react-icons/fa';
 import { Link } from "react-router-dom";
 import clsx from 'clsx';
+import { useSelector, shallowEqual } from 'react-redux';
+import C from '../../Redux/constants';
 
 const drawerWidth = 240;
 
@@ -32,10 +34,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function WebsiteDrawer(props) {
+function WebsiteDrawer() {
 
     const classes = useStyles();
-
+    const fileStatus = useSelector(state => state.files.folderStatus, shallowEqual);
 
     return (
         <div>
@@ -52,7 +54,7 @@ function WebsiteDrawer(props) {
                             <Tooltip title='Home'><ListItemIcon><FaHome /></ListItemIcon></Tooltip>
                             <ListItemText primary='Home' />
                         </ListItem>
-                        <ListItem button component={Link} to='/images'>
+                        <ListItem button disabled={fileStatus !== C.FILES.FILE_STATUS_SUCCESS} component={Link} to='/images'>
                             <Tooltip title='Images'><ListItemIcon><FaImages /></ListItemIcon></Tooltip>
                             <ListItemText primary='Images' />
                         </ListItem>

@@ -11,10 +11,10 @@ import { setFolderStatus } from '../../Redux/actions';
 
 const useStyles = makeStyles((theme) => ({
     page: {
-        background: theme.palette.primary.main,
+        background: theme.palette.surfacePrimary.main,
         height: '100vh',
         display: 'grid',
-        gridTemplateColumns: '1fr 3fr 3fr 1fr',
+        gridTemplateColumns: '230px 1fr 1fr 230px',
         gridTemplateRows: '2rem 1fr 1fr 1fr 1fr 2rem'
     },
     title: {
@@ -23,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
         margin: '2rem',
         display: 'flex',
         alignItems: 'center',
+        color: theme.palette.surfacePrimary.contrastText
         // justifyContent: 'center'
     },
     directory: {
@@ -48,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
         paddingTop: '1rem'
     },
     fileAccordion: {
-        background: theme.palette.primary.main,
+        background: theme.palette.surfacePrimary.main,
         color: 'white'
     },
     fileSummary: {
@@ -58,16 +59,28 @@ const useStyles = makeStyles((theme) => ({
         margin: 'auto',
         marginRight: '0'
     },
-    fileList: {
+    fileDetails: {
         background: 'white',
         color: theme.palette.text.primary,
         maxHeight: 'calc(75vh - 24rem)',
         overflow: 'auto'
+    },
+    fileList: {
+        width: '100%'
     }
 }));
 
-function StatusIcon() {
+function StatusIcon(props) {
+    const isValid = props.isValid;
+    const classes = useStyles();
 
+    if (isValid === true) {
+        return <FaCheckCircle className={classes.fileStatus}></FaCheckCircle>
+    } else if (isValid === false) {
+        return <FaTimesCircle className={classes.fileStatus}></FaTimesCircle>
+    } else {
+        return null;
+    }
     
 }
 
@@ -78,11 +91,14 @@ function Landing() {
     const fileStatus = useSelector(state => state.files.folderStatus, shallowEqual);
     const dispatch = useDispatch();
 
-    async function handleDirectoryClick() {
+    async function handleDirectoryClick(e) {
+        e.target.blur()
         const newPathObj = await pickDirectoryPath(absDir);
-        if (newPathObj.canceled || newPathObj.filePaths[0] == null) return;
+        if (newPathObj.canceled || newPathObj.filePaths[0] == null) {
+            return;
+        };
         const newPath = newPathObj.filePaths[0];
-        checkFiles(newPath);
+        // checkFiles(newPath);
         setAbsDir(newPath);
     }
 
@@ -91,6 +107,8 @@ function Landing() {
         dispatch(setFolderStatus(scanResult.isValid))
         setFileScan(scanResult);
     }
+
+    useEffect(() => checkFiles(absDir), [absDir])
 
     return (
         <div className={classes.page}>
@@ -109,10 +127,10 @@ function Landing() {
                     <Accordion className={classes.fileAccordion}>
                         <AccordionSummary>
                             <Typography>RS File</Typography>
-                            <FaTimesCircle className={classes.fileStatus}></FaTimesCircle>
+                            <StatusIcon isValid={fileScan.rsInfo ? fileScan.rsInfo.isValid : false}></StatusIcon>
                         </AccordionSummary>
-                        <AccordionDetails className={classes.fileList}>
-                            <List>
+                        <AccordionDetails className={classes.fileDetails}>
+                            <List className={classes.fileList}>
                                 {Object.keys(fileScan).length > 0 && fileScan.rsInfo ? (
                                     <ListItem key={fileScan.rsInfo.filename} button>{fileScan.rsInfo.filename}</ListItem>
                                 ) : <ListItem>No RS Files Selected</ListItem>}
@@ -122,10 +140,10 @@ function Landing() {
                     <Accordion className={classes.fileAccordion}>
                         <AccordionSummary className={classes.fileSummary}>
                             <Typography>CT Files</Typography>
-                            <FaTimesCircle className={classes.fileStatus}></FaTimesCircle>
+                            <StatusIcon isValid={fileScan.seriesInfo ? fileScan.seriesInfo.isValid : false}></StatusIcon>
                         </AccordionSummary>
-                        <AccordionDetails className={classes.fileList}>
-                            <List>
+                        <AccordionDetails className={classes.fileDetails}>
+                            <List  className={classes.fileList}>
                                 {Object.keys(fileScan).length > 0 && fileScan.seriesInfo && fileScan.seriesInfo.ctInfo ? fileScan.seriesInfo.ctInfo.map(ct => (
                                     <ListItem key={ct.filename} button>{ct.filename}</ListItem>
                                 )) : <ListItem>No CT Files Selected</ListItem>}

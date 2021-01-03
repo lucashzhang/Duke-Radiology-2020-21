@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import StructMenu from '../Drawer';
 import { makeStyles } from '@material-ui/core/styles';
+import { Paper, Typography } from '@material-ui/core';
 import CTCanvas from '../CTCanvas';
 import { useSeries, useRS } from '../../Backend/fileHooks';
 
@@ -9,34 +10,33 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         flexDirection: 'row'
     },
-    viewport: {
+    main: {
         width: 'calc(100vw - 270px)',
         height: '100vh',
         display: 'grid',
-        gridTemplateColumns: '512px 512px 512px',
-        gridTemplateRows: '512px 1fr',
-        overflow: 'auto'
+        gridTemplateRows: '2rem 1fr 3fr 2rem',
+        overflow: 'auto',
+        background: theme.palette.surfacePrimary.main
     },
-    viewCenter: {
-        gridRow: '1',
-        gridColumn: '1',
-        background: 'black',
-        borderColor: theme.palette.primary.main,
-        borderWidth: 'thick'
-    },
-    viewRight: {
-        gridRow: '1',
-        gridColumn: '2',
-        background: 'black'
-    },
-    viewBottom: {
-        gridRow: '1',
-        gridColumn: '3',
-        background: 'black'
-    },
-    files: {
+    title: {
         gridRow: '2',
-        gridColumn: '1 / 4'
+        margin: '2rem',
+        display: 'flex',
+        alignItems: 'center',
+        color: theme.palette.surfacePrimary.contrastText
+        // justifyContent: 'center'
+    },
+    canvasContainer: {
+        gridRow: '3',
+        display: 'flex'
+    },
+    canvasView: {
+        margin: 'auto',
+        padding: '1rem',
+        display: 'flex',
+        flexDirection: 'row',
+        height: '512px',
+        width: '1536px'
     }
 }));
 
@@ -91,10 +91,15 @@ function Dashboard() {
     return (
         <div className={classes.frame}>
             <StructMenu rs={rs} handleChecked={handleChecked} loading={isLoading}></StructMenu>
-            <div className={classes.viewport}>
-                <div className={classes.viewCenter}><CTCanvas view='AXIAL' handleSlice={handleSlice} sliceNum={sliceZ} series={series}  rs={rs} selected={selected} loading={isLoading}></CTCanvas></div>
-                <div className={classes.viewRight}><CTCanvas view='CORONAL' handleSlice={handleSlice} sliceNum={sliceY} series={series} rs={rs} selected={selected} loading={isLoading}></CTCanvas></div>
-                <div className={classes.viewBottom}><CTCanvas view='SAGITTAL' handleSlice={handleSlice} sliceNum={sliceX} series={series} rs={rs} selected={selected} loading={isLoading}></CTCanvas></div>
+            <div className={classes.main}>
+                <Typography className={classes.title} variant={'h1'}>Placeholder</Typography>
+                <div className={classes.canvasContainer}>
+                    <Paper className={classes.canvasView}>
+                        <CTCanvas view='AXIAL' handleSlice={handleSlice} sliceNum={sliceZ} series={series} rs={rs} selected={selected} loading={isLoading}></CTCanvas>
+                        <CTCanvas view='CORONAL' handleSlice={handleSlice} sliceNum={sliceY} series={series} rs={rs} selected={selected} loading={isLoading}></CTCanvas>
+                        <CTCanvas view='SAGITTAL' handleSlice={handleSlice} sliceNum={sliceX} series={series} rs={rs} selected={selected} loading={isLoading}></CTCanvas>
+                    </Paper>
+                </div>
             </div>
         </div>
     );

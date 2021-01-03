@@ -8,9 +8,10 @@ const useStyles = makeStyles((theme) => ({
     drawerContainer: {
         width: 'calc(270px)',
         height: 'calc(100vh)',
-        backgroundColor: theme.palette.primary.main,
-        color: theme.palette.background.paper,
-        overflow: 'auto'
+        backgroundColor: theme.palette.surfacePrimary.main,
+        color: theme.palette.surfacePrimary.contrastText,
+        overflow: 'auto',
+        borderRight: 'solid'
     },
     loading: {
         width: '100%',

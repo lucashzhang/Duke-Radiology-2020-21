@@ -8,8 +8,8 @@ const useStyles = makeStyles(() => ({
         display: 'grid',
         gridTemplateColumns: '1fr',
         gridTemplateRows: '1fr',
-        width: '100%',
-        height: '100%'
+        width: '512px',
+        height: '512px'
     },
     canvas: {
         cursor: 'pointer',
