@@ -12,6 +12,19 @@ export const folderDirectory = (state = '', action) => {
     }
 }
 
+export const folderStatus = (state = C['FILES'].FILE_STATUS_INIT, action) => {
+    switch (action.type) {
+        case C['FILES'].FILE_STATUS_INIT:
+            return C['FILES'].FILE_STATUS_INIT;
+        case C['FILES'].FILE_STATUS_SUCCESS:
+            return C['FILES'].FILE_STATUS_SUCCESS;
+        case C['FILES'].FILE_STATUS_FAILURE:
+            return C['FILES'].FILE_STATUS_FAILURE;
+        default:
+            return state;
+    }
+}
+
 export const patientFirst = (state = '', action) => {
     switch (action.type) {
         case C['PATIENT'].SET_PATIENT_FIRST:
@@ -48,6 +61,7 @@ export const patientLast = (state = '', action) => {
 export default combineReducers({
     files: combineReducers({
         folderDirectory: folderDirectory,
+        folderStatus: folderStatus
     }),
     patient: combineReducers({
         patientFirst,

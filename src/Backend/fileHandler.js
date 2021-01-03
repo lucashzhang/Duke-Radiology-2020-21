@@ -107,7 +107,7 @@ export async function scanFiles(absDir) {
         res.rsInfo = rsInfo;
     }
     
-    res.isValid = seriesInfo.isValid && rsInfo.isValid && seriesInfo.studyUID === rsInfo.studyUID;
+    res.isValid = !!(seriesInfo.isValid && rsInfo.isValid && seriesInfo.studyUID === rsInfo.studyUID);
     console.log(res.isValid)
 
     validationWorker.terminate();
