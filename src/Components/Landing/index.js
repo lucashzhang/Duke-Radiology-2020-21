@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from '@material-ui/core/styles';
-import { Paper, Typography, FormControl, InputLabel, OutlinedInput, IconButton, List, ListItem, Accordion, AccordionDetails, AccordionSummary } from '@material-ui/core';
-import { FaFolderOpen } from 'react-icons/fa';
+import { Paper, Typography, FormControl, InputLabel, OutlinedInput, IconButton, List, ListItem, Accordion, AccordionDetails, AccordionSummary, CircularProgress } from '@material-ui/core';
+import { FaFolderOpen, FaCheckCircle } from 'react-icons/fa';
 import { pickDirectoryPath, scanFiles } from '../../Backend/fileHandler';
 import { useDirectory } from "../../Backend/fileHooks";
 
@@ -39,6 +39,18 @@ const useStyles = makeStyles((theme) => ({
     },
     fileSummary: {
         height: 'calc(100% - 4rem)',
+        width: '100%',
+        overflow: 'auto',
+        paddingTop: '1rem'
+    },
+    fileAccordion: {
+        background: theme.palette.primary.main,
+        color: 'white'
+    },
+    fileList: {
+        background: 'white',
+        color: theme.palette.text.primary,
+        maxHeight: '200px',
         overflow: 'auto'
     }
 }))
@@ -74,11 +86,11 @@ function Landing() {
                     ></OutlinedInput>
                 </FormControl>
                 <div className={classes.fileSummary}>
-                    <Accordion>
+                    <Accordion className={classes.fileAccordion}>
                         <AccordionSummary>
                             CT Files
                         </AccordionSummary>
-                        <AccordionDetails>
+                        <AccordionDetails className={classes.fileList}>
                             <List>
                                 {Object.keys(fileScan).length > 0 && fileScan.seriesInfo && fileScan.seriesInfo.ctInfo ? fileScan.seriesInfo.ctInfo.map(ct => (
                                     <ListItem key={ct.filename}>{ct.filename}</ListItem>
@@ -86,11 +98,11 @@ function Landing() {
                             </List>
                         </AccordionDetails>
                     </Accordion>
-                    <Accordion>
+                    <Accordion className={classes.fileAccordion}>
                         <AccordionSummary>
                             RS File
                         </AccordionSummary>
-                        <AccordionDetails>
+                        <AccordionDetails className={classes.fileList}>
                             <List>
                                 {Object.keys(fileScan).length > 0 && fileScan.rsInfo ? (
                                     <ListItem>{fileScan.rsInfo.filename}</ListItem>
