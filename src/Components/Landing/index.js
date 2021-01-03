@@ -64,13 +64,13 @@ function Landing() {
         const newPathObj = await pickDirectoryPath(absDir);
         if (newPathObj.canceled || newPathObj.filePaths[0] == null) return;
         const newPath = newPathObj.filePaths[0];
-        const scanResult = await scanFiles(newPath);
+        checkFiles(newPath);
         setAbsDir(newPath);
-        setFileScan(scanResult);
     }
 
-    function handleDirectoryInput(e) {
-        setAbsDir(e.target.value)
+    async function checkFiles(directory) {
+        const scanResult = await scanFiles(directory);
+        setFileScan(scanResult);
     }
 
     return (
@@ -80,9 +80,9 @@ function Landing() {
                 <FormControl fullWidth variant="outlined">
                     <InputLabel htmlFor="directory-input">Choose Your Directory</InputLabel>
                     <OutlinedInput id="directory-input" label="Choose Your Directory"
-                        endAdornment={<IconButton onClick={handleDirectoryClick}><FaFolderOpen></FaFolderOpen></IconButton>}
+                        endAdornment={<IconButton><FaFolderOpen></FaFolderOpen></IconButton>}
                         value={absDir}
-                        onChange={handleDirectoryInput}
+                        onClick={handleDirectoryClick}
                     ></OutlinedInput>
                 </FormControl>
                 <div className={classes.fileSummary}>
@@ -94,7 +94,7 @@ function Landing() {
                             <List>
                                 {Object.keys(fileScan).length > 0 && fileScan.seriesInfo && fileScan.seriesInfo.ctInfo ? fileScan.seriesInfo.ctInfo.map(ct => (
                                     <ListItem key={ct.filename}>{ct.filename}</ListItem>
-                                )) : null}
+                                )) : <ListItem key='noFile'>No CT Files Selected</ListItem>}
                             </List>
                         </AccordionDetails>
                     </Accordion>
@@ -106,7 +106,7 @@ function Landing() {
                             <List>
                                 {Object.keys(fileScan).length > 0 && fileScan.rsInfo ? (
                                     <ListItem>{fileScan.rsInfo.filename}</ListItem>
-                                ) : null}
+                                ) : <ListItem key='noFile'>No RS Files Selected</ListItem>}
                             </List>
                         </AccordionDetails>
                     </Accordion>

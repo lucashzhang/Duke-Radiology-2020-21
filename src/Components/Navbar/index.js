@@ -3,9 +3,7 @@ import { ThemeProvider, makeStyles } from '@material-ui/core/styles';
 import theme from '../../Utilities/theme';
 
 import { Drawer, Divider, List, ListItem, ListItemIcon, ListItemText, Tooltip } from '@material-ui/core';
-import  { pickDirectoryPath } from '../../Backend/fileHandler';
-import { useDirectory } from "../../Backend/fileHooks";
-import { FaHome, FaFolderOpen, FaImages } from 'react-icons/fa';
+import { FaHome, FaImages } from 'react-icons/fa';
 import { Link } from "react-router-dom";
 import clsx from 'clsx';
 
@@ -37,14 +35,7 @@ const useStyles = makeStyles((theme) => ({
 function WebsiteDrawer(props) {
 
     const classes = useStyles();
-    const [absDir, setAbsDir] = useDirectory();
 
-    async function dirButton() {
-        const newPathObj = await pickDirectoryPath(absDir);
-        if (newPathObj.canceled || newPathObj.filePaths[0] == null) return;
-        const newPath = newPathObj.filePaths[0];
-        setAbsDir(newPath);
-    }
 
     return (
         <div>
@@ -56,13 +47,6 @@ function WebsiteDrawer(props) {
                         paper: classes.drawerClose
                     }}
                 >
-                    <List>
-                        <ListItem button onClick={dirButton}>
-                            <Tooltip title='Select Directory'><ListItemIcon><FaFolderOpen /></ListItemIcon></Tooltip>
-                            <ListItemText primary='Select Directory' />
-                        </ListItem>
-                    </List>
-                    <Divider />
                     <List>
                         <ListItem button component={Link} to='/'>
                             <Tooltip title='Home'><ListItemIcon><FaHome /></ListItemIcon></Tooltip>
