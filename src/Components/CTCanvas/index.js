@@ -110,7 +110,7 @@ function CTCanvas(props) {
         if (rs.getContourAtZ == null) return null;
         switch (props.view.toUpperCase()) {
             case 'AXIAL':
-                return rs.getContourAtZ(contours, sliceNum + series.minZ);
+                return rs.getContourAtZ(contours, Math.floor(sliceNum / series.thickness) * series.thickness + series.minZ);
             case 'CORONAL':
                 break;
             case 'SAGITTAL':
