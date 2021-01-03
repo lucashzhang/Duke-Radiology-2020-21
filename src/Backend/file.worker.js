@@ -1,4 +1,4 @@
-import { CT, RS, Series } from './fileObjects';
+import { CT, RS, Series, BasicSeries, BasicRS } from './fileObjects';
 
 export function buildSeries(ctArray) {
     return new Series(ctArray);
@@ -18,4 +18,12 @@ export function buildCT(fileArray) {
         newCT.push(new CT(file.filename, file.contents));
     }
     return newCT;
+}
+
+export function scanSeries(fileArray) {
+    return new BasicSeries(fileArray)
+}
+
+export function scanRS(fileArray) {
+    return new BasicRS(fileArray[0]);
 }

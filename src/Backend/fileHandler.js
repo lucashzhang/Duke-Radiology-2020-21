@@ -5,12 +5,12 @@ import Worker from 'workerize-loader!./file.worker.js'
 const fs = window.require('fs'); // Load the File System to execute our common tasks (CRUD);
 const { dialog } = window.require('electron').remote;
 
-async function getFiles(absDir, fileType) {
+async function getFiles(absDir, fileType = "ALL") {
     if (!absDir.endsWith('/')) absDir += '/';
     let filePromises = [];
     fs.readdirSync(absDir).forEach(file => {
         const { type, extension } = parseFileName(file);
-        if (fileType === type && extension === 'dcm') {
+        if ((fileType === "ALL" || fileType === type) && extension === 'dcm') {
             try {
                 filePromises.push(new Promise((resolve, reject) => {
                     fs.readFile(`${absDir}${file}`, (err, content) => {
@@ -28,14 +28,14 @@ async function getFiles(absDir, fileType) {
     return dirResults
 }
 
-export async function readRS(absDir, rsWorker) {
+export async function readRS(absDir, rsWorker = null) {
 
     let ownWorker = false;
     if (rsWorker == null) {
         rsWorker = new Worker();
         ownWorker = true;
     }
-    
+
     let ctImages = await readCT(absDir, rsWorker);
     let firstCT = ctImages[0];
     let rawRS = await getFiles(absDir, 'RS');
@@ -50,7 +50,7 @@ export async function readRS(absDir, rsWorker) {
     return wrappedRS;
 }
 
-export async function readCT(absDir, ctWorker) {
+export async function readCT(absDir, ctWorker = null) {
     let ownWorker = false;
     if (ctWorker == null) {
         ctWorker = new Worker();
@@ -68,7 +68,7 @@ export async function readCT(absDir, ctWorker) {
     return builtCT;
 }
 
-export async function readSeries(absDir, seriesWorker) {
+export async function readSeries(absDir, seriesWorker = null) {
 
     let ownWorker = false;
     if (seriesWorker == null) {
@@ -86,6 +86,32 @@ export async function readSeries(absDir, seriesWorker) {
 
     if (ownWorker) seriesWorker.terminate();
     return wrappedSeries;
+}
+
+export async function scanFiles(absDir) {
+    const validationWorker = new Worker();
+
+    let res = {}
+
+    let rawCT = await getFiles(absDir, 'CT');
+    let seriesInfo = {};
+    if (rawCT.length > 0) {
+        seriesInfo = await validationWorker.scanSeries(rawCT);
+        res.seriesInfo = seriesInfo;
+    }
+    
+    let rawRS = await getFiles(absDir, 'RS');
+    let rsInfo = {};
+    if (rawRS.length > 0) {
+        rsInfo = await validationWorker.scanRS(rawRS);
+        res.rsInfo = rsInfo;
+    }
+    
+    res.isValid = seriesInfo.isValid && rsInfo.isValid && seriesInfo.studyUID === rsInfo.studyUID;
+    console.log(res.isValid)
+
+    validationWorker.terminate();
+    return res;
 }
 
 function parseFileName(filename) {

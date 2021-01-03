@@ -153,3 +153,77 @@ export class Series {
         this.minZ = this.images[0].position[2];
     }
 }
+
+export class BasicSeries {
+    constructor(ctFiles) {
+        function toArrayBuffer(b) {
+            return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength);
+        }
+
+        function readFiles() {
+
+            let fileList = [];
+            for (let file of ctFiles) {
+                const imageData = daikon.Series.parseImage(new DataView(toArrayBuffer(file.contents)))
+                fileList.push({
+                    filename: file.filename,
+                    rows: imageData.getRows(),
+                    cols: imageData.getCols(),
+                    position: imageData.getImagePosition(),
+                    seriesUID: imageData.getSeriesInstanceUID(),
+                    studyUID: imageData.tags["0020000D"].value[0],
+                    thickness: imageData.getSliceThickness(),
+                    pixelSpacing: imageData.getPixelSpacing(),
+                    patientName: imageData.getPatientName(),
+                    patientID: imageData.getPatientID()
+                })
+            }
+
+            return fileList;
+        }
+
+        function isSeries(ctInfo) {
+
+            let isValid = ctInfo.length > 0;
+            const first = ctInfo[0]
+            isValid = isValid && ctInfo.every(file => file.rows === first.rows);
+            isValid = isValid && ctInfo.every(file => file.cols === first.cols);
+            isValid = isValid && ctInfo.every(file => file.seriesUID === first.seriesUID);
+            isValid = isValid && ctInfo.every(file => file.studyUID === first.studyUID);
+            isValid = isValid && ctInfo.every(file => file.thickness === first.thickness);
+            isValid = isValid && ctInfo.every(file => file.position[0] === first.position[0] && file.position[1] === first.position[1]);
+            isValid = isValid && ctInfo.every(file => file.pixelSpacing[0] === first.pixelSpacing[0] && file.pixelSpacing[1] === first.pixelSpacing[1]);
+            isValid = isValid && ctInfo.every(file => file.patientName === first.patientName);
+            isValid = isValid && ctInfo.every(file => file.patientID === first.patientID);
+
+            if (!isValid) return isValid;
+
+            let sortedCT = ctInfo.sort((a, b) => a.position[2] - b.position[2]);
+            for (let i = 1; i < sortedCT.length; i++) {
+                if (Math.abs(sortedCT[i].position[2] - sortedCT[i-1].position[2]) !== first.thickness) {
+                    return false
+                }
+            }
+
+            return isValid;
+        }
+
+        this.ctInfo = readFiles();
+        this.isValid = isSeries(this.ctInfo);
+        this.studyUID = this.ctInfo[0].studyUID;
+        this.patientName = this.ctInfo[0].patientName;
+    }
+}
+
+export class BasicRS {
+    constructor(structFile) {
+        function toArrayBuffer(b) {
+            return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength);
+        }
+
+        this.isValid = structFile != null;
+        this.filename = structFile.filename;
+        const imageData = daikon.Series.parseImage(new DataView(toArrayBuffer(structFile.contents)));
+        this.studyUID = imageData.tags["0020000D"].value[0];
+    }
+}
