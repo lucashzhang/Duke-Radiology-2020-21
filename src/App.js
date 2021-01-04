@@ -5,7 +5,6 @@ import {
   HashRouter as Router,
   Switch,
   Route,
-  Redirect
 } from "react-router-dom";
 
 import ImageDashboard from './Components/ImageDashboard';

@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
-import { List, ListItem, FormControlLabel, Checkbox, CircularProgress } from '@material-ui/core';
+import { FormGroup, FormControlLabel, Checkbox, CircularProgress, FormControl } from '@material-ui/core';
 
 
 const useStyles = makeStyles((theme) => ({
     drawerContainer: {
-        width: 'calc(270px)',
-        height: 'calc(100vh)',
+        width: 'calc(270px - 2rem)',
+        height: 'calc(100vh - 2rem)',
         backgroundColor: theme.palette.surfacePrimary.main,
         color: theme.palette.surfacePrimary.contrastText,
         overflow: 'auto',
-        borderRight: 'solid'
+        borderRight: 'solid',
+        padding: '1rem'
     },
     loading: {
         width: '100%',
@@ -54,21 +55,22 @@ function StructMenu(props) {
 
     return (
         <div className={classes.drawerContainer}>
-            {structs != null && Object.keys(checked).length !== 0 && !isLoading ? <List>
-                {
-                    structs.map((struct) => (
-                        <ListItem key={`${struct.name}${struct.roi}`}>
+            {structs != null && Object.keys(checked).length !== 0 && !isLoading ? <FormControl component="fieldset">
+                <FormGroup>
+                    {
+                        structs.map((struct) => (
                             <FormControlLabel
-                                control={<Checkbox name={`${struct.roi}`} checked={checked[struct.roi] || false} onChange={() => toggleChecked(struct.roi)} style={{ color: `rgb(${struct.displayColor[0]},${struct.displayColor[1]},${struct.displayColor[2]})` }} />}
+                                key={`${struct.name}${struct.roi}`}
+                                control={<Checkbox name={`${struct.roi}`} checked={!!checked[struct.roi]} onChange={() => toggleChecked(struct.roi)} style={{ color: `rgb(${struct.displayColor[0]},${struct.displayColor[1]},${struct.displayColor[2]})` }} />}
                                 label={struct.name}
                             />
-                        </ListItem>
-                    ))
-                }
+                        ))
+                    }
 
-            </List> : <div className={classes.loading}>
-                <CircularProgress color='secondary'></CircularProgress>
-            </div>}
+                </FormGroup>
+            </FormControl> : <div className={classes.loading}>
+                    <CircularProgress color='secondary'></CircularProgress>
+                </div>}
         </div>
     );
 }
