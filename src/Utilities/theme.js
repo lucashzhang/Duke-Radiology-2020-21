@@ -6,14 +6,14 @@ export default createMuiTheme({
             main: '#FFFFFF'
         },
         secondary: {
-            main: '#00FFFF',
+            main: '#44DDDD',
         },
         surfacePrimary: {
             main: '#555555',
             contrastText: '#FFFFFF'
         },
         surfaceSecondary: {
-            
+
         }
     }
 })

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper, Typography, FormControl, InputLabel, OutlinedInput, IconButton, List, ListItem, Accordion, AccordionDetails, AccordionSummary, CircularProgress } from '@material-ui/core';
 import { FaFolderOpen, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
-import { pickDirectoryPath, scanFiles } from '../../Backend/fileHandler';
+import { pickDirectoryPath } from '../../Backend/fileHandler';
 import { useDirectory } from "../../Backend/fileHooks";
 import { useSelector, shallowEqual } from "react-redux";
 import C from '../../Redux/constants';
@@ -34,12 +34,14 @@ const useStyles = makeStyles((theme) => ({
     doctor: {
         gridColumn: '3',
         gridRow: '2 / 4',
-        margin: '2rem'
+        margin: '2rem',
+        padding: '1rem'
     },
     patient: {
         gridColumn: '3',
         gridRow: '4 / 6',
-        margin: '2rem'
+        margin: '2rem',
+        padding: '1rem'
     },
     files: {
         height: 'calc(100% - 4rem)',
@@ -148,10 +150,10 @@ function Landing() {
                 </div>
             </Paper>
             <Paper className={classes.doctor}>
-
+                <div><b>Doctor Info Input Placeholder</b> { }</div>
             </Paper>
             <Paper className={classes.patient}>
-
+                <div><b>Patient Info Input Placeholder</b> { }</div>
             </Paper>
         </div>
     )

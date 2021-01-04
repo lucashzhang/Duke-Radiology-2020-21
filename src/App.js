@@ -29,7 +29,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <Router>
-        <Route><Navbar></Navbar></Route>
+        <Route component={Navbar}></Route>
         <div className={classes.windowContainer}>
           <Switch>
             <Route exact path="/images"><ImageDashboard></ImageDashboard></Route>

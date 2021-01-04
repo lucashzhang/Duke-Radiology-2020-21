@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ThemeProvider, makeStyles } from '@material-ui/core/styles';
 import theme from '../../Utilities/theme';
 
-import { Drawer, Divider, List, ListItem, ListItemIcon, ListItemText, Tooltip } from '@material-ui/core';
+import { Drawer, List, ListItem, ListItemIcon, ListItemText, Tooltip } from '@material-ui/core';
 import { FaHome, FaImages } from 'react-icons/fa';
 import { Link } from "react-router-dom";
 import clsx from 'clsx';
@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function WebsiteDrawer() {
+function WebsiteDrawer(props) {
 
     const classes = useStyles();
     const fileStatus = useSelector(state => state.files.folderStatus, shallowEqual);
@@ -51,11 +51,15 @@ function WebsiteDrawer() {
                 >
                     <List>
                         <ListItem button component={Link} to='/'>
-                            <Tooltip title='Home'><ListItemIcon><FaHome /></ListItemIcon></Tooltip>
+                            <Tooltip title='Home'><ListItemIcon className={clsx({
+                                    [classes.viewing]: props.location.pathname === '/',
+                                })}><FaHome /></ListItemIcon></Tooltip>
                             <ListItemText primary='Home' />
                         </ListItem>
                         <ListItem button disabled={fileStatus !== C.FILES.FILE_STATUS_SUCCESS} component={Link} to='/images'>
-                            <Tooltip title='Images'><ListItemIcon><FaImages /></ListItemIcon></Tooltip>
+                            <Tooltip title='Images'><ListItemIcon className={clsx({
+                                    [classes.viewing]: props.location.pathname === '/images',
+                                })}><FaImages /></ListItemIcon></Tooltip>
                             <ListItemText primary='Images' />
                         </ListItem>
                         {/* <ListItem button component={Link} to='/about'>
