@@ -74,9 +74,9 @@ function StatusIcon(props) {
     const classes = useStyles();
 
     if (isValid === true) {
-        return <FaCheckCircle className={classes.fileStatus}></FaCheckCircle>
+        return <FaCheckCircle className={classes.fileStatus} style={{ color: '#4caf50' }}></FaCheckCircle>
     } else if (isValid === false) {
-        return <FaTimesCircle className={classes.fileStatus}></FaTimesCircle>
+        return <FaTimesCircle className={classes.fileStatus} style={{ color: '#f44336' }}></FaTimesCircle>
     } else {
         return null;
     }
