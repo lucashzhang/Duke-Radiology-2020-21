@@ -39,6 +39,7 @@ function CTCanvas(props) {
     const maxSlices = getMaxSlices();
     const maxWidth = getMaxWidth();
     const maxHeight = getMaxHeight();
+    const minSlice = getMinSlice();
     const xOffset = Math.floor((series.width - maxWidth) / 2);
     const yOffset = Math.floor((series.height - maxHeight) / 2);
     const equiv = getCoordEquiv();
@@ -110,7 +111,7 @@ function CTCanvas(props) {
         if (rs.getContourAtZ == null) return null;
         switch (props.view.toUpperCase()) {
             case 'AXIAL':
-                return rs.getContourAtZ(contours, Math.floor(sliceNum / series.thickness) * series.thickness + series.minZ);
+                return rs.getContourAtZ(contours, Math.floor(sliceNum / series.thickness) * series.thickness + minSlice);
             case 'CORONAL':
                 break;
             case 'SAGITTAL':
@@ -175,6 +176,20 @@ function CTCanvas(props) {
         }
     }
 
+    function getMinSlice() {
+        if (series == null) return;
+        switch (props.view.toUpperCase()) {
+            case 'AXIAL':
+                return series.minZ
+            case 'CORONAL':
+                return series.minY
+            case 'SAGITTAL':
+                return series.minX
+            default:
+                return { x: '', y: '', z: '' }
+        }
+    }
+
     function canvasReset() {
         const ctx = canvasRef.current.getContext('2d');
         ctx.fillStyle = "#000000";
@@ -222,9 +237,9 @@ function CTCanvas(props) {
         const ctx = canvasRef.current.getContext('2d');
         ctx.font = '16px sans-serif';
         ctx.textAlign = "center";
-        ctx.fillStyle = "#00FFFF";
+        ctx.fillStyle = theme.palette.secondary.light;
         ctx.fillText(props.view.toUpperCase(), 256, 24);
-        ctx.fillText(`Slice Number: ${(props.sliceNum + 1)}`, series.width / 2, series.height - 12);
+        ctx.fillText(`Slice Position: ${(props.sliceNum + minSlice)}mm`, series.width / 2, series.height - 12);
     }
 
     function handleUserKeyPress(e) {
