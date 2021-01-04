@@ -20,7 +20,8 @@ const useStyles = makeStyles((theme) => ({
         gridRow: '2',
         margin: '2rem',
         display: 'flex',
-        alignItems: 'center',
+        flexDirection: 'column',
+        justifyContent: 'center',
         color: theme.palette.surfacePrimary.contrastText
         // justifyContent: 'center'
     },
@@ -79,7 +80,7 @@ function StatusIcon(props) {
     } else {
         return null;
     }
-    
+
 }
 
 function Landing() {
@@ -103,7 +104,10 @@ function Landing() {
 
     return (
         <div className={classes.page}>
-            <Typography className={classes.title} variant={'h1'}>Placeholder</Typography>
+            <div className={classes.title}>
+                <Typography variant={'h1'}>Get Started</Typography>
+                <Typography variant={'h5'}>Input your information here</Typography>
+            </div>
             <Paper className={classes.directory}>
                 <FormControl fullWidth variant="outlined">
                     <InputLabel htmlFor="directory-input">Choose Your Directory</InputLabel>
@@ -134,7 +138,7 @@ function Landing() {
                             <StatusIcon isValid={!!ctSummary.isValid}></StatusIcon>
                         </AccordionSummary>
                         <AccordionDetails className={classes.fileDetails}>
-                            <List  className={classes.fileList}>
+                            <List className={classes.fileList}>
                                 {ctSummary.ctInfo ? ctSummary.ctInfo.map(ct => (
                                     <ListItem key={ct.filename} button>{ct.filename}</ListItem>
                                 )) : <ListItem>No CT Files Selected</ListItem>}

@@ -92,7 +92,9 @@ function Dashboard() {
         <div className={classes.frame}>
             <StructMenu rs={rs} handleChecked={handleChecked} loading={isLoading}></StructMenu>
             <div className={classes.main}>
-                <Typography className={classes.title} variant={'h1'}>Placeholder</Typography>
+                <div className={classes.title}>
+                    <Typography variant={'h1'}>CT Images</Typography>
+                </div>
                 <div className={classes.canvasContainer}>
                     <Paper className={classes.canvasView}>
                         <CTCanvas view='AXIAL' handleSlice={handleSlice} sliceNum={sliceZ} series={series} rs={rs} selected={selected} loading={isLoading}></CTCanvas>
