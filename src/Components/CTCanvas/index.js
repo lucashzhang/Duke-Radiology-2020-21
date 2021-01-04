@@ -36,12 +36,10 @@ function CTCanvas(props) {
     const canvasRef = useRef(null);
     const sliceNum = props.sliceNum;
     const series = props.series;
-    const maxSlices = getMaxSlices();
-    const maxWidth = getMaxWidth();
-    const maxHeight = getMaxHeight();
+    const [maxDepth, maxWidth, maxHeight] = getMax();
     const minSlice = getMinSlice();
-    const xOffset = Math.floor((series.width - maxWidth) / 2);
-    const yOffset = Math.floor((series.height - maxHeight) / 2);
+    const drawXOffset = Math.floor((series.width - maxWidth) / 2);
+    const drawYOffset = Math.floor((series.height - maxHeight) / 2);
     const equiv = getCoordEquiv();
 
     const rs = props.rs;
@@ -50,7 +48,7 @@ function CTCanvas(props) {
 
     const drawText = useCallback(drawTextOverlay, [props.sliceNum, props.view]);
     const drawContours = useCallback(drawContour, [canvasRef])
-    const drawCT = useCallback(drawCanvas, [drawText, xOffset, yOffset, slicedContours, drawContours]);
+    const drawCT = useCallback(drawCanvas, [drawText, drawXOffset, drawYOffset, slicedContours, drawContours]);
     const imgData = useMemo(buildCTCanvas, [series, props.view, sliceNum, drawCT, canvasRef, maxHeight, maxWidth]);
     const [isHold, setIsHold] = useState(false);
 
@@ -67,12 +65,6 @@ function CTCanvas(props) {
             let data = imgData.data;
             // Fill image data object
             for (let i = 3, k = 0; i < data.byteLength; i += 4, k++) {
-                //convert 16-bit to 8-bit, because we cannot render a 16-bit value to the canvas.
-                // let result = ((array[k + 1] & 0xFF) << 8) | (array[k] & 0xFF);
-                // result = (result & 0xFFFF) >> 8;
-                // data[i] = 255 - result;
-
-                // data[i] = 255 - imgArray[k];
                 data[i - 3] = data[i - 2] = data[i - 1] = imgArray[k];
                 data[i] = 255;
             }
@@ -122,43 +114,17 @@ function CTCanvas(props) {
         return {};
     }
 
-    function getMaxSlices() {
-        if (series == null) return 1;
+    function getMax() {
+        if (series == null) return [1, 512, 512];
         switch (props.view.toUpperCase()) {
             case 'AXIAL':
-                return series.depth;
+                return [series.depth, series.width, series.height];
             case 'CORONAL':
-                return series.height;
+                return [series.height, series.width, series.depth];
             case 'SAGITTAL':
-                return series.width;
+                return [series.width, series.height, series.depth];
             default:
                 return 1;
-        }
-    }
-
-    function getMaxWidth() {
-        if (series == null) return 512;
-        switch (props.view.toUpperCase()) {
-            case 'AXIAL':
-                return series.width;
-            case 'CORONAL':
-            case 'SAGITTAL':
-                return series.width;
-            default:
-                return 512;
-        }
-    }
-
-    function getMaxHeight() {
-        if (series == null) return 512;
-        switch (props.view.toUpperCase()) {
-            case 'AXIAL':
-                return series.height;
-            case 'CORONAL':
-            case 'SAGITTAL':
-                return series.depth;
-            default:
-                return 512;
         }
     }
 
@@ -201,7 +167,7 @@ function CTCanvas(props) {
 
         canvasReset();
         const ctx = canvasRef.current.getContext('2d');
-        ctx.putImageData(data, xOffset, yOffset);
+        ctx.putImageData(data, drawXOffset, drawYOffset);
         drawContours(slicedContours)
         drawText();
     }
@@ -234,12 +200,27 @@ function CTCanvas(props) {
     }
 
     function drawTextOverlay() {
+
+        function getSpacing() {
+            if (series == null || series.pixelSpacing == null) return 1;
+            switch (props.view.toUpperCase()) {
+                case 'AXIAL':
+                    return 1;
+                case 'CORONAL':
+                    return series.pixelSpacing[1];
+                case 'SAGITTAL':
+                    return series.pixelSpacing[0];
+                default:
+                    return 1;
+            }
+        }
+
         const ctx = canvasRef.current.getContext('2d');
         ctx.font = '16px sans-serif';
         ctx.textAlign = "center";
         ctx.fillStyle = theme.palette.secondary.light;
         ctx.fillText(props.view.toUpperCase(), 256, 24);
-        ctx.fillText(`Slice Position: ${(props.sliceNum + minSlice)}mm`, series.width / 2, series.height - 12);
+        ctx.fillText(`Slice Position: ${(props.sliceNum * getSpacing() + minSlice).toFixed(4)}mm`, series.width / 2, series.height - 12);
     }
 
     function handleUserKeyPress(e) {
@@ -248,7 +229,7 @@ function CTCanvas(props) {
 
         if ((key === 'ARROWRIGHT' || key === 'ARROWUP')) {
             // Increments forward
-            props.handleSlice(equiv.z, props.sliceNum < maxSlices - 1 ? props.sliceNum + 1 : maxSlices - 1);
+            props.handleSlice(equiv.z, props.sliceNum < maxDepth - 1 ? props.sliceNum + 1 : maxDepth - 1);
         } else if ((key === 'ARROWLEFT' || key === 'ARROWDOWN')) {
             // Increments backward
             props.handleSlice(equiv.z, props.sliceNum > 0 ? props.sliceNum - 1 : 0);
@@ -263,7 +244,7 @@ function CTCanvas(props) {
             props.handleSlice(equiv.z, props.sliceNum > 0 ? props.sliceNum - 1 : 0);
         } else if (direction < 0) {
             // On scroll up
-            props.handleSlice(equiv.z, props.sliceNum < maxSlices - 1 ? props.sliceNum + 1 : maxSlices - 1);
+            props.handleSlice(equiv.z, props.sliceNum < maxDepth - 1 ? props.sliceNum + 1 : maxDepth - 1);
         }
     }
 
@@ -271,8 +252,8 @@ function CTCanvas(props) {
         if ((!isHold && !override) || series == null) return;
         let x = e.clientX - e.target.offsetLeft;
         let y = e.clientY - e.target.offsetTop;
-        props.handleSlice(equiv.x, x - xOffset);
-        props.handleSlice(equiv.y, y - yOffset);
+        props.handleSlice(equiv.x, x - drawXOffset);
+        props.handleSlice(equiv.y, y - drawYOffset);
         canvasReset();
         drawCT(imgData);
         drawCrosshairs(x, y);

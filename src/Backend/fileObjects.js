@@ -148,6 +148,7 @@ export class Series {
         this.height = ctArray[0].imageData.tags["00280010"].value[0];
         this.depth = (ctArray.length - 1) * this.thickness + 1;
         this.imageArray = buildInterpolatedArray(this.images, this.thickness);
+        this.pixelSpacing = this.images[0].pixelSpacing;
         this.minX = this.images[0].position[0];
         this.minY = this.images[0].position[1];
         this.minZ = this.images[0].position[2];

@@ -68,8 +68,8 @@ export function useDirectory() {
   const dispatch = useDispatch();
 
   function setAbsDir(newPath) {
-    const dirWorker = new Worker();
     if (newPath === absDir) return;
+    const dirWorker = new Worker();
     scanFiles(newPath, dirWorker).then(scanResult => {
       dirWorker.terminate();
       dispatch(handleNewFolder(newPath, scanResult))
