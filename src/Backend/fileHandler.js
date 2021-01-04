@@ -88,8 +88,12 @@ export async function readSeries(absDir, seriesWorker = null) {
     return wrappedSeries;
 }
 
-export async function scanFiles(absDir) {
-    const validationWorker = new Worker();
+export async function scanFiles(absDir, validationWorker = null) {
+    let ownWorker = false;
+    if (validationWorker == null) {
+        validationWorker = new Worker();
+        ownWorker = true;
+    }
 
     let res = {}
 
@@ -110,7 +114,7 @@ export async function scanFiles(absDir) {
     res.isValid = !!(seriesInfo.isValid && rsInfo.isValid && seriesInfo.studyUID === rsInfo.studyUID);
     console.log(res.isValid)
 
-    validationWorker.terminate();
+    if (ownWorker) validationWorker.terminate();
     return res;
 }
 

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useSelector, shallowEqual } from "react-redux";
 import { useDispatch } from "react-redux";
-import { readRS, readSeries } from './fileHandler';
-import { setFolderDirectory } from '../Redux/actions';
+import { readRS, readSeries, scanFiles } from './fileHandler';
+import { setFolderDirectory, handleNewFolder } from '../Redux/actions';
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import Worker from 'workerize-loader!./file.worker.js';
 
@@ -68,7 +68,11 @@ export function useDirectory() {
   const dispatch = useDispatch();
 
   function setAbsDir(newPath) {
-    dispatch(setFolderDirectory(newPath))
+    const dirWorker = new Worker();
+    scanFiles(absDir, dirWorker).then(scanResult => {
+      dirWorker.terminate();
+      dispatch(handleNewFolder(newPath, scanResult))
+    });
   }
 
   return [absDir, setAbsDir];

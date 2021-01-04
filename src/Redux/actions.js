@@ -23,3 +23,27 @@ export const setFolderStatus = (isValid) => {
         }
     }
 }
+
+export const setRSSummary = (rs) => {
+    return {
+        type: C.FILES.SET_RS_SUMMARY,
+        payload: rs ? rs : {}
+    }
+}
+
+export const setCTSummary = (ct) => {
+    return {
+        type: C.FILES.SET_CT_SUMMARY,
+        payload: ct ? ct : {}
+    }
+}
+
+export const handleNewFolder = (newDir, fileSummary) => (dispatch) => {
+
+    batch(() => {
+        dispatch(setFolderDirectory(newDir));
+        dispatch(setRSSummary(fileSummary.rsInfo));
+        dispatch(setCTSummary(fileSummary.seriesInfo));
+        dispatch(setFolderStatus(fileSummary.isValid));
+    })
+}

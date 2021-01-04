@@ -21,7 +21,7 @@ export function buildCT(fileArray) {
 }
 
 export function scanSeries(fileArray) {
-    return new BasicSeries(fileArray)
+    return new BasicSeries(fileArray);
 }
 
 export function scanRS(fileArray) {

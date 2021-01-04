@@ -212,6 +212,8 @@ export class BasicSeries {
         this.isValid = isSeries(this.ctInfo);
         this.studyUID = this.ctInfo[0].studyUID;
         this.patientName = this.ctInfo[0].patientName;
+        this.rows = this.ctInfo[0].rows;
+        this.cols = this.ctInfo[0].cols;
     }
 }
 

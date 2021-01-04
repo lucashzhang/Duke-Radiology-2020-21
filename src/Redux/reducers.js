@@ -12,6 +12,28 @@ export const folderDirectory = (state = '', action) => {
     }
 }
 
+export const ctSummary = (state = {}, action) => {
+    switch (action.type) {
+        case C.FILES.SET_CT_SUMMARY:
+            return action.payload
+        case C.FILES.CLEAR_CT_SUMMARY:
+            return {};
+        default:
+            return state;
+    }
+}
+
+export const rsSummary = (state = {}, action) => {
+    switch (action.type) {
+        case C.FILES.SET_RS_SUMMARY:
+            return action.payload
+        case C.FILES.CLEAR_RS_SUMMARY:
+            return {};
+        default:
+            return state;
+    }
+}
+
 export const folderStatus = (state = C['FILES'].FILE_STATUS_INIT, action) => {
     switch (action.type) {
         case C['FILES'].FILE_STATUS_INIT:
@@ -61,7 +83,9 @@ export const patientLast = (state = '', action) => {
 export default combineReducers({
     files: combineReducers({
         folderDirectory: folderDirectory,
-        folderStatus: folderStatus
+        folderStatus: folderStatus,
+        ctSummary: ctSummary,
+        rsSummary: rsSummary
     }),
     patient: combineReducers({
         patientFirst,
