@@ -103,7 +103,7 @@ function Dashboard() {
                     <Typography variant={'h1'}>CT Images</Typography>
                 </div>
                 <Paper className={classes.infoContainer}>
-                    <div><b>Patient Basic Info Placeholder</b> {}</div>
+                    <div><b>Basic CT Series Info Placeholder</b> {}</div>
                 </Paper>
                 <div className={classes.canvasContainer}>
                     <Paper className={classes.canvasView}>
