@@ -1,4 +1,5 @@
-// import daikon from 'daikon';
+import daikon from 'daikon';
+import sanitizeHtml from 'sanitize-html';
 import { Factory } from './wrapperObjects';
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import Worker from 'workerize-loader!./file.worker.js'
@@ -26,6 +27,41 @@ async function getFiles(absDir, fileType = "ALL") {
 
     let dirResults = await Promise.all(filePromises);
     return dirResults
+}
+
+export async function getFile(absDir, filename) {
+
+    let filePromise = new Promise((resolve, reject) => {
+        fs.readFile(`${absDir}/${filename}`, (err, content) => {
+            if (err) return reject(err);
+            return resolve({ filename, contents: content });
+        });
+    });
+
+    let fileContents = await filePromise;
+    return fileContents;
+}
+
+export async function getSummary(absDir, filename) {
+    if (filename.length === 0 || absDir.length === 0) return '';
+    const { contents } = await getFile(absDir, filename);
+
+    function toArrayBuffer(b) {
+        return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength);
+    }
+
+    daikon.Parser.verbose = false;
+    let imageData = daikon.Series.parseImage(new DataView(toArrayBuffer(contents)));
+    // const siemens = new daikon.Siemens(toArrayBuffer(contents));
+
+    let html = imageData.toString()
+    // const clean = sanitizeHtml(html, {
+    //     allowedTags: [],
+    //     allowedAttributes: {}
+    // });
+
+    // console.log(clean);
+    return html;
 }
 
 export async function readRS(absDir, rsWorker = null) {
@@ -103,14 +139,14 @@ export async function scanFiles(absDir, validationWorker = null) {
         seriesInfo = await validationWorker.scanSeries(rawCT);
         res.seriesInfo = seriesInfo;
     }
-    
+
     let rawRS = await getFiles(absDir, 'RS');
     let rsInfo = {};
     if (rawRS.length > 0) {
         rsInfo = await validationWorker.scanRS(rawRS);
         res.rsInfo = rsInfo;
     }
-    
+
     res.isValid = !!(seriesInfo.isValid && rsInfo.isValid && seriesInfo.studyUID === rsInfo.studyUID);
     console.log(res.isValid)
 

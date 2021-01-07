@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from '@material-ui/core/styles';
-import { Paper, Typography, FormControl, InputLabel, OutlinedInput, IconButton, List, ListItem, Accordion, AccordionDetails, AccordionSummary, CircularProgress } from '@material-ui/core';
+import parse from 'html-react-parser';
+import { Paper, Typography, FormControl, InputLabel, OutlinedInput, IconButton, List, ListItem, Accordion, AccordionDetails, AccordionSummary, Dialog } from '@material-ui/core';
 import { FaFolderOpen, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
-import { pickDirectoryPath } from '../../Backend/fileHandler';
+import { pickDirectoryPath, getSummary } from '../../Backend/fileHandler';
 import { useDirectory } from "../../Backend/fileHooks";
 import { useSelector, shallowEqual } from "react-redux";
 import C from '../../Redux/constants';
@@ -85,10 +86,27 @@ function StatusIcon(props) {
 
 }
 
+function SummaryDialog(props) {
+    const { open, onClose, dir, filename } = props;
+    const [summary, setSummary] = useState('');
+
+    useEffect(() => {
+        getSummary(dir, filename).then(res => {
+            setSummary(res);
+        })
+    }, [filename])
+
+
+    return <Dialog open={props.open} onClose={onClose}>
+        {parse(summary)}
+    </Dialog>
+}
+
 function Landing() {
     const classes = useStyles();
     const [absDir, setAbsDir] = useDirectory();
-    const [fileScan, setFileScan] = useState({});
+    const [open, setOpen] = useState(false);
+    const [dialogFile, setDialogFile] = useState('')
     const { folderStatus, ctSummary, rsSummary } = useSelector(state => state.files, shallowEqual);
 
     async function handleDirectoryClick(e) {
@@ -100,6 +118,20 @@ function Landing() {
         const newPath = newPathObj.filePaths[0];
         // checkFiles(newPath);
         setAbsDir(newPath);
+    }
+
+    function handleDialogOpen(filename) {
+        setOpen(true);
+        setDialogFile(filename ? filename : '');
+    }
+
+    function handleDialogClose() {
+        setOpen(false);
+        setDialogFile('');
+    }
+
+    function handleFileClick(filename) {
+        handleDialogOpen(filename);
     }
 
     // useEffect(() => checkFiles(absDir), [absDir])
@@ -129,7 +161,7 @@ function Landing() {
                         <AccordionDetails className={classes.fileDetails}>
                             <List className={classes.fileList}>
                                 {rsSummary.filename ? (
-                                    <ListItem key={rsSummary.filename} button>{rsSummary.filename}</ListItem>
+                                    <ListItem key={rsSummary.filename} button onClick={() => handleFileClick(rsSummary.filename)}>{rsSummary.filename}</ListItem>
                                 ) : <ListItem>No RS Files Selected</ListItem>}
                             </List>
                         </AccordionDetails>
@@ -155,6 +187,7 @@ function Landing() {
             <Paper className={classes.patient}>
                 <div><b>Patient Info Input Placeholder</b> { }</div>
             </Paper>
+            <SummaryDialog open={open} onClose={handleDialogClose} dir={absDir} filename={dialogFile}></SummaryDialog>
         </div>
     )
 }
