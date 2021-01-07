@@ -98,7 +98,6 @@ function SummaryDialog(props) {
 
 
     return <Dialog open={props.open} onClose={onClose}>
-        {parse(summary)}
     </Dialog>
 }
 
@@ -182,7 +181,7 @@ function Landing() {
                 </div>
             </Paper>
             <Paper className={classes.doctor}>
-                <div><b>Doctor Info Input Placeholder</b> { }</div>
+                <div><b>Doctor Info Input Placeholder</b></div>
             </Paper>
             <Paper className={classes.patient}>
                 <div><b>Patient Info Input Placeholder</b> { }</div>

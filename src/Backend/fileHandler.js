@@ -54,14 +54,34 @@ export async function getSummary(absDir, filename) {
     let imageData = daikon.Series.parseImage(new DataView(toArrayBuffer(contents)));
     // const siemens = new daikon.Siemens(toArrayBuffer(contents));
 
-    let html = imageData.toString()
-    // const clean = sanitizeHtml(html, {
-    //     allowedTags: [],
-    //     allowedAttributes: {}
-    // });
+    // let html = imageData.toString();
+    let str = "";
 
-    // console.log(clean);
-    return html;
+
+    let sorted_keys = Object.keys(imageData.tags).sort();
+
+    for (let i = 0; i < sorted_keys.length; i++) {
+        let key = sorted_keys[i];
+        if (imageData.tags.hasOwnProperty(key)) {
+            let tag = imageData.tags[key];
+            console.log(tag.toString())
+        }
+    }
+
+
+    console.log(str);
+    return '';
+}
+
+function readDICOM(tag) {
+    let { element, group } = tag;
+    let description = daikon.Dictionary.getDescription(group, element);
+    let value = tag.value;
+    if (tag.value && (tag.value[0].sublist === false || tag.value[0].sublist == null) && tag.value[0].group == null) {
+        return {description, value: value}
+    } else if (tag.value) {
+
+    }
 }
 
 export async function readRS(absDir, rsWorker = null) {
