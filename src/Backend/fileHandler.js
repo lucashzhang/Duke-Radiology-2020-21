@@ -102,7 +102,7 @@ function readTagString(tag, level = 0) {
         valueStr = 'The Pixel Data is too big to render here, please view it on the CT Images page';
     } else if (!tag.value) {
         valueStr = '';
-    } else if (tag.value.length > 10) {
+    } else if (tag.value.length > 15) {
         valueStr = 'Too Many Values to Display'
     } else if (tag.value.length === 1) {
         valueStr = tag.value[0];
@@ -124,7 +124,6 @@ function readTagString(tag, level = 0) {
 
 
     return `${padding} ${tagStr} ${des}: ${valueStr}`;
-    // return { tag: tagStr, description: des, value: valueList };
 }
 
 export async function readRS(absDir, rsWorker = null) {

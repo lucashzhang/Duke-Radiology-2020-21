@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from '@material-ui/core/styles';
-import { Paper, Typography, FormControl, InputLabel, OutlinedInput, IconButton, List, ListItem, Accordion, AccordionDetails, AccordionSummary, Dialog, DialogContent, DialogTitle } from '@material-ui/core';
+import { Paper, Typography, FormControl, InputLabel, OutlinedInput, IconButton, List, ListItem, Accordion, AccordionDetails, AccordionSummary, Dialog, DialogContent, DialogTitle, DialogActions, Button } from '@material-ui/core';
 import { FaFolderOpen, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import { pickDirectoryPath, getSummary } from '../../Backend/fileHandler';
 import { useDirectory } from "../../Backend/fileHooks";
@@ -103,6 +103,7 @@ function SummaryDialog(props) {
                 return <pre key={i}>{tag}</pre>
             })}
         </DialogContent>
+        <DialogActions><Button variant={"contained"} color={"primary"} onClick={onClose}>Close</Button></DialogActions>
     </Dialog>
 }
 

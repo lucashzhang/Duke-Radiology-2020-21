@@ -69,7 +69,7 @@ function StructMenu(props) {
 
                 </FormGroup>
             </FormControl> : <div className={classes.loading}>
-                    <CircularProgress color='secondary'></CircularProgress>
+                    <CircularProgress color='primary'></CircularProgress>
                 </div>}
         </div>
     );

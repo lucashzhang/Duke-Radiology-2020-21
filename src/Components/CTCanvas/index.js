@@ -188,7 +188,7 @@ function CTCanvas(props) {
 
     function drawCrosshairs(x, y) {
         const ctx = canvasRef.current.getContext('2d');
-        ctx.strokeStyle = theme.palette.secondary.light;
+        ctx.strokeStyle = theme.palette.primary.main;
         ctx.beginPath();
         ctx.moveTo(x, 0);
         ctx.lineTo(x, canvasRef.current.height);
@@ -218,7 +218,7 @@ function CTCanvas(props) {
         const ctx = canvasRef.current.getContext('2d');
         ctx.font = '16px sans-serif';
         ctx.textAlign = "center";
-        ctx.fillStyle = theme.palette.secondary.light;
+        ctx.fillStyle = theme.palette.primary.light;
         ctx.fillText(props.view.toUpperCase(), 256, 24);
         ctx.fillText(`Slice Position: ${(props.sliceNum * getSpacing() + minSlice).toFixed(4)}mm`, series.width / 2, series.height - 12);
     }
@@ -277,7 +277,7 @@ function CTCanvas(props) {
             >
             </canvas>
             {series == null || Object.keys(series).length === 0 || isLoading ? <div className={classes.loading}>
-                <CircularProgress color='secondary'></CircularProgress>
+                <CircularProgress color='primary'></CircularProgress>
             </div> : null}
         </div>
     );

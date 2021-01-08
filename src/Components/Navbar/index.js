@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
         },
     },
     viewing: {
-        color: theme.palette.secondary.main,
+        color: theme.palette.primary.main,
     },
     menu: {
         color: theme.palette.primary.main,
