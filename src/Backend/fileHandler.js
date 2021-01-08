@@ -94,7 +94,7 @@ function readTagString(tag, level = 0) {
 
     if (tag.sublist) {
         for (ctr = 0; ctr < tag.value.length; ctr += 1) {
-            valueStr += ('\n' + (readTagString(tag.value[ctr], level + 1)));
+            valueStr += ('\n\n' + (readTagString(tag.value[ctr], level + 1)));
         }
     } else if (tag.vr === 'SQ') {
         valueStr = '';
