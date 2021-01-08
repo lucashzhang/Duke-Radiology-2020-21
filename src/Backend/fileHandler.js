@@ -1,5 +1,4 @@
 import daikon from 'daikon';
-import sanitizeHtml from 'sanitize-html';
 import { Factory } from './wrapperObjects';
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import Worker from 'workerize-loader!./file.worker.js'
@@ -59,29 +58,80 @@ export async function getSummary(absDir, filename) {
 
 
     let sorted_keys = Object.keys(imageData.tags).sort();
+    let tagList = [];
 
     for (let i = 0; i < sorted_keys.length; i++) {
         let key = sorted_keys[i];
         if (imageData.tags.hasOwnProperty(key)) {
             let tag = imageData.tags[key];
-            console.log(tag.toString())
+            tagList.push(readTagString(tag))
         }
     }
 
 
-    console.log(str);
+    console.log(tagList);
     return '';
 }
 
-function readDICOM(tag) {
-    let { element, group } = tag;
-    let description = daikon.Dictionary.getDescription(group, element);
-    let value = tag.value;
-    if (tag.value && (tag.value[0].sublist === false || tag.value[0].sublist == null) && tag.value[0].group == null) {
-        return {description, value: value}
-    } else if (tag.value) {
+function readTagString(tag, level = 0) {
 
+    function getTagStr(tag) {
+        let groupStr = daikon.Utils.dec2hex(tag.group),
+            elemStr = daikon.Utils.dec2hex(tag.element),
+            tagStr = groupStr + elemStr;
+        return tagStr;
     }
+    // let valueStr = '',
+    let ctr,
+        des = '',
+        padding,
+        tagStr = getTagStr(tag);
+
+    let valueList = []
+
+    padding = "";
+    for (ctr = 0; ctr < level; ctr += 1) {
+        padding += "  ";
+    }
+
+    if (tag.sublist) {
+        for (ctr = 0; ctr < tag.value.length; ctr += 1) {
+            // valueStr += ('\n' + (readTagString(tag.value[ctr], level + 1)));
+            valueList.push(readTagString(tag.value[ctr], level + 1));
+        }
+    } else if (tag.vr === 'SQ') {
+        // valueStr = '';
+        valueList = [];
+    } else if (tag.isPixelData()) {
+        // valueStr = '';
+        valueList = [];
+    } else if (!tag.value) {
+        // valueStr = '';
+        valueList = [];
+    } else if (tag.value.length > 30) {
+        valueList = 'Too Many Values to Display'
+    } else if (tag.value.length === 1) {
+        // valueStr = tag.value;
+        valueList = tag.value[0];
+    } else {
+        valueList = tag.value
+    }
+
+    if (tag.isSublistItem()) {
+        tagStr = "Sequence Item";
+    } else if (tag.isSublistItemDelim()) {
+        tagStr = "Sequence Item Delimiter";
+    } else if (tag.isSequenceDelim()) {
+        tagStr = "Sequence Delimiter";
+    } else if (tag.isPixelData()) {
+        tagStr = "Pixel Data";
+    } else {
+        des = daikon.Utils.convertCamcelCaseToTitleCase(daikon.Dictionary.getDescription(tag.group, tag.element));
+    }
+
+
+    // return padding + ' ' + tagStr + ' ' + des + ' ' + valueList;
+    return { tag: tagStr, description: des, value: valueList };
 }
 
 export async function readRS(absDir, rsWorker = null) {

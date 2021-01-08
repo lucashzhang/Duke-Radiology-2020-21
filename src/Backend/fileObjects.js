@@ -1,6 +1,5 @@
 import * as dicomParser from 'dicom-parser';
 import * as daikon from 'daikon';
-import { TAG_DICT } from './dicomDict';
 // import greenlet from 'greenlet';
 
 class DCM {
