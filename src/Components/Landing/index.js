@@ -96,7 +96,7 @@ function SummaryDialog(props) {
     }, [filename])
 
 
-    return <Dialog open={open} onClose={onClose} maxWidth={'xl'}>
+    return <Dialog open={open} onClose={onClose} maxWidth={'xl'} scroll={'paper'}>
         <DialogTitle>{filename}</DialogTitle>
         <DialogContent>
             {summary.map((tag, i) => {
@@ -126,8 +126,8 @@ function Landing() {
     }
 
     function handleDialogOpen(filename) {
-        setOpen(true);
         setDialogFile(filename ? filename : '');
+        setOpen(true);
     }
 
     function handleDialogClose() {
