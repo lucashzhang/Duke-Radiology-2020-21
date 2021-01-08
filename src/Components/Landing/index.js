@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import parse from 'html-react-parser';
-import { Paper, Typography, FormControl, InputLabel, OutlinedInput, IconButton, List, ListItem, Accordion, AccordionDetails, AccordionSummary, Dialog } from '@material-ui/core';
+import { Paper, Typography, FormControl, InputLabel, OutlinedInput, IconButton, List, ListItem, Accordion, AccordionDetails, AccordionSummary, Dialog, DialogContent } from '@material-ui/core';
 import { FaFolderOpen, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import { pickDirectoryPath, getSummary } from '../../Backend/fileHandler';
 import { useDirectory } from "../../Backend/fileHooks";
@@ -88,16 +88,22 @@ function StatusIcon(props) {
 
 function SummaryDialog(props) {
     const { open, onClose, dir, filename } = props;
-    const [summary, setSummary] = useState('');
+    const [summary, setSummary] = useState([]);
 
     useEffect(() => {
         getSummary(dir, filename).then(res => {
+            console.log(res)
             setSummary(res);
         })
     }, [filename])
 
 
-    return <Dialog open={props.open} onClose={onClose}>
+    return <Dialog open={open} onClose={onClose}>
+        <DialogContent>
+            {summary.map(tag => {
+                return <pre>{tag}</pre>
+            })}
+        </DialogContent>
     </Dialog>
 }
 

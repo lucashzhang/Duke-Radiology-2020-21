@@ -42,7 +42,7 @@ export async function getFile(absDir, filename) {
 }
 
 export async function getSummary(absDir, filename) {
-    if (filename.length === 0 || absDir.length === 0) return '';
+    if (filename.length === 0 || absDir.length === 0) return [];
     const { contents } = await getFile(absDir, filename);
 
     function toArrayBuffer(b) {
@@ -70,7 +70,7 @@ export async function getSummary(absDir, filename) {
 
 
     console.log(tagList);
-    return '';
+    return tagList;
 }
 
 function readTagString(tag, level = 0) {
@@ -88,6 +88,7 @@ function readTagString(tag, level = 0) {
         tagStr = getTagStr(tag);
 
     let valueList = []
+    let valueStr = "";
 
     padding = "";
     for (ctr = 0; ctr < level; ctr += 1) {
@@ -96,24 +97,26 @@ function readTagString(tag, level = 0) {
 
     if (tag.sublist) {
         for (ctr = 0; ctr < tag.value.length; ctr += 1) {
-            // valueStr += ('\n' + (readTagString(tag.value[ctr], level + 1)));
+            valueStr += ('\n' + (readTagString(tag.value[ctr], level + 1)));
             valueList.push(readTagString(tag.value[ctr], level + 1));
         }
     } else if (tag.vr === 'SQ') {
-        // valueStr = '';
+        valueStr = '';
         valueList = [];
     } else if (tag.isPixelData()) {
-        // valueStr = '';
+        valueStr = '';
         valueList = [];
     } else if (!tag.value) {
-        // valueStr = '';
+        valueStr = '';
         valueList = [];
     } else if (tag.value.length > 30) {
+        valueStr = 'Too Many Values to Display'
         valueList = 'Too Many Values to Display'
     } else if (tag.value.length === 1) {
-        // valueStr = tag.value;
+        valueStr = tag.value[0];
         valueList = tag.value[0];
     } else {
+        valueStr = tag.value
         valueList = tag.value
     }
 
@@ -130,8 +133,8 @@ function readTagString(tag, level = 0) {
     }
 
 
-    // return padding + ' ' + tagStr + ' ' + des + ' ' + valueList;
-    return { tag: tagStr, description: des, value: valueList };
+    return padding + ' ' + tagStr + ' ' + des + ' ' + valueStr;
+    // return { tag: tagStr, description: des, value: valueList };
 }
 
 export async function readRS(absDir, rsWorker = null) {
