@@ -68,8 +68,6 @@ export async function getSummary(absDir, filename) {
         }
     }
 
-
-    console.log(tagList);
     return tagList;
 }
 
@@ -78,7 +76,7 @@ function readTagString(tag, level = 0) {
     function getTagStr(tag) {
         let groupStr = daikon.Utils.dec2hex(tag.group),
             elemStr = daikon.Utils.dec2hex(tag.element),
-            tagStr = groupStr + elemStr;
+            tagStr = `(${groupStr},${elemStr})`;
         return tagStr;
     }
     // let valueStr = '',
@@ -87,7 +85,6 @@ function readTagString(tag, level = 0) {
         padding,
         tagStr = getTagStr(tag);
 
-    let valueList = []
     let valueStr = "";
 
     padding = "";
@@ -98,26 +95,19 @@ function readTagString(tag, level = 0) {
     if (tag.sublist) {
         for (ctr = 0; ctr < tag.value.length; ctr += 1) {
             valueStr += ('\n' + (readTagString(tag.value[ctr], level + 1)));
-            valueList.push(readTagString(tag.value[ctr], level + 1));
         }
     } else if (tag.vr === 'SQ') {
         valueStr = '';
-        valueList = [];
     } else if (tag.isPixelData()) {
-        valueStr = '';
-        valueList = [];
+        valueStr = 'The Pixel Data is too big to render here, please view it on the CT Images page';
     } else if (!tag.value) {
         valueStr = '';
-        valueList = [];
-    } else if (tag.value.length > 30) {
+    } else if (tag.value.length > 10) {
         valueStr = 'Too Many Values to Display'
-        valueList = 'Too Many Values to Display'
     } else if (tag.value.length === 1) {
         valueStr = tag.value[0];
-        valueList = tag.value[0];
     } else {
-        valueStr = tag.value
-        valueList = tag.value
+        valueStr = '[' + tag.value + ']';
     }
 
     if (tag.isSublistItem()) {
@@ -133,7 +123,7 @@ function readTagString(tag, level = 0) {
     }
 
 
-    return padding + ' ' + tagStr + ' ' + des + ' ' + valueStr;
+    return `${padding} ${tagStr} ${des}: ${valueStr}`;
     // return { tag: tagStr, description: des, value: valueList };
 }
 
