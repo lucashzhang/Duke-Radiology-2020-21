@@ -62,18 +62,6 @@ function WebsiteDrawer(props) {
                                 })}><FaImages /></ListItemIcon></Tooltip>
                             <ListItemText primary='Images' />
                         </ListItem>
-                        {/* <ListItem button component={Link} to='/about'>
-                            <Tooltip title='About Me'><ListItemIcon><FaUser /></ListItemIcon></Tooltip>
-                            <ListItemText primary='About Me' />
-                        </ListItem>
-                        <ListItem button component={Link} to='/programming'>
-                            <Tooltip title='My Projects'><ListItemIcon><FaCode /></ListItemIcon></Tooltip>
-                            <ListItemText primary='My Projects' />
-                        </ListItem>
-                        <ListItem button component={Link} to='/contact'>
-                            <Tooltip title='Contact Me'><ListItemIcon><FaAddressBook /></ListItemIcon></Tooltip>
-                            <ListItemText primary='Contact Me' />
-                        </ListItem> */}
                     </List>
                 </Drawer>
             </ThemeProvider>
