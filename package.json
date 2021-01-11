@@ -25,7 +25,6 @@
     "daikon": "^1.2.42",
     "dicom-parser": "^1.8.7",
     "electron-is-dev": "^1.2.0",
-    "html-react-parser": "^1.1.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-icons": "^4.1.0",
@@ -34,7 +33,6 @@
     "react-scripts": "4.0.1",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
-    "sanitize-html": "^2.3.0",
     "web-vitals": "^1.0.1"
   },
   "scripts": {
