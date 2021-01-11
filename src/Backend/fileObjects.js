@@ -199,8 +199,10 @@ export class BasicSeries {
             if (!isValid) return isValid;
 
             let sortedCT = ctInfo.sort((a, b) => a.position[2] - b.position[2]);
+            const positionError = 1.0001
             for (let i = 1; i < sortedCT.length; i++) {
-                if (Math.abs(sortedCT[i].position[2] - sortedCT[i-1].position[2]) !== first.thickness) {
+                if (Math.abs(sortedCT[i].position[2] - sortedCT[i-1].position[2]) > first.thickness * positionError) {
+                    console.log(`Missing slice between ${sortedCT[i].filename} & ${sortedCT[i-1].filename}`)
                     return false
                 }
             }

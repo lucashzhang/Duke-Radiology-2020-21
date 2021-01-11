@@ -171,10 +171,6 @@ export async function readSeries(absDir, seriesWorker = null) {
     let ctImages = await readCT(absDir, seriesWorker);
     let builtSeries = await seriesWorker.buildSeries(ctImages);
     let wrappedSeries = Factory.createWrapper(builtSeries, 'SERIES');
-    if (!wrappedSeries.isSeries()) {
-        alert("Please check that your CT images are all from the same series");
-        return {};
-    }
 
     if (ownWorker) seriesWorker.terminate();
     return wrappedSeries;
