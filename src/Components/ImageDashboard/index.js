@@ -63,7 +63,6 @@ function Dashboard() {
     const [sliceZ, setSliceZ] = useState(0);
     const [selected, setSelected] = useState([]);
     const isLoading = Object.keys(rs).length === 0 || Object.keys(series).length === 0;
-    const { ctSummary, rsSummary } = useSelector(state => state.files, shallowEqual);
 
     function initMiddle() {
         if (series == null || Object.keys(series).length === 0) return;

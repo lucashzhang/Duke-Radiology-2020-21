@@ -51,11 +51,6 @@ export async function getSummary(absDir, filename) {
 
     daikon.Parser.verbose = false;
     let imageData = daikon.Series.parseImage(new DataView(toArrayBuffer(contents)));
-    // const siemens = new daikon.Siemens(toArrayBuffer(contents));
-
-    // let html = imageData.toString();
-    let str = "";
-
 
     let sorted_keys = Object.keys(imageData.tags).sort();
     let tagList = [];
@@ -79,7 +74,6 @@ function readTagString(tag, level = 0) {
             tagStr = `(${groupStr},${elemStr})`;
         return tagStr;
     }
-    // let valueStr = '',
     let ctr,
         des = '',
         padding,
@@ -103,7 +97,7 @@ function readTagString(tag, level = 0) {
     } else if (!tag.value) {
         valueStr = '';
     } else if (tag.value.length > 15) {
-        valueStr = 'Too Many Values to Display'
+        valueStr = 'Too Many Values to Display';
     } else if (tag.value.length === 1) {
         valueStr = tag.value[0];
     } else {
