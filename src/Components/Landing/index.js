@@ -110,8 +110,8 @@ function SummaryDialog(props) {
 function Landing() {
     const classes = useStyles();
     const [absDir, setAbsDir] = useDirectory();
-    const [open, setOpen] = useState(false);
-    const [dialogFile, setDialogFile] = useState('')
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [dialogFile, setDialogFile] = useState('');
     const { folderStatus, ctSummary, rsSummary } = useSelector(state => state.files, shallowEqual);
 
     async function handleDirectoryClick(e) {
@@ -127,11 +127,11 @@ function Landing() {
 
     function handleDialogOpen(filename) {
         setDialogFile(filename ? filename : '');
-        setOpen(true);
+        setDialogOpen(true);
     }
 
     function handleDialogClose() {
-        setOpen(false);
+        setDialogOpen(false);
         setDialogFile('');
     }
 
@@ -190,9 +190,9 @@ function Landing() {
                 <div><b>Doctor Info Input Placeholder</b></div>
             </Paper>
             <Paper className={classes.patient}>
-                <div><b>Patient Info Input Placeholder</b> { }</div>
+                <div><b>Patient Info Input Placeholder</b></div>
             </Paper>
-            <SummaryDialog open={open} onClose={handleDialogClose} dir={absDir} filename={dialogFile}></SummaryDialog>
+            {open ? <SummaryDialog open={dialogOpen} onClose={handleDialogClose} dir={absDir} filename={dialogFile}></SummaryDialog> : null}
         </div>
     )
 }
