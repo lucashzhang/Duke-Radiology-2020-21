@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: theme.palette.surfacePrimary.main,
         color: theme.palette.surfacePrimary.contrastText,
         overflow: 'auto',
-        borderRight: 'solid',
+        // borderRight: 'solid',
         padding: '1rem'
     },
     loading: {

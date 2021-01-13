@@ -9,7 +9,8 @@ const useStyles = makeStyles(() => ({
         gridTemplateColumns: '1fr',
         gridTemplateRows: '1fr',
         width: '512px',
-        height: '512px'
+        height: '512px',
+        backgroundColor: 'black',
     },
     canvas: {
         cursor: 'pointer',
@@ -188,7 +189,7 @@ function CTCanvas(props) {
 
     function drawCrosshairs(x, y) {
         const ctx = canvasRef.current.getContext('2d');
-        ctx.strokeStyle = theme.palette.primary.main;
+        ctx.strokeStyle = theme.palette.primary.light;
         ctx.beginPath();
         ctx.moveTo(x, 0);
         ctx.lineTo(x, canvasRef.current.height);
