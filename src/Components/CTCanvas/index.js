@@ -52,11 +52,11 @@ function CTCanvas(props) {
     function getCoordEquiv() {
         switch (props.view.toUpperCase()) {
             case 'AXIAL':
-                return { x: 'X', y: 'Y', z: 'Z' }
+                return { x: 'x', y: 'y', z: 'z' }
             case 'CORONAL':
-                return { x: 'X', y: 'Z', z: 'Y' }
+                return { x: 'x', y: 'z', z: 'y' }
             case 'SAGITTAL':
-                return { x: 'Y', y: 'Z', z: 'X' }
+                return { x: 'y', y: 'z', z: 'x' }
             default:
                 return { x: '', y: '', z: '' }
         }

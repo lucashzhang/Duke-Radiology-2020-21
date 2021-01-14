@@ -61,6 +61,7 @@ function Dashboard() {
     const [sliceX, setSliceX] = useState(0);
     const [sliceY, setSliceY] = useState(0);
     const [sliceZ, setSliceZ] = useState(0);
+    const [sliceCoord, setSliceCoord] = useState({ x: 0, y: 0, z: 0 });
     const [selected, setSelected] = useState([]);
     const isLoading = Object.keys(rs).length === 0 || Object.keys(series).length === 0;
 
@@ -73,13 +74,13 @@ function Dashboard() {
 
     function handleSlice(plane, value) {
         switch (plane) {
-            case 'X':
+            case 'x':
                 setSliceX(value);
                 break;
-            case 'Y':
+            case 'y':
                 setSliceY(value);
                 break;
-            case 'Z':
+            case 'z':
                 setSliceZ(value);
                 break;
             default:
