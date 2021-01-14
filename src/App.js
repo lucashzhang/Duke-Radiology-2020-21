@@ -12,7 +12,6 @@ import Navbar from './Components/Navbar';
 import Landing from './Components/Landing';
 
 import theme from './Utilities/theme';
-import { useDirectory } from './Backend/fileHooks';
 
 const useStyles = makeStyles((theme) => ({
   windowContainer: {
@@ -23,7 +22,6 @@ const useStyles = makeStyles((theme) => ({
 function App() {
 
   const classes = useStyles();
-  const [absDir, setAbsDir] = useDirectory();
 
   return (
     <ThemeProvider theme={theme}>

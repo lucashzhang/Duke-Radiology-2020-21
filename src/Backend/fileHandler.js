@@ -132,7 +132,6 @@ export async function readRS(absDir, rsWorker = null) {
     let firstCT = ctImages[0];
     let rawRS = await getFiles(absDir, 'RS');
     if (rawRS.length <= 0) {
-        alert("Please make sure to include an RS File directory");
         return {};
     }
     let builtRS = await rsWorker.buildRS(rawRS, firstCT);
@@ -140,6 +139,27 @@ export async function readRS(absDir, rsWorker = null) {
 
     if (ownWorker) rsWorker.terminate();
     return wrappedRS;
+}
+
+export async function readRD(absDir, rdWorker = null) {
+
+    let ownWorker = false;
+    if (rdWorker == null) {
+        rdWorker = new Worker();
+        ownWorker = true;
+    }
+
+    let ctImages = await readCT(absDir, rdWorker);
+    let firstCT = ctImages[0];
+    let rawRD = await getFiles(absDir, 'RD');
+    if (rawRD.length <= 0) {
+        return {};
+    }
+    let builtRD = await rdWorker.buildRD(rawRD, firstCT);
+    let wrappedRD = Factory.createWrapper(builtRD[0], 'RD');
+
+    if (ownWorker) rdWorker.terminate();
+    return wrappedRD;
 }
 
 export async function readCT(absDir, ctWorker = null) {

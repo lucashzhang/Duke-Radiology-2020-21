@@ -97,13 +97,58 @@ export class CT extends DCM {
 
     constructor(filename, buffer) {
 
-        super(filename, buffer)
+        super(filename, buffer);
         this.thickness = this.imageData.getSliceThickness();
         this.rows = this.imageData.getRows();
         this.cols = this.imageData.getCols();
         this.position = this.imageData.getImagePosition();
         this.interpretedData = this.imageData.getInterpretedData();
         this.pixelSpacing = this.imageData.getPixelSpacing();
+    }
+}
+
+export class RD extends DCM {
+
+    constructor(filename, buffer, ct) {
+        super(filename, buffer);
+
+        const unFoldPixelData = () => {
+            let pixelData = this.imageData.getPixelData().value.buffer;
+            switch (this.imageData.getBitsAllocated()) {
+                case 8:
+                    pixelData = new Uint8Array(pixelData)
+                    break;
+                case 16: 
+                    pixelData = new Uint16Array(pixelData)
+                    break;
+                case 32:
+                    pixelData = new Uint32Array(pixelData)
+                    break;
+                default:
+                    break;
+            }
+            let scaledArray = [];
+            const doseGridScaling = this.imageData.tags["3004000E"].value[0];
+            for (let i = 0; i < pixelData.length; i++) {
+                scaledArray.push(pixelData[i] * doseGridScaling);
+            }
+            let pixelDataArray = [];
+            const arrayLength = this.imageData.getRows() * this.imageData.getCols();
+            for (let i = 0, j = arrayLength; j <= pixelData.length; i += arrayLength, j += arrayLength) {
+                pixelDataArray.push(scaledArray.slice(i,j))
+            }
+
+            return pixelDataArray
+        }
+
+        this.rows = this.imageData.getRows();
+        this.cols = this.imageData.getCols();
+        this.numFrames = this.imageData.getNumberOfFrames();
+        this.position = this.imageData.getImagePosition();
+        this.pixelSpacing = this.imageData.getPixelSpacing();
+        this.doseGridScaling = this.imageData.tags["3004000E"].value[0];
+        this.doseUnits = this.imageData.tags["30040002"].value[0];
+        this.pixelArray = unFoldPixelData();
     }
 }
 

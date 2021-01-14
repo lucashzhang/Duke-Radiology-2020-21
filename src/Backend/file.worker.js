@@ -1,4 +1,4 @@
-import { CT, RS, Series, BasicSeries, BasicRS, BasicRD } from './fileObjects';
+import { CT, RS, Series, RD, BasicSeries, BasicRS, BasicRD } from './fileObjects';
 
 export function buildSeries(ctArray) {
     return new Series(ctArray);
@@ -10,6 +10,14 @@ export function buildRS(fileArray, ct) {
         newRS.push(new RS(file.filename, file.contents, ct));
     }
     return newRS;
+}
+
+export function buildRD(fileArray, ct) {
+    let newRD = [];
+    for (let file of fileArray) {
+        newRD.push(new RD(file.filename, file.contents, ct))
+    }
+    return newRD;
 }
 
 export function buildCT(fileArray) {

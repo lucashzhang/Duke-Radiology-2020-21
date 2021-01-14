@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useSelector, shallowEqual } from "react-redux";
 import { useDispatch } from "react-redux";
-import { readRS, readSeries, scanFiles } from './fileHandler';
-import { setFolderDirectory, handleNewFolder } from '../Redux/actions';
+import { readRS, readSeries, readRD, scanFiles } from './fileHandler';
+import { handleNewFolder } from '../Redux/actions';
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import Worker from 'workerize-loader!./file.worker.js';
 
@@ -53,6 +53,7 @@ export function useRS() {
     const rsWorker = new Worker();
     readRS(absDir, rsWorker).then(newRS => {
       if (newRS !== {} && newRS != null) setRS(newRS);
+      console.log(newRS)
       rsWorker.terminate();
     });
 
@@ -61,6 +62,27 @@ export function useRS() {
     }
   }, [absDir]);
   return rs;
+}
+
+export function useRD() {
+  const absDir = useSelector(state => state.files.folderDirectory, shallowEqual);
+  const [rd, setRD] = useState({});
+
+  useEffect(() => {
+    if (absDir == null || absDir === '') return;
+    setRD({});
+    const rdWorker = new Worker();
+    readRD(absDir, rdWorker).then(newRD => {
+      if (newRD !== {} && newRD != null) setRD(newRD);
+      console.log(newRD);
+      rdWorker.terminate();
+    });
+
+    return function cleanup() {
+      rdWorker.terminate();
+    }
+  }, [absDir]);
+  return rd;
 }
 
 export function useDirectory() {

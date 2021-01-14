@@ -3,7 +3,7 @@ import StructMenu from '../Drawer';
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper, Typography } from '@material-ui/core';
 import CTCanvas from '../CTCanvas';
-import { useSeries, useRS } from '../../Backend/fileHooks';
+import { useSeries, useRS, useRD } from '../../Backend/fileHooks';
 
 const useStyles = makeStyles((theme) => ({
     frame: {
@@ -57,11 +57,12 @@ function Dashboard() {
 
     const series = useSeries();
     const rs = useRS();
+    const rd = useRD();
 
     const [sliceX, setSliceX] = useState(0);
     const [sliceY, setSliceY] = useState(0);
     const [sliceZ, setSliceZ] = useState(0);
-    const [sliceCoord, setSliceCoord] = useState({ x: 0, y: 0, z: 0 });
+    // const [sliceCoord, setSliceCoord] = useState({ x: 0, y: 0, z: 0 });
     const [selected, setSelected] = useState([]);
     const isLoading = Object.keys(rs).length === 0 || Object.keys(series).length === 0;
 
