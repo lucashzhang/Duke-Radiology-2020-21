@@ -2,12 +2,12 @@ import React, { useState, useRef, useMemo, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import theme from '../../Utilities/theme';
 import { CircularProgress } from '@material-ui/core';
+import CTLayer from './CTLayer';
+import OverlayLayer from './OverlayLayer';
 
 const useStyles = makeStyles(() => ({
     canvasContainer: {
-        display: 'grid',
-        gridTemplateColumns: '1fr',
-        gridTemplateRows: '1fr',
+        position: 'relative',
         width: '512px',
         height: '512px',
         backgroundColor: 'black',
@@ -16,6 +16,8 @@ const useStyles = makeStyles(() => ({
         cursor: 'pointer',
         gridColumn: '1',
         gridRow: '1',
+        zIndex: '100',
+        position: 'absolute'
     },
     loading: {
         gridColumn: '1',
@@ -37,100 +39,17 @@ function CTCanvas(props) {
     const canvasRef = useRef(null);
     const sliceNum = props.sliceNum;
     const series = props.series;
-    const [maxDepth, maxWidth, maxHeight] = getMax();
     const minSlice = getMinSlice();
-    const drawXOffset = Math.floor((series.width - maxWidth) / 2);
-    const drawYOffset = Math.floor((series.height - maxHeight) / 2);
+    const view = props.view;
+    const [maxDepth, maxWidth, maxHeight] = getMax();
+    const [isHold, setIsHold] = useState(false);
     const equiv = getCoordEquiv();
 
-    const rs = props.rs;
-    const contours = useMemo(getSelectedContours, [rs, props.selected, sliceNum]);
-    const slicedContours = useMemo(createContourPoints, [rs, contours, sliceNum, series, props.view]);
-
     const drawText = useCallback(drawTextOverlay, [props.sliceNum, props.view]);
-    const drawContours = useCallback(drawContour, [canvasRef])
-    const drawCT = useCallback(drawCanvas, [drawText, drawXOffset, drawYOffset, slicedContours, drawContours]);
-    const imgData = useMemo(buildCTCanvas, [series, props.view, sliceNum, drawCT, canvasRef, maxHeight, maxWidth]);
-    const [isHold, setIsHold] = useState(false);
 
     const isLoading = props.loading != null ? props.loading : false;
 
-
-    function buildCTCanvas() {
-
-        function createImageData(imgArray) {
-            if (imgArray == null) return null;
-            const ctx = canvasRef.current.getContext('2d');
-            // Create new image data object
-            let imgData = ctx.createImageData(maxWidth, maxHeight);
-            let data = imgData.data;
-            // Fill image data object
-            for (let i = 3, k = 0; i < data.byteLength; i += 4, k++) {
-                data[i - 3] = data[i - 2] = data[i - 1] = imgArray[k];
-                data[i] = 255;
-            }
-            // setImgData(imgData)
-            drawCT(imgData);
-            return imgData;
-        }
-        if (canvasRef.current == null || series == null || series.getAxialSlice == null) return;
-        // const ctSeries = new CTSeries(series);
-        let imgData = null;
-        canvasRef.current.width = series.width;
-        canvasRef.current.height = series.height;
-        switch (props.view.toUpperCase()) {
-            case 'AXIAL':
-                imgData = createImageData(series.getAxialSlice(sliceNum));
-                break;
-            case 'CORONAL':
-                imgData = createImageData(series.getCoronalSlice(sliceNum));
-                break;
-            case 'SAGITTAL':
-                imgData = createImageData(series.getSagittalSlice(sliceNum));
-                break;
-            default:
-                imgData = null;
-        }
-        return imgData;
-
-    }
-
-    function getSelectedContours() {
-        if (rs.getSpecificContours == null && (true || sliceNum >= 0)) return null;
-        return rs.getSpecificContours(props.selected);
-    }
-
-    function createContourPoints() {
-        if (rs.getContourAtZ == null) return null;
-        switch (props.view.toUpperCase()) {
-            case 'AXIAL':
-                return rs.getContourAtZ(contours, Math.floor(sliceNum / series.thickness) * series.thickness + minSlice);
-            case 'CORONAL':
-                break;
-            case 'SAGITTAL':
-                break;
-            default:
-                break;
-        }
-        return {};
-    }
-
-    function getMax() {
-        if (series == null) return [1, 512, 512];
-        switch (props.view.toUpperCase()) {
-            case 'AXIAL':
-                return [series.depth, series.width, series.height];
-            case 'CORONAL':
-                return [series.height, series.width, series.depth];
-            case 'SAGITTAL':
-                return [series.width, series.height, series.depth];
-            default:
-                return 1;
-        }
-    }
-
     function getCoordEquiv() {
-        if (series == null) return;
         switch (props.view.toUpperCase()) {
             case 'AXIAL':
                 return { x: 'X', y: 'Y', z: 'Z' }
@@ -153,37 +72,35 @@ function CTCanvas(props) {
             case 'SAGITTAL':
                 return series.minX
             default:
-                return { x: '', y: '', z: '' }
+                return 1
         }
     }
 
-    function canvasReset() {
-        const ctx = canvasRef.current.getContext('2d');
-        ctx.fillStyle = "#000000";
-        ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    function getMax() {
+        if (series == null) return [1, 512, 512];
+        switch (view.toUpperCase()) {
+            case 'AXIAL':
+                return [series.depth, series.width, series.height];
+            case 'CORONAL':
+                return [series.height, series.width, series.depth];
+            case 'SAGITTAL':
+                return [series.width, series.height, series.depth];
+            default:
+                return 1;
+        }
     }
 
-    function drawCanvas(data = null) {
-        if (data == null) return;
-
-        canvasReset();
-        const ctx = canvasRef.current.getContext('2d');
-        ctx.putImageData(data, drawXOffset, drawYOffset);
-        drawContours(slicedContours)
-        drawText();
-    }
-
-    function drawContour(contourData = null) {
-        if (contourData == null || Object.keys(contourData).length === 0) return;
-        const ctx = canvasRef.current.getContext('2d');
-        for (let roi in contourData) {
-            const color = contourData[roi].displayColor
-            ctx.fillStyle = `rgb(${color[0]},${color[1]},${color[2]})`;
-            for (let sequence of contourData[roi].sequences) {
-                for (let point of sequence.contours) {
-                    ctx.fillRect(point[0] - 0.25, point[1] - 0.25, 2, 2);
-                }
-            }
+    function getSpacing() {
+        if (series == null || series.pixelSpacing == null) return 1;
+        switch (props.view.toUpperCase()) {
+            case 'AXIAL':
+                return 1;
+            case 'CORONAL':
+                return series.pixelSpacing[1];
+            case 'SAGITTAL':
+                return series.pixelSpacing[0];
+            default:
+                return 1;
         }
     }
 
@@ -250,13 +167,17 @@ function CTCanvas(props) {
     }
 
     function handleCrosshair(e, override = false) {
+        
         if ((!isHold && !override) || series == null) return;
-        let x = e.clientX - e.target.offsetLeft;
-        let y = e.clientY - e.target.offsetTop;
+        const ctx = canvasRef.current.getContext('2d');
+        ctx.clearRect(0,0,512,512)
+        const drawXOffset = Math.floor((series.width - maxWidth) / 2);
+        const drawYOffset = Math.floor((series.height - maxHeight) / 2);
+        const rect = e.target.getBoundingClientRect();
+        let x = e.clientX - rect.left;
+        let y = e.clientY - rect.top;
         props.handleSlice(equiv.x, x - drawXOffset);
         props.handleSlice(equiv.y, y - drawYOffset);
-        canvasReset();
-        drawCT(imgData);
         drawCrosshairs(x, y);
     }
 
@@ -265,6 +186,8 @@ function CTCanvas(props) {
         <div
             className={classes.canvasContainer}
         >
+            <CTLayer sliceNum={props.sliceNum} series={props.series} view={props.view}></CTLayer>
+            <OverlayLayer sliceNum={props.sliceNum} rs={props.rs} view={props.view} minSlice={minSlice} selected={props.selected}></OverlayLayer>
             <canvas
                 ref={canvasRef}
                 className={classes.canvas}
@@ -275,6 +198,8 @@ function CTCanvas(props) {
                 onMouseLeave={() => setIsHold(false)}
                 onMouseMove={handleCrosshair}
                 tabIndex="0"
+                width={512}
+                height={512}
             >
             </canvas>
             {series == null || Object.keys(series).length === 0 || isLoading ? <div className={classes.loading}>
