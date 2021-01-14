@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
     fileDetails: {
         background: 'white',
         color: theme.palette.text.primary,
-        maxHeight: 'calc(75vh - 24rem)',
+        maxHeight: 'calc(75vh - 28rem)',
         overflow: 'auto'
     },
     fileList: {
@@ -112,7 +112,7 @@ function Landing() {
     const [absDir, setAbsDir] = useDirectory();
     const [dialogOpen, setDialogOpen] = useState(false);
     const [dialogFile, setDialogFile] = useState('');
-    const { folderStatus, ctSummary, rsSummary } = useSelector(state => state.files, shallowEqual);
+    const { folderStatus, ctSummary, rsSummary, rdSummary } = useSelector(state => state.files, shallowEqual);
 
     async function handleDirectoryClick(e) {
         e.target.blur()
@@ -168,6 +168,19 @@ function Landing() {
                                 {rsSummary.filename ? (
                                     <ListItem key={rsSummary.filename} button onClick={() => handleFileClick(rsSummary.filename)}>{rsSummary.filename}</ListItem>
                                 ) : <ListItem>No RS Files Selected</ListItem>}
+                            </List>
+                        </AccordionDetails>
+                    </Accordion>
+                    <Accordion className={classes.fileAccordion}>
+                        <AccordionSummary>
+                            <Typography>RD File</Typography>
+                            <StatusIcon isValid={!!rsSummary.isValid}></StatusIcon>
+                        </AccordionSummary>
+                        <AccordionDetails className={classes.fileDetails}>
+                            <List className={classes.fileList}>
+                                {rdSummary.filename ? (
+                                    <ListItem key={rdSummary.filename} button onClick={() => handleFileClick(rdSummary.filename)}>{rdSummary.filename}</ListItem>
+                                ) : <ListItem>No RD Files Selected</ListItem>}
                             </List>
                         </AccordionDetails>
                     </Accordion>

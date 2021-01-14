@@ -231,3 +231,16 @@ export class BasicRS {
         this.studyUID = imageData.tags["0020000D"].value[0];
     }
 }
+
+export class BasicRD {
+    constructor(doseFile) {
+        function toArrayBuffer(b) {
+            return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength);
+        }
+
+        this.isValid = doseFile != null;
+        this.filename = doseFile.filename;
+        const imageData = daikon.Series.parseImage(new DataView(toArrayBuffer(doseFile.contents)));
+        this.studyUID = imageData.tags["0020000D"].value[0];
+    }
+}

@@ -38,12 +38,20 @@ export const setCTSummary = (ct) => {
     }
 }
 
+export const setRDSummary = (rd) => {
+    return {
+        type: C.FILES.SET_RD_SUMMARY,
+        payload: rd ? rd : {}
+    }
+}
+
 export const handleNewFolder = (newDir, fileSummary) => (dispatch) => {
 
     batch(() => {
         dispatch(setFolderDirectory(newDir));
         dispatch(setRSSummary(fileSummary.rsInfo));
         dispatch(setCTSummary(fileSummary.seriesInfo));
+        dispatch(setRDSummary(fileSummary.rdInfo))
         dispatch(setFolderStatus(fileSummary.isValid));
     })
 }

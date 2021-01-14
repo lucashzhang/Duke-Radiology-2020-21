@@ -1,4 +1,4 @@
-import { CT, RS, Series, BasicSeries, BasicRS } from './fileObjects';
+import { CT, RS, Series, BasicSeries, BasicRS, BasicRD } from './fileObjects';
 
 export function buildSeries(ctArray) {
     return new Series(ctArray);
@@ -26,4 +26,8 @@ export function scanSeries(fileArray) {
 
 export function scanRS(fileArray) {
     return new BasicRS(fileArray[0]);
+}
+
+export function scanRD(fileArray) {
+    return new BasicRD(fileArray[0]);
 }

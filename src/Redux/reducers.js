@@ -34,6 +34,17 @@ export const rsSummary = (state = {}, action) => {
     }
 }
 
+export const rdSummary = (state = {}, action) => {
+    switch (action.type) {
+        case C.FILES.SET_RD_SUMMARY:
+            return action.payload
+        case C.FILES.CLEAR_RD_SUMMARY:
+            return {};
+        default:
+            return state;
+    }
+}
+
 export const folderStatus = (state = C['FILES'].FILE_STATUS_INIT, action) => {
     switch (action.type) {
         case C['FILES'].FILE_STATUS_INIT:
@@ -85,7 +96,8 @@ export default combineReducers({
         folderDirectory: folderDirectory,
         folderStatus: folderStatus,
         ctSummary: ctSummary,
-        rsSummary: rsSummary
+        rsSummary: rsSummary,
+        rdSummary: rdSummary
     }),
     patient: combineReducers({
         patientFirst,
