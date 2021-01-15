@@ -4,7 +4,7 @@ import { RD } from '../../Backend/fileObjects';
 function CTLayer(props) {
 
     const canvasRef = useRef(null);
-    const { sliceNum, selected, view, rs, rd, minSlice, series } = props
+    const { sliceNum, selected, view, rs, rd, minSlice, canvasOffset } = props
 
     useEffect(() => {
         function getSelectedContours() {
@@ -46,30 +46,14 @@ function CTLayer(props) {
 
             function imgOffset() {
 
-                function getMax() {
-                    if (series == null) return [1, 512, 512];
-                    switch (view.toUpperCase()) {
-                        case 'AXIAL':
-                            return [series.depth, series.width, series.height];
-                        case 'CORONAL':
-                            return [series.height, series.width, series.depth];
-                        case 'SAGITTAL':
-                            return [series.width, series.height, series.depth];
-                        default:
-                            return [1, 512, 512];
-                    }
-                }
-
-                const [maxDepth, maxWidth, maxHeight] = getMax();
-                const drawXOffset = Math.floor((512 - maxWidth) / 2);
-                const drawYOffset = Math.floor((512 - maxHeight) / 2);
+                if (canvasOffset == null) return [0,0]
                 switch (view.toUpperCase()) {
                     case 'AXIAL':
-                        return [-1 * rd.offsetVector[0], -1 * rd.offsetVector[1]]
+                        return [-1 * rd.offsetVector[0] + canvasOffset[0], -1 * rd.offsetVector[1] + canvasOffset[1]]
                     case 'CORONAL':
-                        return [-1 * rd.offsetVector[0], -1 * rd.offsetVector[2]]
+                        return [-1 * rd.offsetVector[0] + canvasOffset[0], -1 * rd.offsetVector[2] + canvasOffset[1]]
                     case 'SAGITTAL':
-                        return [-1 * rd.offsetVector[1], -1 * rd.offsetVector[2]]
+                        return [-1 * rd.offsetVector[1] + canvasOffset[0], -1 * rd.offsetVector[2] + canvasOffset[1]]
                     default:
                         return [0, 0];
                 }

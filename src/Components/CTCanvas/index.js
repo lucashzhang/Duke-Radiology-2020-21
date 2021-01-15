@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import theme from '../../Utilities/theme';
 import { CircularProgress } from '@material-ui/core';
 import CTLayer from './CTLayer';
-import OverlayLayer from './OverlayLayer';
+import OverlayLayer from './overlayLayer';
 
 const useStyles = makeStyles(() => ({
     canvasContainer: {
@@ -42,10 +42,12 @@ function CTCanvas(props) {
     const minSlice = getMinSlice();
     const view = props.view;
     const [maxDepth, maxWidth, maxHeight] = getMax();
+    const drawXOffset = Math.floor((series.width - maxWidth) / 2);
+    const drawYOffset = Math.floor((series.height - maxHeight) / 2);
     const [isHold, setIsHold] = useState(false);
     const equiv = getCoordEquiv();
 
-    const drawText = useCallback(drawTextOverlay, [props.sliceNum, props.view]);
+    // const drawText = useCallback(drawTextOverlay, [props.sliceNum, props.view]);
 
     const isLoading = props.loading != null ? props.loading : false;
 
@@ -167,12 +169,11 @@ function CTCanvas(props) {
     }
 
     function handleCrosshair(e, override = false) {
-        
+
         if ((!isHold && !override) || series == null) return;
         const ctx = canvasRef.current.getContext('2d');
-        ctx.clearRect(0,0,512,512)
-        const drawXOffset = Math.floor((series.width - maxWidth) / 2);
-        const drawYOffset = Math.floor((series.height - maxHeight) / 2);
+        ctx.clearRect(0, 0, 512, 512)
+
         const rect = e.target.getBoundingClientRect();
         let x = e.clientX - rect.left;
         let y = e.clientY - rect.top;
@@ -187,7 +188,7 @@ function CTCanvas(props) {
             className={classes.canvasContainer}
         >
             <CTLayer sliceNum={props.sliceNum} series={props.series} view={props.view}></CTLayer>
-            <OverlayLayer sliceNum={props.sliceNum} rs={props.rs} rd={props.rd} series={props.series} view={props.view} minSlice={minSlice} selected={props.selected}></OverlayLayer>
+            <OverlayLayer sliceNum={props.sliceNum} rs={props.rs} rd={props.rd} view={props.view} minSlice={minSlice} selected={props.selected} canvasOffset={[drawXOffset, drawYOffset]}></OverlayLayer>
             <canvas
                 ref={canvasRef}
                 className={classes.canvas}
