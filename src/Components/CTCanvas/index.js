@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo, useCallback } from 'react';
+import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import theme from '../../Utilities/theme';
 import { CircularProgress } from '@material-ui/core';
@@ -44,22 +44,22 @@ function CTCanvas(props) {
     const drawXOffset = Math.floor((series.width - maxWidth) / 2);
     const drawYOffset = Math.floor((series.height - maxHeight) / 2);
     const [isHold, setIsHold] = useState(false);
-    const equiv = getCoordEquiv();
+    const [sliceX, sliceY, sliceZ] = getSliceNum();
 
-    // const drawText = useCallback(drawTextOverlay, [props.sliceNum, props.view]);
+    // const drawText = useCallback(drawTextOverlay, [sliceNum, props.view]);
 
-    const isLoading = props.loading != null ? props.loading : false;
+    const isLoading = !!props.loading;
 
-    function getCoordEquiv() {
+    function getSliceNum() {
         switch (props.view.toUpperCase()) {
             case 'AXIAL':
-                return { x: 'x', y: 'y', z: 'z' }
+                return [props.sliceCoords.x, props.sliceCoords.y, props.sliceCoords.z]
             case 'CORONAL':
-                return { x: 'x', y: 'z', z: 'y' }
+                return [props.sliceCoords.x, props.sliceCoords.z, props.sliceCoords.y]
             case 'SAGITTAL':
-                return { x: 'y', y: 'z', z: 'x' }
+                return [props.sliceCoords.z, props.sliceCoords.y, props.sliceCoords.x]
             default:
-                return { x: '', y: '', z: '' }
+                return 0;
         }
     }
 
@@ -139,7 +139,7 @@ function CTCanvas(props) {
         ctx.textAlign = "center";
         ctx.fillStyle = theme.palette.primary.light;
         ctx.fillText(props.view.toUpperCase(), 256, 24);
-        ctx.fillText(`Slice Position: ${(props.sliceNum * getSpacing() + minSlice).toFixed(4)}mm`, series.width / 2, series.height - 12);
+        ctx.fillText(`Slice Position: ${(sliceZ * getSpacing() + minSlice).toFixed(4)}mm`, series.width / 2, series.height - 12);
     }
 
     function handleUserKeyPress(e) {
@@ -148,10 +148,10 @@ function CTCanvas(props) {
 
         if ((key === 'ARROWRIGHT' || key === 'ARROWUP')) {
             // Increments forward
-            props.handleSlice(equiv.z, props.sliceNum < maxDepth - 1 ? props.sliceNum + 1 : maxDepth - 1);
+            props.handleSlice(props.view, sliceX, sliceY, sliceZ < maxDepth - 1 ? sliceZ + 1 : maxDepth - 1);
         } else if ((key === 'ARROWLEFT' || key === 'ARROWDOWN')) {
             // Increments backward
-            props.handleSlice(equiv.z, props.sliceNum > 0 ? props.sliceNum - 1 : 0);
+            props.handleSlice(props.view, sliceX, sliceY, sliceZ > 0 ? sliceZ - 1 : 0);
         }
     }
 
@@ -160,34 +160,35 @@ function CTCanvas(props) {
         const direction = e.deltaY;
         if (direction > 0) {
             // On scroll down
-            props.handleSlice(equiv.z, props.sliceNum > 0 ? props.sliceNum - 1 : 0);
+            props.handleSlice(props.view, sliceX, sliceY, sliceZ > 0 ? sliceZ - 1 : 0);
         } else if (direction < 0) {
             // On scroll up
-            props.handleSlice(equiv.z, props.sliceNum < maxDepth - 1 ? props.sliceNum + 1 : maxDepth - 1);
+            props.handleSlice(props.view, sliceX, sliceY, sliceZ < maxDepth - 1 ? sliceZ + 1 : maxDepth - 1);
         }
     }
 
     function handleCrosshair(e, override = false) {
 
         if ((!isHold && !override) || series == null) return;
-        const ctx = canvasRef.current.getContext('2d');
-        ctx.clearRect(0, 0, 512, 512)
-
         const rect = e.target.getBoundingClientRect();
         let x = e.clientX - rect.left;
         let y = e.clientY - rect.top;
-        props.handleSlice(equiv.x, x - drawXOffset);
-        props.handleSlice(equiv.y, y - drawYOffset);
-        drawCrosshairs(x, y);
+        props.handleSlice(props.view, x - drawXOffset, y - drawYOffset, sliceZ);
     }
+
+    useEffect(() => {
+        const ctx = canvasRef.current.getContext('2d');
+        ctx.clearRect(0, 0, 512, 512)
+        drawCrosshairs(sliceX + drawXOffset, sliceY, drawYOffset)
+    }, [sliceX, sliceY, sliceZ])
 
 
     return (
         <div
             className={classes.canvasContainer}
         >
-            <CTLayer sliceNum={props.sliceNum} series={props.series} view={props.view}></CTLayer>
-            <OverlayLayer sliceNum={props.sliceNum} rs={props.rs} rd={props.rd} view={props.view} minSlice={minSlice} selected={props.selected} canvasOffset={[drawXOffset, drawYOffset]}></OverlayLayer>
+            <CTLayer sliceNum={sliceZ} series={props.series} view={props.view}></CTLayer>
+            <OverlayLayer sliceNum={sliceZ} rs={props.rs} rd={props.rd} view={props.view} minSlice={minSlice} selected={props.selected} canvasOffset={[drawXOffset, drawYOffset]}></OverlayLayer>
             <canvas
                 ref={canvasRef}
                 className={classes.canvas}

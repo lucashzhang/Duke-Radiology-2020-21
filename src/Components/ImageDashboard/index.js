@@ -59,30 +59,57 @@ function Dashboard() {
     const rs = useRS();
     const rd = useRD();
 
-    const [sliceX, setSliceX] = useState(0);
-    const [sliceY, setSliceY] = useState(0);
-    const [sliceZ, setSliceZ] = useState(0);
-    // const [sliceCoord, setSliceCoord] = useState({ x: 0, y: 0, z: 0 });
+    const [sliceCoord, setSliceCoord] = useState({ x: 0, y: 0, z: 0 });
     const [selected, setSelected] = useState([]);
     const isLoading = Object.keys(rs).length === 0 || Object.keys(series).length === 0 || Object.keys(rd).length === 0;
 
     function initMiddle() {
         if (series == null || Object.keys(series).length === 0) return;
-        setSliceX(Math.round(series.width / 2));
-        setSliceY(Math.round(series.height / 2));
-        setSliceZ(Math.round(series.depth / 2));
+        setSliceCoord({
+            x: Math.round(series.width / 2),
+            y: Math.round(series.height / 2),
+            z: Math.round(series.depth / 2)
+        })
+        // setSliceX(Math.round(series.width / 2));
+        // setSliceY(Math.round(series.height / 2));
+        // setSliceZ(Math.round(series.depth / 2));
     }
 
-    function handleSlice(plane, value) {
-        switch (plane) {
-            case 'x':
-                setSliceX(value);
+    function handleSlice(view, val1, val2, val3) {
+        // switch (plane) {
+        //     case 'x':
+        //         setSliceX(value);
+        //         break;
+        //     case 'y':
+        //         setSliceY(value);
+        //         break;
+        //     case 'z':
+        //         setSliceZ(value);
+        //         break;
+        //     default:
+        //         break;
+        // }
+        switch (view.toUpperCase()) {
+            case 'AXIAL':
+                setSliceCoord({
+                    x: val1,
+                    y: val2,
+                    z: val3
+                });
                 break;
-            case 'y':
-                setSliceY(value);
+            case 'CORONAL':
+                setSliceCoord({
+                    x: val1,
+                    y: val3,
+                    z: val2
+                });
                 break;
-            case 'z':
-                setSliceZ(value);
+            case 'SAGITTAL':
+                setSliceCoord({
+                    x: val3,
+                    y: val1,
+                    z: val2
+                });
                 break;
             default:
                 break;
@@ -108,9 +135,9 @@ function Dashboard() {
                 </Paper>
                 <div className={classes.canvasContainer}>
                     <Paper className={classes.canvasView}>
-                        <CTCanvas view='AXIAL' handleSlice={handleSlice} sliceNum={sliceZ} series={series} rs={rs} rd={rd} selected={selected} loading={isLoading}></CTCanvas>
-                        <CTCanvas view='CORONAL' handleSlice={handleSlice} sliceNum={sliceY} series={series} rs={rs} rd={rd} selected={selected} loading={isLoading}></CTCanvas>
-                        <CTCanvas view='SAGITTAL' handleSlice={handleSlice} sliceNum={sliceX} series={series} rs={rs} rd={rd} selected={selected} loading={isLoading}></CTCanvas>
+                        <CTCanvas view='AXIAL' handleSlice={handleSlice} series={series} rs={rs} rd={rd} selected={selected} loading={isLoading} sliceCoords={sliceCoord}></CTCanvas>
+                        <CTCanvas view='CORONAL' handleSlice={handleSlice} series={series} rs={rs} rd={rd} selected={selected} loading={isLoading} sliceCoords={sliceCoord}></CTCanvas>
+                        <CTCanvas view='SAGITTAL' handleSlice={handleSlice} series={series} rs={rs} rd={rd} selected={selected} loading={isLoading} sliceCoords={sliceCoord}></CTCanvas>
                     </Paper>
                 </div>
             </div>

@@ -79,14 +79,10 @@ function CTLayer(props) {
 
         }
 
-
+        const ctx = canvasRef.current.getContext('2d');
+        ctx.clearRect(0, 0, 512, 512);
         drawDoseOverlay();
         drawContour(createContourPoints());
-
-        return () => {
-            const ctx = canvasRef.current.getContext('2d');
-            ctx.clearRect(0, 0, 512, 512);
-        }
     }, [rs, rd, sliceNum, selected, canvasOffset])
 
     return (
