@@ -106,9 +106,9 @@ function Dashboard() {
                 break;
             case 'SAGITTAL':
                 setSliceCoord({
-                    x: val3,
-                    y: val1,
-                    z: val2
+                    x: val2,
+                    y: val3,
+                    z: val1
                 });
                 break;
             default:

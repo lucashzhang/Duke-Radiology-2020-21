@@ -57,9 +57,9 @@ function CTCanvas(props) {
             case 'CORONAL':
                 return [props.sliceCoords.x, props.sliceCoords.z, props.sliceCoords.y]
             case 'SAGITTAL':
-                return [props.sliceCoords.z, props.sliceCoords.y, props.sliceCoords.x]
+                return [props.sliceCoords.y, props.sliceCoords.z, props.sliceCoords.x]
             default:
-                return 0;
+                return [0, 0, 0];
         }
     }
 
@@ -179,7 +179,7 @@ function CTCanvas(props) {
     useEffect(() => {
         const ctx = canvasRef.current.getContext('2d');
         ctx.clearRect(0, 0, 512, 512)
-        drawCrosshairs(sliceX + drawXOffset, sliceY, drawYOffset)
+        drawCrosshairs(sliceX + drawXOffset, sliceY + drawYOffset)
     }, [sliceX, sliceY, sliceZ])
 
 
