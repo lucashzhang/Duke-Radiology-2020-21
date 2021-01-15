@@ -1,4 +1,4 @@
-export default {
+const reduxContants = {
     FILES: {
         SET_DIRECTORY: 'SET_DIRECTORY',
         CLEAR_DIRECTORY: 'CLEAR_DIRECTORY',
@@ -33,3 +33,5 @@ export default {
         CLEAR_DOCTOR_ID: 'CLEAR_DOCTOR_ID'
     }
 }
+
+export default reduxContants;

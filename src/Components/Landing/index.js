@@ -93,7 +93,7 @@ function SummaryDialog(props) {
         getSummary(dir, filename).then(res => {
             setSummary(res);
         })
-    }, [filename])
+    }, [filename, dir])
 
 
     return <Dialog open={open} onClose={onClose} maxWidth={'xl'} scroll={'paper'}>

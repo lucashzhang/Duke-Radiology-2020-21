@@ -148,10 +148,10 @@ function CTCanvas(props) {
 
         if ((key === 'ARROWRIGHT' || key === 'ARROWUP')) {
             // Increments forward
-            props.handleSlice(props.view, sliceX, sliceY, sliceZ < maxDepth - 1 ? sliceZ + 1 : maxDepth - 1);
+            props.handleSlice(props.view, sliceX, sliceY, sliceZ > 0 ? sliceZ - 1 : 0);
         } else if ((key === 'ARROWLEFT' || key === 'ARROWDOWN')) {
             // Increments backward
-            props.handleSlice(props.view, sliceX, sliceY, sliceZ > 0 ? sliceZ - 1 : 0);
+            props.handleSlice(props.view, sliceX, sliceY, sliceZ < maxDepth - 1 ? sliceZ + 1 : maxDepth - 1);
         }
     }
 
@@ -160,10 +160,12 @@ function CTCanvas(props) {
         const direction = e.deltaY;
         if (direction > 0) {
             // On scroll down
-            props.handleSlice(props.view, sliceX, sliceY, sliceZ > 0 ? sliceZ - 1 : 0);
+            props.handleSlice(props.view, sliceX, sliceY, sliceZ < maxDepth - 1 ? sliceZ + 1 : maxDepth - 1);
+
         } else if (direction < 0) {
             // On scroll up
-            props.handleSlice(props.view, sliceX, sliceY, sliceZ < maxDepth - 1 ? sliceZ + 1 : maxDepth - 1);
+            props.handleSlice(props.view, sliceX, sliceY, sliceZ > 0 ? sliceZ - 1 : 0);
+
         }
     }
 
