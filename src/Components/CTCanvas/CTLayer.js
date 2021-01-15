@@ -35,7 +35,6 @@ function CTLayer(props) {
         switch (view.toUpperCase()) {
             case 'AXIAL':
                 imgData = series.getAxialSlice(sliceNum);
-                console.log(imgData)
                 break;
             case 'CORONAL':
                 imgData = series.getCoronalSlice(sliceNum);
