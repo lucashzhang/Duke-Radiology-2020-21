@@ -76,19 +76,6 @@ function Dashboard() {
     }
 
     function handleSlice(view, val1, val2, val3) {
-        // switch (plane) {
-        //     case 'x':
-        //         setSliceX(value);
-        //         break;
-        //     case 'y':
-        //         setSliceY(value);
-        //         break;
-        //     case 'z':
-        //         setSliceZ(value);
-        //         break;
-        //     default:
-        //         break;
-        // }
         switch (view.toUpperCase()) {
             case 'AXIAL':
                 setSliceCoord({
