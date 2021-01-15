@@ -25,6 +25,7 @@ export function buildCT(fileArray) {
     for (let file of fileArray) {
         newCT.push(new CT(file.filename, file.contents));
     }
+    newCT = newCT.sort((a, b) => a.position[2] - b.position[2]);
     return newCT;
 }
 

@@ -148,7 +148,7 @@ export async function readRD(absDir, rdWorker = null) {
         ownWorker = true;
     }
 
-    let ctImages = await readCT(absDir, rdWorker, true);
+    let ctImages = await readCT(absDir, rdWorker);
     let firstCT = ctImages[0];
     let rawRD = await getFiles(absDir, 'RD');
     if (rawRD.length <= 0) {

@@ -187,7 +187,7 @@ function CTCanvas(props) {
             className={classes.canvasContainer}
         >
             <CTLayer sliceNum={props.sliceNum} series={props.series} view={props.view}></CTLayer>
-            <OverlayLayer sliceNum={props.sliceNum} rs={props.rs} rd={props.rd} view={props.view} minSlice={minSlice} selected={props.selected}></OverlayLayer>
+            <OverlayLayer sliceNum={props.sliceNum} rs={props.rs} rd={props.rd} series={props.series} view={props.view} minSlice={minSlice} selected={props.selected}></OverlayLayer>
             <canvas
                 ref={canvasRef}
                 className={classes.canvas}

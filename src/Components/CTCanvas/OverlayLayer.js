@@ -4,7 +4,7 @@ import { RD } from '../../Backend/fileObjects';
 function CTLayer(props) {
 
     const canvasRef = useRef(null);
-    const { sliceNum, selected, view, rs, rd, minSlice } = props
+    const { sliceNum, selected, view, rs, rd, minSlice, series } = props
 
     useEffect(() => {
         function getSelectedContours() {
@@ -43,6 +43,37 @@ function CTLayer(props) {
         }
 
         function drawDoseOverlay() {
+
+            function imgOffset() {
+
+                function getMax() {
+                    if (series == null) return [1, 512, 512];
+                    switch (view.toUpperCase()) {
+                        case 'AXIAL':
+                            return [series.depth, series.width, series.height];
+                        case 'CORONAL':
+                            return [series.height, series.width, series.depth];
+                        case 'SAGITTAL':
+                            return [series.width, series.height, series.depth];
+                        default:
+                            return [1, 512, 512];
+                    }
+                }
+
+                const [maxDepth, maxWidth, maxHeight] = getMax();
+                const drawXOffset = Math.floor((512 - maxWidth) / 2);
+                const drawYOffset = Math.floor((512 - maxHeight) / 2);
+                switch (view.toUpperCase()) {
+                    case 'AXIAL':
+                        return [-1 * rd.offsetVector[0], -1 * rd.offsetVector[1]]
+                    case 'CORONAL':
+                        return [-1 * rd.offsetVector[0], -1 * rd.offsetVector[2]]
+                    case 'SAGITTAL':
+                        return [-1 * rd.offsetVector[1], -1 * rd.offsetVector[2]]
+                    default:
+                        return [0, 0];
+                }
+            }
             if (rd.imageArray == null) return;
             let pixelArray;
             switch (view.toUpperCase()) {
@@ -50,8 +81,10 @@ function CTLayer(props) {
                     pixelArray = rd.getAxialSlice(sliceNum);
                     break;
                 case 'CORONAL':
+                    pixelArray = rd.getCoronalSlice(sliceNum);
                     break;
                 case 'SAGITTAL':
+                    pixelArray = rd.getSagittalSlice(sliceNum);
                     break;
                 default:
                     return;
@@ -60,15 +93,16 @@ function CTLayer(props) {
             if (pixelArray == null || pixelArray.length === 0) return;
             const ctx = canvasRef.current.getContext('2d');
             // Create new image data object
-            let imgData = ctx.createImageData(rd.width, rd.height);
-            let data = imgData.data;
-            // Fill image data object
-            for (let i = 3, k = 0; i < data.byteLength; i += 4, k++) {
-                data[i - 3] = data[i - 2] = data[i - 1] = pixelArray[k] * rd.doseGridScaling * 255;
-                data[i] = pixelArray[k] === 0 ? 0 : 100;
-            }
-            // setImgData(imgData)
-            ctx.putImageData(imgData, -rd.offsetVector[0], -rd.offsetVector[1]);
+            // let imgData = ctx.createImageData(rd.width, rd.height);
+            // let data = imgData.data;
+            // // Fill image data object
+            // for (let i = 3, k = 0; i < data.byteLength; i += 4, k++) {
+            //     data[i - 3] = data[i - 2] = data[i - 1] = pixelArray[k] * rd.doseGridScaling * 255;
+            //     data[i] = pixelArray[k] === 0 ? 0 : 128;
+            // }
+            // // setImgData(imgData)
+            const offsets = imgOffset();
+            ctx.putImageData(pixelArray, offsets[0], offsets[1]);
 
         }
 

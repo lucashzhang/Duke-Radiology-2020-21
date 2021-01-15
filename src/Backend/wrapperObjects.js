@@ -69,33 +69,51 @@ export class SeriesWrapper extends Wrapper {
 export class RDWrapper extends Wrapper {
 
     getAxialSlice(sliceNum) {
-        sliceNum = Math.floor(sliceNum)
+        sliceNum = Math.floor(sliceNum) - this.offsetVector[2];
         if (sliceNum > this.depth || sliceNum < 0) return [];
-        return this.imageArray[sliceNum];
+        let imageData = new ImageData(this.width, this.height);
+        let data = imageData.data;
+        for (let i = 3, k = 0; i < data.byteLength; i += 4, k++) {
+            data[i - 3] = data[i - 2] = data[i - 1] = this.imageArray[sliceNum][k] * this.doseGridScaling * 255;
+            data[i] = this.imageArray[sliceNum][k] === 0 ? 0 : 128;
+        }
+        return imageData;
     }
 
     getCoronalSlice(sliceNum) {
-        sliceNum = Math.floor(sliceNum)
-        let temp = [];
-        if (sliceNum > this.height || sliceNum < 0) return temp;
+        sliceNum = Math.floor(sliceNum) + Math.round(this.offsetVector[1]);
+        if (sliceNum > this.height || sliceNum < 0) return null;
+        let k = 3;
+        let imageData = new ImageData(this.width, this.depth);
+        let data = imageData.data;
         for (let i = 0; i < this.depth; i++) {
             for (let j = 0; j < this.width; j++) {
-                temp.push(this.imageArray[i][sliceNum * this.height + j])
+                let pixelVal = this.imageArray[i][sliceNum * this.height + j];
+
+                data[k - 3] = data[k - 2] = data[k - 1] = pixelVal * this.doseGridScaling * 255;
+                data[k] = pixelVal === 0 ? 0 : 128;
+                k += 4;
             }
         }
-        return temp;
+        return imageData;
     }
 
     getSagittalSlice(sliceNum) {
-        sliceNum = Math.floor(sliceNum)
+        sliceNum = Math.floor(sliceNum) + Math.round(this.offsetVector[0])
         let temp = [];
         if (sliceNum > this.width || sliceNum < 0) return temp;
+        let k = 3;
+        let imageData = new ImageData(this.height, this.depth);
+        let data = imageData.data;
         for (let j = 0; j < this.depth; j++) {
             for (let i = 0; i < this.height; i++) {
-                temp.push(this.imageArray[j][sliceNum + this.width * i]);
+                let pixelVal = this.imageArray[j][sliceNum + this.width * i];
+                data[k - 3] = data[k - 2] = data[k - 1] = pixelVal * this.doseGridScaling * 255;
+                data[k] = pixelVal === 0 ? 0 : 128;
+                k += 4
             }
         }
-        return temp;
+        return imageData;
     }
 }
 
