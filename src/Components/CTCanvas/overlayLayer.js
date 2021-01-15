@@ -1,5 +1,4 @@
 import React, { useRef, useEffect } from 'react';
-import { RD } from '../../Backend/fileObjects';
 
 function CTLayer(props) {
 
