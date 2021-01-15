@@ -22,7 +22,7 @@ const useStyles = makeStyles(() => ({
     loading: {
         gridColumn: '1',
         gridRow: '1',
-        zIndex: '10',
+        zIndex: '300',
         backgroundColor: 'black',
         width: '100%',
         height: '100%',
@@ -37,7 +37,6 @@ function CTCanvas(props) {
 
     const classes = useStyles();
     const canvasRef = useRef(null);
-    const sliceNum = props.sliceNum;
     const series = props.series;
     const minSlice = getMinSlice();
     const view = props.view;
