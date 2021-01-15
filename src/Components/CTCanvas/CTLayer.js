@@ -61,6 +61,7 @@ function CTLayer(props) {
                 return;
         }
         const ctx = canvasRef.current.getContext('2d');
+        if (imgData == null) return;
         ctx.putImageData(imgData, drawXOffset, drawYOffset);
     }
 

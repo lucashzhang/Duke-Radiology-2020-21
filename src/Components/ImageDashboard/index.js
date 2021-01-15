@@ -108,9 +108,9 @@ function Dashboard() {
                 </Paper>
                 <div className={classes.canvasContainer}>
                     <Paper className={classes.canvasView}>
-                        <CTCanvas view='AXIAL' handleSlice={handleSlice} sliceNum={sliceZ} series={series} rs={rs} selected={selected} loading={isLoading}></CTCanvas>
-                        <CTCanvas view='CORONAL' handleSlice={handleSlice} sliceNum={sliceY} series={series} rs={rs} selected={selected} loading={isLoading}></CTCanvas>
-                        <CTCanvas view='SAGITTAL' handleSlice={handleSlice} sliceNum={sliceX} series={series} rs={rs} selected={selected} loading={isLoading}></CTCanvas>
+                        <CTCanvas view='AXIAL' handleSlice={handleSlice} sliceNum={sliceZ} series={series} rs={rs} rd={rd} selected={selected} loading={isLoading}></CTCanvas>
+                        <CTCanvas view='CORONAL' handleSlice={handleSlice} sliceNum={sliceY} series={series} rs={rs} rd={rd} selected={selected} loading={isLoading}></CTCanvas>
+                        <CTCanvas view='SAGITTAL' handleSlice={handleSlice} sliceNum={sliceX} series={series} rs={rs} rd={rd} selected={selected} loading={isLoading}></CTCanvas>
                     </Paper>
                 </div>
             </div>

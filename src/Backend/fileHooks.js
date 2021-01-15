@@ -74,7 +74,7 @@ export function useRD() {
     const rdWorker = new Worker();
     readRD(absDir, rdWorker).then(newRD => {
       if (newRD !== {} && newRD != null) setRD(newRD);
-      console.log(newRD);
+      // console.log(newRD);
       rdWorker.terminate();
     });
 

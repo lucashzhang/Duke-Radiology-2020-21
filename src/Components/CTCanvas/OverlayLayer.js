@@ -1,9 +1,10 @@
 import React, { useRef, useEffect } from 'react';
+import { RD } from '../../Backend/fileObjects';
 
 function CTLayer(props) {
 
     const canvasRef = useRef(null);
-    const { sliceNum, selected, view, rs, minSlice } = props
+    const { sliceNum, selected, view, rs, rd, minSlice } = props
 
     useEffect(() => {
         function getSelectedContours() {
@@ -13,7 +14,6 @@ function CTLayer(props) {
 
         function drawContour(contourData = null) {
             const ctx = canvasRef.current.getContext('2d');
-            ctx.clearRect(0,0,512,512);
             if (contourData == null || Object.keys(contourData).length === 0) return;
             for (let roi in contourData) {
                 const color = contourData[roi].displayColor
@@ -42,15 +42,48 @@ function CTLayer(props) {
             return {};
         }
 
+        function drawDoseOverlay() {
+            if (rd.imageArray == null) return;
+            let pixelArray;
+            switch (view.toUpperCase()) {
+                case 'AXIAL':
+                    pixelArray = rd.getAxialSlice(sliceNum);
+                    break;
+                case 'CORONAL':
+                    break;
+                case 'SAGITTAL':
+                    break;
+                default:
+                    return;
+            }
+
+            if (pixelArray == null || pixelArray.length === 0) return;
+            const ctx = canvasRef.current.getContext('2d');
+            // Create new image data object
+            let imgData = ctx.createImageData(rd.width, rd.height);
+            let data = imgData.data;
+            // Fill image data object
+            for (let i = 3, k = 0; i < data.byteLength; i += 4, k++) {
+                data[i - 3] = data[i - 2] = data[i - 1] = pixelArray[k] * rd.doseGridScaling * 255;
+                data[i] = pixelArray[k] === 0 ? 0 : 100;
+            }
+            // setImgData(imgData)
+            ctx.putImageData(imgData, -rd.offsetVector[0], -rd.offsetVector[1]);
+
+        }
+
+        const ctx = canvasRef.current.getContext('2d');
+        ctx.clearRect(0, 0, 512, 512);
+        drawDoseOverlay();
         drawContour(createContourPoints());
-    }, [rs, sliceNum, selected])
+    }, [rs, rd, sliceNum, selected])
 
     return (
         <canvas
             ref={canvasRef}
             width={512}
             height={512}
-            style={{ position: 'absolute'}}
+            style={{ position: 'absolute' }}
         ></canvas>
     )
 }

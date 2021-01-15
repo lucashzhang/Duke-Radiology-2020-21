@@ -19,15 +19,6 @@ class DCM {
         }
     }
 
-    convertFromID(id) {
-        let asString = String(id);
-        let key = `(${asString.substring(0, 4)},${asString.substring(4, asString.length)})`;
-        return TAG_DICT[key];
-    }
-
-    convertToID(id) {
-        return `x${id}`;
-    }
 }
 
 export class RS extends DCM {
@@ -209,15 +200,24 @@ export class RD extends DCM {
             return interpolatedArray;
         }
 
-        this.rows = this.imageData.getRows();
-        this.cols = this.imageData.getCols();
+
         this.numFrames = this.imageData.getNumberOfFrames();
+
         this.position = this.imageData.getImagePosition();
         this.pixelSpacing = this.imageData.getPixelSpacing();
         this.doseGridScaling = this.imageData.tags["3004000E"].value[0];
         this.doseUnits = this.imageData.tags["30040002"].value[0];
-        this.pixelArray = calculatePixelData();
+        this.imageArray = calculatePixelData();
+        this.thickness = ct.thickness;
         // Thickness of the dose is the same as in the CT
+        const rows = this.imageData.getRows();
+        const cols = this.imageData.getCols();
+        const scaleW = this.imageData.getPixelSpacing()[1] / ct.pixelSpacing[1];
+        const scaleH = this.imageData.getPixelSpacing()[0] / ct.pixelSpacing[0];
+        this.offsetVector = [((ct.position[0] - this.position[0]) / ct.pixelSpacing[0]), ((ct.position[1] - this.position[1]) / ct.pixelSpacing[1])]
+        this.width = Math.floor(cols * scaleW);
+        this.height = Math.floor(rows * scaleH);
+        this.depth = this.imageArray.length;
     }
 }
 
