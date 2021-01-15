@@ -45,7 +45,6 @@ function CTLayer(props) {
 
             function imgOffset() {
 
-                if (canvasOffset == null) return [0,0]
                 switch (view.toUpperCase()) {
                     case 'AXIAL':
                         return [-1 * rd.offsetVector[0] + canvasOffset[0], -1 * rd.offsetVector[1] + canvasOffset[1]]
@@ -57,7 +56,7 @@ function CTLayer(props) {
                         return [0, 0];
                 }
             }
-            if (rd.imageArray == null) return;
+            if (rd.imageArray == null || canvasOffset == null || rd.offsetVector == null) return;
             let pixelArray;
             switch (view.toUpperCase()) {
                 case 'AXIAL':
@@ -75,17 +74,8 @@ function CTLayer(props) {
 
             if (pixelArray == null || pixelArray.length === 0) return;
             const ctx = canvasRef.current.getContext('2d');
-            // Create new image data object
-            // let imgData = ctx.createImageData(rd.width, rd.height);
-            // let data = imgData.data;
-            // // Fill image data object
-            // for (let i = 3, k = 0; i < data.byteLength; i += 4, k++) {
-            //     data[i - 3] = data[i - 2] = data[i - 1] = pixelArray[k] * rd.doseGridScaling * 255;
-            //     data[i] = pixelArray[k] === 0 ? 0 : 128;
-            // }
-            // // setImgData(imgData)
             const offsets = imgOffset();
-            ctx.putImageData(pixelArray, offsets[0], offsets[1]);
+            ctx.putImageData(pixelArray, offsets[0] || 0, offsets[1] || 0);
 
         }
 
@@ -93,7 +83,7 @@ function CTLayer(props) {
         ctx.clearRect(0, 0, 512, 512);
         drawDoseOverlay();
         drawContour(createContourPoints());
-    }, [rs, rd, sliceNum, selected])
+    }, [rs, rd, sliceNum, selected, canvasOffset])
 
     return (
         <canvas

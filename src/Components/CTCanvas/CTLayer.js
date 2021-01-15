@@ -8,21 +8,6 @@ function CTLayer(props) {
     const view = props.view;
 
     function buildCTCanvas() {
-
-        function createImageData(imgArray) {
-            if (imgArray == null) return null;
-            const ctx = canvasRef.current.getContext('2d');
-            // Create new image data object
-            let imgData = ctx.createImageData(maxWidth, maxHeight);
-            let data = imgData.data;
-            // Fill image data object
-            for (let i = 3, k = 0; i < data.byteLength; i += 4, k++) {
-                data[i - 3] = data[i - 2] = data[i - 1] = imgArray[k];
-                data[i] = 255;
-            }
-            // setImgData(imgData)
-            return imgData;
-        }
     
         function getMax() {
             if (series == null) return [512, 512];
@@ -49,13 +34,14 @@ function CTLayer(props) {
         canvasRef.current.height = series.height;
         switch (view.toUpperCase()) {
             case 'AXIAL':
-                imgData = createImageData(series.getAxialSlice(sliceNum));
+                imgData = series.getAxialSlice(sliceNum);
+                console.log(imgData)
                 break;
             case 'CORONAL':
-                imgData = createImageData(series.getCoronalSlice(sliceNum));
+                imgData = series.getCoronalSlice(sliceNum);
                 break;
             case 'SAGITTAL':
-                imgData = createImageData(series.getSagittalSlice(sliceNum));
+                imgData = series.getSagittalSlice(sliceNum);
                 break;
             default:
                 return;
