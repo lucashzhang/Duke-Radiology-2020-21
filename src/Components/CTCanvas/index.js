@@ -161,11 +161,9 @@ function CTCanvas(props) {
         if (direction > 0) {
             // On scroll down
             props.handleSlice(props.view, sliceX, sliceY, sliceZ < maxDepth - 1 ? sliceZ + 1 : maxDepth - 1);
-
         } else if (direction < 0) {
             // On scroll up
             props.handleSlice(props.view, sliceX, sliceY, sliceZ > 0 ? sliceZ - 1 : 0);
-
         }
     }
 
