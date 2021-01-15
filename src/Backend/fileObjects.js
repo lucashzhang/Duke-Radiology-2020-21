@@ -112,10 +112,10 @@ export class RD extends DCM {
     constructor(filename, buffer, ct) {
         super(filename, buffer);
 
-        const unFoldPixelData = () => {
+        const calculatePixelData = () => {
 
-            function buildInterpolatedArray(images, thickness) {
-    
+            function linearInterpolation(images, thickness) {
+
                 function weightedAverage(array1, array2, weight) {
                     let res = array1.map((a, i) => {
                         let b = array2[i];
@@ -123,7 +123,7 @@ export class RD extends DCM {
                     });
                     return res;
                 }
-    
+
                 let res = [];
                 for (let i = 0; i < images.length - 1; i++) {
                     res.push(images[i]);
@@ -136,12 +136,55 @@ export class RD extends DCM {
                 return res;
             }
 
+            function bilinearInterpolation(src, width, height, scaleW, scaleH) {
+                function interpolate(k, kMin, kMax, vMin, vMax) {
+                    return Math.round((k - kMin) * vMax + (kMax - k) * vMin)
+                }
+
+                function interpolateHorizontal(offset, x, y, xMin, xMax) {
+                    const vMin = src[((y * width + xMin) * 1) + offset]
+                    if (xMin === xMax) return vMin
+
+                    const vMax = src[((y * width + xMax) * 1) + offset]
+                    return interpolate(x, xMin, xMax, vMin, vMax)
+                }
+
+                function interpolateVertical(offset, x, xMin, xMax, y, yMin, yMax) {
+                    const vMin = interpolateHorizontal(offset, x, yMin, xMin, xMax)
+                    if (yMin === yMax) return vMin
+
+                    const vMax = interpolateHorizontal(offset, x, yMax, xMin, xMax)
+                    return interpolate(y, yMin, yMax, vMin, vMax)
+                }
+
+                let dst = [];
+                const dstWidth = Math.round(width * scaleW);
+                const dstHeight = Math.round(height * scaleH);
+
+                for (let y = 0; y < dstHeight; y++) {
+                    for (let x = 0; x < dstWidth; x++) {
+                        const srcX = x / scaleW;
+                        const srcY = y / scaleH;
+
+                        const xMin = Math.floor(srcX)
+                        const yMin = Math.floor(srcY)
+
+                        const xMax = Math.min(Math.ceil(srcX), width - 1);
+                        const yMax = Math.min(Math.ceil(srcY), height - 1);
+
+                        dst.push(interpolateVertical(0, srcX, xMin, xMax, srcY, yMin, yMax));
+                    }
+                }
+
+                return dst;
+            }
+
             let pixelData = this.imageData.getPixelData().value.buffer;
             switch (this.imageData.getBitsAllocated()) {
                 case 8:
                     pixelData = new Uint8Array(pixelData);
                     break;
-                case 16: 
+                case 16:
                     pixelData = new Uint16Array(pixelData);
                     break;
                 case 32:
@@ -150,18 +193,18 @@ export class RD extends DCM {
                 default:
                     break;
             }
-            let scaledArray = [];
-            const doseGridScaling = this.imageData.tags["3004000E"].value[0];
-            for (let i = 0; i < pixelData.length; i++) {
-                scaledArray.push(pixelData[i] * doseGridScaling);
-            }
+            // const doseGridScaling = this.imageData.tags["3004000E"].value[0];
             let pixelDataArray = [];
-            const arrayLength = this.imageData.getRows() * this.imageData.getCols();
+            const width = this.imageData.getCols();
+            const height = this.imageData.getRows();
+            const scaleW = this.imageData.getPixelSpacing()[1] / ct.pixelSpacing[1];
+            const scaleH = this.imageData.getPixelSpacing()[0] / ct.pixelSpacing[1];
+            const arrayLength = width * height;
             for (let i = 0, j = arrayLength; j <= pixelData.length; i += arrayLength, j += arrayLength) {
-                pixelDataArray.push(scaledArray.slice(i,j))
+                pixelDataArray.push(bilinearInterpolation(pixelData.slice(i, j), width, height, scaleW, scaleH));
             }
 
-            let interpolatedArray = buildInterpolatedArray(pixelDataArray, ct.thickness)
+            let interpolatedArray = linearInterpolation(pixelDataArray, ct.thickness)
 
             return interpolatedArray;
         }
@@ -173,7 +216,7 @@ export class RD extends DCM {
         this.pixelSpacing = this.imageData.getPixelSpacing();
         this.doseGridScaling = this.imageData.tags["3004000E"].value[0];
         this.doseUnits = this.imageData.tags["30040002"].value[0];
-        this.pixelArray = unFoldPixelData();
+        this.pixelArray = calculatePixelData();
         // Thickness of the dose is the same as in the CT
     }
 }
@@ -272,8 +315,8 @@ export class BasicSeries {
             let sortedCT = ctInfo.sort((a, b) => a.position[2] - b.position[2]);
             const positionError = 1.0001
             for (let i = 1; i < sortedCT.length; i++) {
-                if (Math.abs(sortedCT[i].position[2] - sortedCT[i-1].position[2]) > first.thickness * positionError) {
-                    console.log(`Missing slice between ${sortedCT[i].filename} & ${sortedCT[i-1].filename}`)
+                if (Math.abs(sortedCT[i].position[2] - sortedCT[i - 1].position[2]) > first.thickness * positionError) {
+                    console.log(`Missing slice between ${sortedCT[i].filename} & ${sortedCT[i - 1].filename}`)
                     return false
                 }
             }

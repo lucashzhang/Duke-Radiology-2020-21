@@ -9,6 +9,9 @@ export class Factory {
             case 'RSWRAPPER':
             case 'RS':
                 return new RSWrapper(obj);
+            case 'RDWRAPPER':
+            case 'RD':
+                return new RDWrapper(obj);
             default:
                 return obj;
         }
@@ -22,6 +25,48 @@ class Wrapper {
 }
 // Casts the Series object to add some useful methods
 export class SeriesWrapper extends Wrapper {
+
+    getAxialSlice(sliceNum) {
+        sliceNum = Math.floor(sliceNum);
+        if (sliceNum > this.depth || sliceNum < 0) return [];
+        return this.imageArray[sliceNum];
+    }
+
+    getCoronalSlice(sliceNum) {
+        sliceNum = Math.floor(sliceNum);
+        let temp = [];
+        if (sliceNum > this.height || sliceNum < 0) return temp;
+        for (let i = 0; i < this.depth; i++) {
+            for (let j = 0; j < this.width; j++) {
+                temp.push(this.imageArray[i][sliceNum * this.height + j])
+            }
+        }
+        return temp;
+    }
+
+    getSagittalSlice(sliceNum) {
+        sliceNum = Math.floor(sliceNum);
+        let temp = [];
+        if (sliceNum > this.width || sliceNum < 0) return temp;
+        for (let j = 0; j < this.depth; j++) {
+            for (let i = 0; i < this.height; i++) {
+                temp.push(this.imageArray[j][sliceNum + this.width * i]);
+            }
+        }
+        return temp;
+    }
+
+    isSeries() {
+        for (let i = 1; i < this.images.length; i++) {
+            if (Math.abs(this.images[i].position[2] - this.images[i - 1].position[2]) !== this.thickness) {
+                return false
+            }
+        }
+        return true;
+    }
+}
+
+export class RDWrapper extends Wrapper {
 
     getAxialSlice(sliceNum) {
         sliceNum = Math.floor(sliceNum)
@@ -51,15 +96,6 @@ export class SeriesWrapper extends Wrapper {
             }
         }
         return temp;
-    }
-
-    isSeries() {
-        for (let i = 1; i < this.images.length; i++) {
-            if (Math.abs(this.images[i].position[2] - this.images[i-1].position[2]) !== this.thickness) {
-                return false
-            }
-        }
-        return true;
     }
 }
 
