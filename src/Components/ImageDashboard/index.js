@@ -76,6 +76,7 @@ function Dashboard() {
     }
 
     function handleSlice(view, val1, val2, val3) {
+
         switch (view.toUpperCase()) {
             case 'AXIAL':
                 setSliceCoord({
@@ -93,9 +94,9 @@ function Dashboard() {
                 break;
             case 'SAGITTAL':
                 setSliceCoord({
-                    x: val2,
-                    y: val3,
-                    z: val1
+                    x: val3,
+                    y: val1,
+                    z: val2
                 });
                 break;
             default:
