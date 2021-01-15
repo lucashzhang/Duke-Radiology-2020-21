@@ -53,7 +53,7 @@ export function useRS() {
     const rsWorker = new Worker();
     readRS(absDir, rsWorker).then(newRS => {
       if (newRS !== {} && newRS != null) setRS(newRS);
-      console.log(newRS)
+      // console.log(newRS)
       rsWorker.terminate();
     });
 

@@ -116,7 +116,6 @@ function readTagString(tag, level = 0) {
         des = daikon.Utils.convertCamcelCaseToTitleCase(daikon.Dictionary.getDescription(tag.group, tag.element));
     }
 
-
     return `${padding} ${tagStr} ${des}: ${valueStr}`;
 }
 
@@ -128,7 +127,7 @@ export async function readRS(absDir, rsWorker = null) {
         ownWorker = true;
     }
 
-    let ctImages = await readCT(absDir, rsWorker);
+    let ctImages = await readCT(absDir, rsWorker, true);
     let firstCT = ctImages[0];
     let rawRS = await getFiles(absDir, 'RS');
     if (rawRS.length <= 0) {
@@ -149,7 +148,7 @@ export async function readRD(absDir, rdWorker = null) {
         ownWorker = true;
     }
 
-    let ctImages = await readCT(absDir, rdWorker);
+    let ctImages = await readCT(absDir, rdWorker, true);
     let firstCT = ctImages[0];
     let rawRD = await getFiles(absDir, 'RD');
     if (rawRD.length <= 0) {
@@ -162,7 +161,7 @@ export async function readRD(absDir, rdWorker = null) {
     return wrappedRD;
 }
 
-export async function readCT(absDir, ctWorker = null) {
+export async function readCT(absDir, ctWorker = null, one = false) {
     let ownWorker = false;
     if (ctWorker == null) {
         ctWorker = new Worker();
@@ -170,6 +169,7 @@ export async function readCT(absDir, ctWorker = null) {
     }
 
     let rawCT = await getFiles(absDir, 'CT');
+    if (one) rawCT = [rawCT[0]];
     let builtCT = await ctWorker.buildCT(rawCT);
     if (builtCT.length <= 0) {
         alert("Please make sure to include CT Images in the directory");

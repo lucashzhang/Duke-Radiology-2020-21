@@ -113,16 +113,39 @@ export class RD extends DCM {
         super(filename, buffer);
 
         const unFoldPixelData = () => {
+
+            function buildInterpolatedArray(images, thickness) {
+    
+                function weightedAverage(array1, array2, weight) {
+                    let res = array1.map((a, i) => {
+                        let b = array2[i];
+                        return a * (thickness - weight) / thickness + b * weight / thickness;
+                    });
+                    return res;
+                }
+    
+                let res = [];
+                for (let i = 0; i < images.length - 1; i++) {
+                    res.push(images[i]);
+                    for (let j = 1; j < thickness; j++) {
+                        let slice = weightedAverage(images[i], images[i + 1], j);
+                        res.push(slice);
+                    }
+                }
+                res.push(images[images.length - 1]);
+                return res;
+            }
+
             let pixelData = this.imageData.getPixelData().value.buffer;
             switch (this.imageData.getBitsAllocated()) {
                 case 8:
-                    pixelData = new Uint8Array(pixelData)
+                    pixelData = new Uint8Array(pixelData);
                     break;
                 case 16: 
-                    pixelData = new Uint16Array(pixelData)
+                    pixelData = new Uint16Array(pixelData);
                     break;
                 case 32:
-                    pixelData = new Uint32Array(pixelData)
+                    pixelData = new Uint32Array(pixelData);
                     break;
                 default:
                     break;
@@ -138,7 +161,9 @@ export class RD extends DCM {
                 pixelDataArray.push(scaledArray.slice(i,j))
             }
 
-            return pixelDataArray
+            let interpolatedArray = buildInterpolatedArray(pixelDataArray, ct.thickness)
+
+            return interpolatedArray;
         }
 
         this.rows = this.imageData.getRows();
@@ -149,6 +174,7 @@ export class RD extends DCM {
         this.doseGridScaling = this.imageData.tags["3004000E"].value[0];
         this.doseUnits = this.imageData.tags["30040002"].value[0];
         this.pixelArray = unFoldPixelData();
+        // Thickness of the dose is the same as in the CT
     }
 }
 
