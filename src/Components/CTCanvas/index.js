@@ -35,11 +35,10 @@ const useStyles = makeStyles(() => ({
 
 function CTCanvas(props) {
 
+    const { view, series } = props;
     const classes = useStyles();
     const canvasRef = useRef(null);
-    const series = props.series;
     const minSlice = getMinSlice();
-    const view = props.view;
     const [maxDepth, maxWidth, maxHeight] = getMax();
     const drawXOffset = Math.floor((series.width - maxWidth) / 2);
     const drawYOffset = Math.floor((series.height - maxHeight) / 2);
