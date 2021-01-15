@@ -1,10 +1,10 @@
 {
   "name": "duke-radiology-project",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Pending",
   "author": "Lucas Zhang",
   "build": {
-    "appId": "com.electron.reactboilerplate",
+    "appId": "com.electron.dukeradiologyproject",
     "win": {
       "target": [
         {
