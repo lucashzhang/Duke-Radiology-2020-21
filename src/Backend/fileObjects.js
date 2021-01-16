@@ -214,13 +214,13 @@ export class RD extends DCM {
         const cols = this.imageData.getCols();
         const scaleW = this.imageData.getPixelSpacing()[1] / ct.pixelSpacing[1];
         const scaleH = this.imageData.getPixelSpacing()[0] / ct.pixelSpacing[0];
-        this.offsetVector = [((ct.position[0] - this.position[0]) / ct.pixelSpacing[0]),
-        ((ct.position[1] - this.position[1]) / ct.pixelSpacing[1]),
-        Math.round(ct.position[2] - this.position[2])
-        ];
         this.width = Math.floor(cols * scaleW);
         this.height = Math.floor(rows * scaleH);
         this.depth = this.imageArray.length;
+        this.offsetVector = [((ct.position[0] - this.position[0]) / ct.pixelSpacing[0]),
+        ((ct.position[1] - this.position[1]) / ct.pixelSpacing[1]),
+        Math.round(ct.position[2] - this.position[2] - this.depth)
+        ];
     }
 }
 
