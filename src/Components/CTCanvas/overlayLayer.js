@@ -13,6 +13,7 @@ function CTLayer(props) {
 
         function drawContour(contourData = null) {
             const ctx = canvasRef.current.getContext('2d');
+            console.log(contourData)
             if (contourData == null || Object.keys(contourData).length === 0) return;
             for (let roi in contourData) {
                 const color = contourData[roi].displayColor

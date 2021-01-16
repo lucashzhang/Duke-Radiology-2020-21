@@ -177,7 +177,8 @@ function CTCanvas(props) {
 
     useEffect(() => {
         const ctx = canvasRef.current.getContext('2d');
-        ctx.clearRect(0, 0, 512, 512)
+        ctx.clearRect(0, 0, 512, 512);
+        drawTextOverlay();
         drawCrosshairs(sliceX + drawXOffset, sliceY + drawYOffset)
     }, [sliceX, sliceY, sliceZ])
 

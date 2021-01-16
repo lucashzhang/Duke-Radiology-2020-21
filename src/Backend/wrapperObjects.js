@@ -155,7 +155,6 @@ export class RSWrapper extends Wrapper {
 
     getContourAtZ(contourObj, z) {
         // z = Math.floor(z / this.imageThickness) * this.imageThickness;
-
         for (let roi in contourObj) {
             if (contourObj[roi].sequences.length > 0) {
                 contourObj[roi].sequences = contourObj[roi].sequences.filter(item => item.zIndex === z)
