@@ -8,7 +8,8 @@ import { useSeries, useRS, useRD } from '../../Backend/fileHooks';
 const useStyles = makeStyles((theme) => ({
     frame: {
         display: 'flex',
-        flexDirection: 'row'
+        flexDirection: 'row',
+        background: theme.palette.surfacePrimary.main
     },
     main: {
         width: 'calc(100vw - 270px)',
@@ -17,7 +18,6 @@ const useStyles = makeStyles((theme) => ({
         gridTemplateColumns: '1fr 784px 784px 1fr',
         gridTemplateRows: '2rem 1fr 3fr 2rem',
         overflow: 'auto',
-        background: theme.palette.surfacePrimary.main
     },
     title: {
         gridRow: '2',

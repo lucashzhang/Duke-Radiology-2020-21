@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from '@material-ui/core/styles';
-import { Paper, Typography, FormControl, InputLabel, OutlinedInput, IconButton, List, ListItem, Accordion, AccordionDetails, AccordionSummary, Dialog, DialogContent, DialogTitle, DialogActions, Button } from '@material-ui/core';
+import { Paper, Typography, FormControl, InputLabel, OutlinedInput, IconButton, List, ListItem, Button } from '@material-ui/core';
+import { Dialog, DialogContent, DialogTitle, DialogActions } from '@material-ui/core';
+import { Accordion, AccordionDetails, AccordionSummary } from '@material-ui/core';
 import { FaFolderOpen, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import { pickDirectoryPath, getSummary } from '../../Backend/fileHandler';
 import { useDirectory } from "../../Backend/fileHooks";
@@ -51,7 +53,6 @@ const useStyles = makeStyles((theme) => ({
     },
     fileAccordion: {
         background: theme.palette.surfacePrimary.main,
-        color: 'white'
     },
     fileSummary: {
         display: 'flex'
@@ -61,8 +62,6 @@ const useStyles = makeStyles((theme) => ({
         marginRight: '0'
     },
     fileDetails: {
-        background: 'white',
-        color: theme.palette.text.primary,
         maxHeight: 'calc(75vh - 28rem)',
         overflow: 'auto'
     },
@@ -192,7 +191,7 @@ function Landing() {
                         <AccordionDetails className={classes.fileDetails}>
                             <List className={classes.fileList}>
                                 {ctSummary.ctInfo ? ctSummary.ctInfo.map(ct => (
-                                    <ListItem key={ct.filename} button onClick={() => handleFileClick(ct.filename)}>{ct.filename}</ListItem>
+                                    <ListItem key={ct.filename} button onClick={() => handleFileClick(ct.filename)} divider>{ct.filename}</ListItem>
                                 )) : <ListItem>No CT Files Selected</ListItem>}
                             </List>
                         </AccordionDetails>

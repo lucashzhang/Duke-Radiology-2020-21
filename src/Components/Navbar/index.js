@@ -26,10 +26,10 @@ const useStyles = makeStyles((theme) => ({
         },
     },
     viewing: {
-        color: theme.palette.primary.main,
+        color: theme.palette.primary.light,
     },
     menu: {
-        color: theme.palette.primary.main,
+        color: theme.palette.primary.light,
     },
 }));
 

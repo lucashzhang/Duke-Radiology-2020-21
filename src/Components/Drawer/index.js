@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
-import { FormGroup, FormControlLabel, Checkbox, CircularProgress, FormControl } from '@material-ui/core';
+import { Paper, FormGroup, FormControlLabel, Checkbox, CircularProgress, FormControl } from '@material-ui/core';
 
 
 const useStyles = makeStyles((theme) => ({
     drawerContainer: {
-        width: 'calc(270px - 2rem)',
+        width: 'calc(240px - 2rem)',
         height: 'calc(100vh - 2rem)',
-        backgroundColor: theme.palette.surfacePrimary.main,
-        color: theme.palette.surfacePrimary.contrastText,
         overflow: 'auto',
-        // borderRight: 'solid',
         padding: '1rem'
     },
     loading: {
@@ -54,7 +51,7 @@ function StructMenu(props) {
     useEffect(initChecks, [structs]);
 
     return (
-        <div className={classes.drawerContainer}>
+        <Paper className={classes.drawerContainer}>
             {structs != null && Object.keys(checked).length !== 0 && !isLoading ? <FormControl component="fieldset">
                 <FormGroup>
                     {
@@ -71,7 +68,7 @@ function StructMenu(props) {
             </FormControl> : <div className={classes.loading}>
                     <CircularProgress color='primary'></CircularProgress>
                 </div>}
-        </div>
+        </Paper>
     );
 }
 
