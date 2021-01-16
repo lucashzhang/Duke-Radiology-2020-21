@@ -9,7 +9,12 @@ const useStyles = makeStyles((theme) => ({
         width: 'calc(240px - 2rem)',
         height: 'calc(100vh - 2rem)',
         overflow: 'auto',
-        padding: '1rem'
+        // overflow: 'hidden',
+        padding: '1rem',
+        // transition: '0.5s',
+        // '&:hover': {
+        //     overflow: 'auto',
+        //  },
     },
     loading: {
         width: '100%',

@@ -1,5 +1,6 @@
 import React from "react";
 import { ThemeProvider, makeStyles } from '@material-ui/core/styles';
+import './App.css';
 
 import {
   HashRouter as Router,

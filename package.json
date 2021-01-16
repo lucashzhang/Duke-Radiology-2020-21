@@ -18,8 +18,8 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.11.2",
-    "@testing-library/jest-dom": "^5.11.8",
-    "@testing-library/react": "^11.2.2",
+    "@testing-library/jest-dom": "^5.11.9",
+    "@testing-library/react": "^11.2.3",
     "@testing-library/user-event": "^12.6.0",
     "clsx": "^1.1.1",
     "daikon": "^1.2.42",
@@ -33,7 +33,7 @@
     "react-scripts": "4.0.1",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
-    "web-vitals": "^1.0.1"
+    "web-vitals": "^1.1.0"
   },
   "scripts": {
     "react-start": "react-scripts start",
