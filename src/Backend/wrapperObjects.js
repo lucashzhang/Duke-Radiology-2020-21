@@ -126,7 +126,7 @@ export class RDWrapper extends Wrapper {
                 let pixelVal = this.imageArray[j][sliceNum + this.width * i];
                 data[k - 3] = data[k - 2] = data[k - 1] = pixelVal * this.doseGridScaling * 255;
                 data[k] = pixelVal === 0 ? 0 : 128;
-                k += 4
+                k += 4;
             }
         }
         return imageData;
