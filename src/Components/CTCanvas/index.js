@@ -17,7 +17,10 @@ const useStyles = makeStyles(() => ({
         gridColumn: '1',
         gridRow: '1',
         zIndex: '100',
-        position: 'absolute'
+        position: 'absolute',
+        "&:focus": {
+            outlineColor: 'white',
+        }
     },
     loading: {
         position: 'absolute',
@@ -27,7 +30,7 @@ const useStyles = makeStyles(() => ({
         height: '100%',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
     }
 }));
 
@@ -89,20 +92,6 @@ function CTCanvas(props) {
         }
     }
 
-    function getSpacing() {
-        if (series == null || series.pixelSpacing == null) return 1;
-        switch (props.view.toUpperCase()) {
-            case 'AXIAL':
-                return 1;
-            case 'CORONAL':
-                return series.pixelSpacing[1];
-            case 'SAGITTAL':
-                return series.pixelSpacing[0];
-            default:
-                return 1;
-        }
-    }
-
     function drawCrosshairs(x, y) {
         const ctx = canvasRef.current.getContext('2d');
         ctx.strokeStyle = theme.palette.primary.light;
@@ -135,7 +124,7 @@ function CTCanvas(props) {
         const ctx = canvasRef.current.getContext('2d');
         ctx.font = '16px sans-serif';
         ctx.textAlign = "center";
-        ctx.fillStyle = theme.palette.primary.light;
+        ctx.fillStyle = '#FFFFFF';
         ctx.fillText(props.view.toUpperCase(), 256, 24);
         ctx.fillText(`Slice Position: ${(sliceZ * getSpacing() + minSlice).toFixed(4)}mm`, series.width / 2, series.height - 12);
     }
