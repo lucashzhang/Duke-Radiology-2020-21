@@ -20,8 +20,7 @@ const useStyles = makeStyles(() => ({
         position: 'absolute'
     },
     loading: {
-        gridColumn: '1',
-        gridRow: '1',
+        position: 'absolute',
         zIndex: '300',
         backgroundColor: 'black',
         width: '100%',
