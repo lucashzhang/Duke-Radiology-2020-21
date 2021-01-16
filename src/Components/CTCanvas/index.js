@@ -62,14 +62,14 @@ function CTCanvas(props) {
     }
 
     function getMinSlice() {
-        if (series == null) return;
+        if (series.position == null) return;
         switch (props.view.toUpperCase()) {
             case 'AXIAL':
-                return series.minZ
+                return series.position[2]
             case 'CORONAL':
-                return series.minY
+                return series.position[1]
             case 'SAGITTAL':
-                return series.minX
+                return series.position[0]
             default:
                 return 1
         }
@@ -122,7 +122,7 @@ function CTCanvas(props) {
             if (series == null || series.pixelSpacing == null) return 1;
             switch (props.view.toUpperCase()) {
                 case 'AXIAL':
-                    return 1;
+                    return -1;
                 case 'CORONAL':
                     return series.pixelSpacing[1];
                 case 'SAGITTAL':

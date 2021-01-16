@@ -191,7 +191,7 @@ export class RD extends DCM {
             const scaleW = this.imageData.getPixelSpacing()[1] / ct.pixelSpacing[1];
             const scaleH = this.imageData.getPixelSpacing()[0] / ct.pixelSpacing[1];
             const arrayLength = width * height;
-            for (let i = 0, j = arrayLength; j <= pixelData.length; i += arrayLength, j += arrayLength) {
+            for (let i = pixelData.length - arrayLength, j = pixelData.length; i >= 0; i -= arrayLength, j -= arrayLength) {
                 pixelDataArray.push(bilinearInterpolation(pixelData.slice(i, j), width, height, scaleW, scaleH));
             }
 
@@ -214,13 +214,13 @@ export class RD extends DCM {
         const cols = this.imageData.getCols();
         const scaleW = this.imageData.getPixelSpacing()[1] / ct.pixelSpacing[1];
         const scaleH = this.imageData.getPixelSpacing()[0] / ct.pixelSpacing[0];
-        this.offsetVector = [((ct.position[0] - this.position[0]) / ct.pixelSpacing[0]),
-        ((ct.position[1] - this.position[1]) / ct.pixelSpacing[1]),
-        Math.round(ct.position[2] - this.position[2])
-        ];
         this.width = Math.floor(cols * scaleW);
         this.height = Math.floor(rows * scaleH);
         this.depth = this.imageArray.length;
+        this.offsetVector = [((ct.position[0] - this.position[0]) / ct.pixelSpacing[0]),
+        ((ct.position[1] - this.position[1]) / ct.pixelSpacing[1]),
+        Math.round(ct.position[2] - this.position[2] - this.depth)
+        ];
     }
 }
 
@@ -258,16 +258,14 @@ export class Series {
             return res;
         }
 
-        this.images = ctArray.sort((a, b) => a.position[2] - b.position[2]);
+        this.images = ctArray.sort((a, b) => b.position[2] - a.position[2]);
         this.thickness = ctArray[0].thickness;
         this.width = ctArray[0].cols;
         this.height = ctArray[0].imageData.tags["00280010"].value[0];
         this.depth = (ctArray.length - 1) * this.thickness + 1;
         this.imageArray = buildInterpolatedArray(this.images, this.thickness);
         this.pixelSpacing = this.images[0].pixelSpacing;
-        this.minX = this.images[0].position[0];
-        this.minY = this.images[0].position[1];
-        this.minZ = this.images[0].position[2];
+        this.position = [this.images[0].position[0], this.images[0].position[1], this.images[0].position[2]];
     }
 }
 

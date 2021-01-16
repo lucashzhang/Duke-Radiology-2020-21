@@ -86,7 +86,7 @@ export class SeriesWrapper extends Wrapper {
 export class RDWrapper extends Wrapper {
 
     getAxialSlice(sliceNum) {
-        sliceNum = Math.floor(sliceNum) - this.offsetVector[2];
+        sliceNum = Math.floor(sliceNum) + this.offsetVector[2];
         if (sliceNum > this.depth || sliceNum < 0 || this.imageArray[sliceNum] == null) return null;
         let imageData = new ImageData(this.width, this.height);
         let data = imageData.data;
