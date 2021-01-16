@@ -30,7 +30,7 @@ function CTLayer(props) {
             const contours = getSelectedContours()
             switch (view.toUpperCase()) {
                 case 'AXIAL':
-                    return rs.getContourAtZ(contours, Math.floor(sliceNum / rs.imageThickness) * rs.imageThickness + minSlice);
+                    return rs.getContourAtZ(contours, minSlice - Math.floor(sliceNum / rs.imageThickness) * rs.imageThickness);
                 case 'CORONAL':
                     break;
                 case 'SAGITTAL':
