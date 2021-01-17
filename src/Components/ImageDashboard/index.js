@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
         width: 'calc(100vw - 270px)',
         height: '100vh',
         display: 'grid',
-        gridTemplateColumns: '1fr 794px 794px 1fr',
+        gridTemplateColumns: '1fr 49.5rem 49.5rem 1fr',
         gridTemplateRows: '2rem 1fr 3fr 2rem',
         overflow: 'auto',
     },
@@ -46,8 +46,8 @@ const useStyles = makeStyles((theme) => ({
         padding: '0.75rem 0.75rem 0.75rem 0rem',
         display: 'flex',
         flexDirection: 'row',
-        height: '512px',
-        width: '1572px'
+        height: '33.5rem',
+        width: '99rem'
 
     },
     canvas: {

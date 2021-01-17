@@ -1,11 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import theme from '../../Utilities/theme';
 import { CircularProgress } from '@material-ui/core';
 import CTLayer from './CTLayer';
 import OverlayLayer from './overlayLayer';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
     canvasContainer: {
         position: 'relative',
         width: '512px',
@@ -14,6 +13,10 @@ const useStyles = makeStyles(() => ({
         borderRadius: '0.25rem',
         "& canvas": {
             borderRadius: '0.25rem'
+        },
+        "&:focus": {
+            outline: 'none',
+            border: 'solid 3px'
         }
     },
     canvas: {
@@ -23,8 +26,11 @@ const useStyles = makeStyles(() => ({
         zIndex: '100',
         position: 'absolute',
         borderRadius: '0.25rem',
+        boxSizing: 'border-box',
         "&:focus": {
-            outlineColor: 'white',
+            outline: 'none',
+            boxShadow: `0 0 0 2pt ${theme.palette.primary.main}`
+            // border: 'solid 3px'
         }
     },
     loading: {
@@ -100,7 +106,7 @@ function CTCanvas(props) {
 
     function drawCrosshairs(x, y) {
         const ctx = canvasRef.current.getContext('2d');
-        ctx.strokeStyle = theme.palette.primary.dark;
+        ctx.strokeStyle = '#FFFFFF';
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.moveTo(x, 0);

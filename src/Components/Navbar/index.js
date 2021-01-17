@@ -23,10 +23,10 @@ const useStyles = makeStyles((theme) => ({
         width: theme.spacing(7) + 1,
     },
     viewing: {
-        color: theme.palette.primary.light,
+        color: theme.palette.primary.main,
     },
     menu: {
-        color: theme.palette.primary.light,
+        color: theme.palette.primary.main,
     },
 }));
 
