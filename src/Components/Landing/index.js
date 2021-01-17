@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
         background: theme.palette.surfacePrimary.main,
         height: '100vh',
         display: 'grid',
-        gridTemplateColumns: '1fr 784px 784px 1fr',
+        gridTemplateColumns: '1fr 792px 792px 1fr',
         gridTemplateRows: '2rem 1fr 1fr 1fr 1fr 2rem'
     },
     title: {
