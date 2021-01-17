@@ -3,11 +3,6 @@
      width: 1rem;
  }
 
- /* Track */
- ::-webkit-scrollbar-track {
-     background: #424242;
- }
-
  /* Handle */
  ::-webkit-scrollbar-thumb {
      background: #828282;

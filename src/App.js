@@ -16,7 +16,8 @@ import theme from './Utilities/theme';
 
 const useStyles = makeStyles((theme) => ({
   windowContainer: {
-    marginLeft: '57px'
+    marginLeft: '57px',
+    height: '100vh'
   }
 }));
 

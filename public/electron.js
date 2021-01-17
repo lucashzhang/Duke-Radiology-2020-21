@@ -12,11 +12,15 @@ function createWindow() {
         webPreferences: {
             nodeIntegration: true, // <--- flag
             // nodeIntegrationInWorker: true, // <---  for web workers
-            enableRemoteModule: true
-        }
+            enableRemoteModule: true,
+            contextIsolation: false
+        },
     }); 
     mainWindow.loadURL(isDev ? "http://localhost:3000" : `file://${path.join(__dirname, "../build/index.html")}`); 
     mainWindow.on("closed", () => (mainWindow = null)); 
+    if (!isDev) {
+        mainWindow.removeMenu();
+    }
 } 
 
 app.on("ready", createWindow); 

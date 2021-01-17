@@ -63,10 +63,10 @@ const useStyles = makeStyles((theme) => ({
     },
     fileDetails: {
         maxHeight: 'calc(75vh - 28rem)',
-        overflow: 'auto'
+        overflow: 'auto',
     },
     fileList: {
-        width: '100%'
+        width: '100%',
     }
 }));
 
@@ -111,6 +111,8 @@ function Landing() {
     const [absDir, setAbsDir] = useDirectory();
     const [dialogOpen, setDialogOpen] = useState(false);
     const [dialogFile, setDialogFile] = useState('');
+    const [expanded, setExpanded] = useState(false);
+
     const { folderStatus, ctSummary, rsSummary, rdSummary } = useSelector(state => state.files, shallowEqual);
 
     async function handleDirectoryClick(e) {
@@ -138,6 +140,10 @@ function Landing() {
         handleDialogOpen(filename);
     }
 
+    const handleAccordion = (panel) => (event, isExpanded) => {
+        setExpanded(isExpanded ? panel : false);
+    };
+
     // useEffect(() => checkFiles(absDir), [absDir])
 
     return (
@@ -157,7 +163,7 @@ function Landing() {
                     ></OutlinedInput>
                 </FormControl>
                 <div className={classes.files}>
-                    <Accordion className={classes.fileAccordion}>
+                    <Accordion className={classes.fileAccordion} expanded={expanded === 'RS'} onChange={handleAccordion('RS')}>
                         <AccordionSummary>
                             <Typography>RS File</Typography>
                             <StatusIcon isValid={!!rsSummary.isValid}></StatusIcon>
@@ -170,7 +176,7 @@ function Landing() {
                             </List>
                         </AccordionDetails>
                     </Accordion>
-                    <Accordion className={classes.fileAccordion}>
+                    <Accordion className={classes.fileAccordion} expanded={expanded === 'RD'} onChange={handleAccordion('RD')}>
                         <AccordionSummary>
                             <Typography>RD File</Typography>
                             <StatusIcon isValid={!!rsSummary.isValid}></StatusIcon>
@@ -183,7 +189,7 @@ function Landing() {
                             </List>
                         </AccordionDetails>
                     </Accordion>
-                    <Accordion className={classes.fileAccordion}>
+                    <Accordion className={classes.fileAccordion} expanded={expanded === 'CT'} onChange={handleAccordion('CT')}>
                         <AccordionSummary className={classes.fileSummary}>
                             <Typography>CT Files</Typography>
                             <StatusIcon isValid={!!ctSummary.isValid}></StatusIcon>

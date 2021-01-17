@@ -21,9 +21,6 @@ const useStyles = makeStyles((theme) => ({
     drawerClose: {
         overflowX: 'hidden',
         width: theme.spacing(7) + 1,
-        [theme.breakpoints.up('sm')]: {
-            width: theme.spacing(7) + 1,
-        },
     },
     viewing: {
         color: theme.palette.primary.light,
@@ -44,7 +41,7 @@ function WebsiteDrawer(props) {
             <ThemeProvider theme={theme}>
                 <Drawer
                     variant="permanent"
-                    className={clsx(classes.drawer, classes.drawerOpen)}
+                    className={classes.drawer}
                     classes={{
                         paper: classes.drawerClose
                     }}

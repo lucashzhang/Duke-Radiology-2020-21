@@ -94,7 +94,7 @@ function CTCanvas(props) {
 
     function drawCrosshairs(x, y) {
         const ctx = canvasRef.current.getContext('2d');
-        ctx.strokeStyle = theme.palette.primary.light;
+        ctx.strokeStyle = '#4444FF';
         ctx.beginPath();
         ctx.moveTo(x, 0);
         ctx.lineTo(x, canvasRef.current.height);
