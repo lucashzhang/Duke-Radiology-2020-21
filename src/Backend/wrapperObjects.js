@@ -94,7 +94,7 @@ export class RDWrapper extends Wrapper {
             let pixelVal = this.imageArray[sliceNum][k] * this.doseGridScaling;
             data[i - 3] = pixelVal * 255;
             data[i - 1] = (1 - pixelVal) * 255;
-            data[i] = this.imageArray[sliceNum][k] === 0 ? 0 : 128;
+            data[i] = this.imageArray[sliceNum][k] === 0 ? 0 : 88;
         }
         return imageData;
     }
@@ -111,7 +111,7 @@ export class RDWrapper extends Wrapper {
 
                 data[k - 3] = pixelVal * 255;
                 data[k - 1] = (1 - pixelVal) * 255;
-                data[k] = pixelVal === 0 ? 0 : 128;
+                data[k] = pixelVal === 0 ? 0 : 88;
                 k += 4;
             }
         }
@@ -129,7 +129,7 @@ export class RDWrapper extends Wrapper {
                 let pixelVal = this.imageArray[j][sliceNum + this.width * i] * this.doseGridScaling;
                 data[k - 3] = pixelVal * 255;
                 data[k - 1] = (1 - pixelVal) * 255;
-                data[k] = pixelVal === 0 ? 0 : 128;
+                data[k] = pixelVal === 0 ? 0 : 88;
                 k += 4;
             }
         }
