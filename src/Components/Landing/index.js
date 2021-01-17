@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
         background: theme.palette.surfacePrimary.main,
         height: '100vh',
         display: 'grid',
-        gridTemplateColumns: '1fr 792px 792px 1fr',
+        gridTemplateColumns: '1fr 794px 794px 1fr',
         gridTemplateRows: '2rem 1fr 1fr 1fr 1fr 2rem'
     },
     title: {
@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme) => ({
         marginRight: '0'
     },
     fileDetails: {
-        maxHeight: 'calc(75vh - 28rem)',
+        maxHeight: 'calc(75vh - 26rem)',
         overflow: 'auto',
     },
     fileList: {
@@ -210,7 +210,7 @@ function Landing() {
             <Paper className={classes.patient}>
                 <div><b>Patient Info Input Placeholder</b></div>
             </Paper>
-            {open ? <SummaryDialog open={dialogOpen} onClose={handleDialogClose} dir={absDir} filename={dialogFile}></SummaryDialog> : null}
+            {dialogOpen ? <SummaryDialog open={dialogOpen} onClose={handleDialogClose} dir={absDir} filename={dialogFile}></SummaryDialog> : null}
         </div>
     )
 }
