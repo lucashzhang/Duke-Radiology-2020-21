@@ -206,30 +206,24 @@ export async function scanFiles(absDir, validationWorker = null) {
     let res = {}
 
     let raw = await getFiles(absDir, 'CT');
-    let seriesInfo = {};
     if (raw.length > 0) {
-        seriesInfo = await validationWorker.scanSeries(raw);
-        res.seriesInfo = seriesInfo;
+        res.seriesInfo = await validationWorker.scanSeries(raw);
     }
 
     raw = await getFiles(absDir, 'RS');
-    let rsInfo = {};
     if (raw.length > 0) {
-        rsInfo = await validationWorker.scanRS(raw);
-        res.rsInfo = rsInfo;
+        res.rsInfo = await validationWorker.scanRS(raw);
     }
 
     raw = await getFiles(absDir, 'RD');
-    let rdInfo = {};
     if (raw.length > 0) {
-        rdInfo = await validationWorker.scanRD(raw);
-        res.rdInfo = rdInfo;
+        res.rdInfo = await validationWorker.scanRD(raw);
     }
 
-    res.isValid = !!(seriesInfo.isValid
-        && rsInfo.isValid
-        && seriesInfo.studyUID === rsInfo.studyUID
-        && rsInfo.studyUID === rdInfo.studyUID
+    res.isValid = !!(res.seriesInfo.isValid
+        && res.rsInfo.isValid
+        && res.seriesInfo.studyUID === res.rsInfo.studyUID
+        && res.rsInfo.studyUID === res.rdInfo.studyUID
     );
 
     if (ownWorker) validationWorker.terminate();

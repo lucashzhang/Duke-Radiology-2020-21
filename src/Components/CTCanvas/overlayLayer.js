@@ -3,7 +3,7 @@ import React, { useRef, useEffect } from 'react';
 function CTLayer(props) {
 
     const canvasRef = useRef(null);
-    const { sliceNum, selected, view, rs, rd, minSlice, canvasOffset } = props
+    const { sliceNum, selected, view, rs, rd, minSlice, canvasOffset, isDose } = props
 
     useEffect(() => {
         function getSelectedContours() {
@@ -19,7 +19,7 @@ function CTLayer(props) {
                 ctx.fillStyle = `rgb(${color[0]},${color[1]},${color[2]})`;
                 for (let sequence of contourData[roi].sequences) {
                     for (let point of sequence.contours) {
-                        ctx.fillRect(point[0] - 0.25, point[1] - 0.25, 2, 2);
+                        ctx.fillRect(point[0] - 0.5, point[1] - 0.5, 2, 2);
                     }
                 }
             }
@@ -81,9 +81,9 @@ function CTLayer(props) {
 
         const ctx = canvasRef.current.getContext('2d');
         ctx.clearRect(0, 0, 512, 512);
-        drawDoseOverlay();
+        if (!!isDose) drawDoseOverlay();
         drawContour(createContourPoints());
-    }, [rs, rd, sliceNum, selected, canvasOffset])
+    }, [rs, rd, sliceNum, selected, canvasOffset, isDose])
 
     return (
         <canvas

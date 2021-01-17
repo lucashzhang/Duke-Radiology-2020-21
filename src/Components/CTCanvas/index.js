@@ -94,7 +94,8 @@ function CTCanvas(props) {
 
     function drawCrosshairs(x, y) {
         const ctx = canvasRef.current.getContext('2d');
-        ctx.strokeStyle = '#4444FF';
+        ctx.strokeStyle = theme.palette.primary.dark;
+        ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.moveTo(x, 0);
         ctx.lineTo(x, canvasRef.current.height);
@@ -176,7 +177,16 @@ function CTCanvas(props) {
             className={classes.canvasContainer}
         >
             <CTLayer sliceNum={sliceZ} series={props.series} view={props.view}></CTLayer>
-            <OverlayLayer sliceNum={sliceZ} rs={props.rs} rd={props.rd} view={props.view} minSlice={minSlice} selected={props.selected} canvasOffset={[drawXOffset, drawYOffset]}></OverlayLayer>
+            <OverlayLayer
+                sliceNum={sliceZ}
+                rs={props.rs}
+                rd={props.rd}
+                view={props.view}
+                minSlice={minSlice}
+                selected={props.selected}
+                isDose={props.isDose}
+                canvasOffset={[drawXOffset, drawYOffset]}
+            ></OverlayLayer>
             <canvas
                 ref={canvasRef}
                 className={classes.canvas}

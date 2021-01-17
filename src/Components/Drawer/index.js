@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
-import { Paper, FormGroup, FormControlLabel, Checkbox, CircularProgress, FormControl } from '@material-ui/core';
+import { Paper, FormGroup, FormControlLabel, Checkbox, CircularProgress, FormControl, Divider, List, ListItem, Typography, Switch } from '@material-ui/core';
+import theme from '../../Utilities/theme';
 
 
 const useStyles = makeStyles((theme) => ({
     drawerContainer: {
-        width: 'calc(240px - 2rem)',
-        height: 'calc(100vh - 2rem)',
+        width: 'calc(240px)',
+        height: 'calc(100vh)',
         overflow: 'auto',
         // overflow: 'hidden',
-        padding: '1rem',
         // transition: '0.5s',
         // '&:hover': {
         //     overflow: 'auto',
@@ -30,6 +30,8 @@ function StructMenu(props) {
 
     const classes = useStyles();
     const structs = props.rs != null ? props.rs.structList : null;
+    const isSwitchOn = props.isDose;
+    const toggleSwitch = props.toggleDose;
     const isLoading = props.loading != null ? props.loading : false;
 
     const [checked, setChecked] = useState({});
@@ -57,22 +59,39 @@ function StructMenu(props) {
 
     return (
         <Paper className={classes.drawerContainer}>
-            {structs != null && Object.keys(checked).length !== 0 && !isLoading ? <FormControl component="fieldset">
-                <FormGroup>
-                    {
-                        structs.map((struct) => (
-                            <FormControlLabel
-                                key={`${struct.name}${struct.roi}`}
-                                control={<Checkbox name={`${struct.roi}`} checked={!!checked[struct.roi]} onChange={() => toggleChecked(struct.roi)} style={{ color: `rgb(${struct.displayColor[0]},${struct.displayColor[1]},${struct.displayColor[2]})` }} />}
-                                label={struct.name}
-                            />
-                        ))
-                    }
+            <List>
+                <ListItem><Typography variant="h6">Dose</Typography></ListItem>
+                <ListItem>
+                    <FormGroup>
+                        <FormControlLabel
+                            control={<Switch color={'primary'} checked={isSwitchOn} onChange={toggleSwitch}></Switch>}
+                            label={"RD File"}
+                        />
 
-                </FormGroup>
-            </FormControl> : <div className={classes.loading}>
-                    <CircularProgress color='primary'></CircularProgress>
-                </div>}
+                    </FormGroup>
+                </ListItem>
+                <Divider></Divider>
+                <ListItem><Typography variant="h6">Structures</Typography></ListItem>
+                <ListItem>
+                    {structs != null && Object.keys(checked).length !== 0 && !isLoading ? <FormControl component="fieldset">
+                        <FormGroup>
+                            {
+                                structs.map((struct) => (
+                                    <FormControlLabel
+                                        key={`${struct.name}${struct.roi}`}
+                                        control={<Checkbox name={`${struct.roi}`} checked={!!checked[struct.roi]} onChange={() => toggleChecked(struct.roi)} style={{ color: `rgb(${struct.displayColor[0]},${struct.displayColor[1]},${struct.displayColor[2]})` }} />}
+                                        label={struct.name}
+                                    />
+                                ))
+                            }
+
+                        </FormGroup>
+                    </FormControl> : <div className={classes.loading}>
+                            <CircularProgress color='primary'></CircularProgress>
+                        </div>}
+                </ListItem>
+            </List>
+
         </Paper>
     );
 }

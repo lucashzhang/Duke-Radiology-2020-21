@@ -61,6 +61,7 @@ function Dashboard() {
 
     const [sliceCoord, setSliceCoord] = useState({ x: 0, y: 0, z: 0 });
     const [selected, setSelected] = useState([]);
+    const [isDose, setIsDose] = useState(false);
     const isLoading = Object.keys(rs).length === 0 || Object.keys(series).length === 0 || Object.keys(rd).length === 0;
 
     function initMiddle() {
@@ -108,12 +109,16 @@ function Dashboard() {
         setSelected(checkedList)
     }
 
+    function toggleDose() {
+        setIsDose(prevState => !prevState);
+    }
+
     useEffect(() => setSelected([]), [rs]);
     useEffect(initMiddle, [series])
 
     return (
         <div className={classes.frame}>
-            <StructMenu rs={rs} handleChecked={handleChecked} loading={isLoading}></StructMenu>
+            <StructMenu rs={rs} handleChecked={handleChecked} isDose={isDose} toggleDose={toggleDose}></StructMenu>
             <div className={classes.main}>
                 <div className={classes.title}>
                     <Typography variant={'h1'}>CT Images</Typography>
@@ -123,9 +128,9 @@ function Dashboard() {
                 </Paper>
                 <div className={classes.canvasContainer}>
                     <Paper className={classes.canvasView}>
-                        <CTCanvas view='AXIAL' handleSlice={handleSlice} series={series} rs={rs} rd={rd} selected={selected} loading={isLoading} sliceCoords={sliceCoord}></CTCanvas>
-                        <CTCanvas view='CORONAL' handleSlice={handleSlice} series={series} rs={rs} rd={rd} selected={selected} loading={isLoading} sliceCoords={sliceCoord}></CTCanvas>
-                        <CTCanvas view='SAGITTAL' handleSlice={handleSlice} series={series} rs={rs} rd={rd} selected={selected} loading={isLoading} sliceCoords={sliceCoord}></CTCanvas>
+                        <CTCanvas view='AXIAL' handleSlice={handleSlice} series={series} rs={rs} rd={rd} selected={selected} loading={isLoading} sliceCoords={sliceCoord} isDose={isDose}></CTCanvas>
+                        <CTCanvas view='CORONAL' handleSlice={handleSlice} series={series} rs={rs} rd={rd} selected={selected} loading={isLoading} sliceCoords={sliceCoord} isDose={isDose}></CTCanvas>
+                        <CTCanvas view='SAGITTAL' handleSlice={handleSlice} series={series} rs={rs} rd={rd} selected={selected} loading={isLoading} sliceCoords={sliceCoord} isDose={isDose}></CTCanvas>
                     </Paper>
                 </div>
             </div>
