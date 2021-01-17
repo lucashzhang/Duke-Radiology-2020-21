@@ -8,7 +8,7 @@ function CTLayer(props) {
     const view = props.view;
 
     function buildCTCanvas() {
-    
+
         function getMax() {
             if (series == null) return [512, 512];
             switch (view.toUpperCase()) {
@@ -57,7 +57,7 @@ function CTLayer(props) {
             ref={canvasRef}
             width={512}
             height={512}
-            style={{ position: 'absolute'}}
+            style={{ position: 'absolute' }}
         ></canvas>
     )
 }

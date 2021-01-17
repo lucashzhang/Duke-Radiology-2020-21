@@ -11,6 +11,7 @@ const useStyles = makeStyles(() => ({
         width: '512px',
         height: '512px',
         backgroundColor: 'black',
+        borderRadius: '0.25rem',
     },
     canvas: {
         cursor: 'pointer',
@@ -18,6 +19,7 @@ const useStyles = makeStyles(() => ({
         gridRow: '1',
         zIndex: '100',
         position: 'absolute',
+        borderRadius: '0.25rem',
         "&:focus": {
             outlineColor: 'white',
         }
@@ -31,6 +33,14 @@ const useStyles = makeStyles(() => ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        borderRadius: '0.25rem',
+    },
+    roundCorners: {
+        position: 'absolute',
+        width: '512px',
+        height: '512px',
+        borderRadius: '0.25rem',
+        overflow: 'hidden',
     }
 }));
 
@@ -176,17 +186,19 @@ function CTCanvas(props) {
         <div
             className={classes.canvasContainer}
         >
-            <CTLayer sliceNum={sliceZ} series={props.series} view={props.view}></CTLayer>
-            <OverlayLayer
-                sliceNum={sliceZ}
-                rs={props.rs}
-                rd={props.rd}
-                view={props.view}
-                minSlice={minSlice}
-                selected={props.selected}
-                isDose={props.isDose}
-                canvasOffset={[drawXOffset, drawYOffset]}
-            ></OverlayLayer>
+            <div className={classes.roundCorners}>
+                <CTLayer sliceNum={sliceZ} series={props.series} view={props.view}></CTLayer>
+                <OverlayLayer
+                    sliceNum={sliceZ}
+                    rs={props.rs}
+                    rd={props.rd}
+                    view={props.view}
+                    minSlice={minSlice}
+                    selected={props.selected}
+                    isDose={props.isDose}
+                    canvasOffset={[drawXOffset, drawYOffset]}
+                ></OverlayLayer>
+            </div>
             <canvas
                 ref={canvasRef}
                 className={classes.canvas}
