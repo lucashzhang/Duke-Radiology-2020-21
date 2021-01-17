@@ -12,6 +12,9 @@ const useStyles = makeStyles(() => ({
         height: '512px',
         backgroundColor: 'black',
         borderRadius: '0.25rem',
+        "& canvas": {
+            borderRadius: '0.25rem'
+        }
     },
     canvas: {
         cursor: 'pointer',
@@ -34,13 +37,6 @@ const useStyles = makeStyles(() => ({
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: '0.25rem',
-    },
-    roundCorners: {
-        position: 'absolute',
-        width: '512px',
-        height: '512px',
-        borderRadius: '0.25rem',
-        overflow: 'hidden',
     }
 }));
 
@@ -186,19 +182,17 @@ function CTCanvas(props) {
         <div
             className={classes.canvasContainer}
         >
-            <div className={classes.roundCorners}>
-                <CTLayer sliceNum={sliceZ} series={props.series} view={props.view}></CTLayer>
-                <OverlayLayer
-                    sliceNum={sliceZ}
-                    rs={props.rs}
-                    rd={props.rd}
-                    view={props.view}
-                    minSlice={minSlice}
-                    selected={props.selected}
-                    isDose={props.isDose}
-                    canvasOffset={[drawXOffset, drawYOffset]}
-                ></OverlayLayer>
-            </div>
+            <CTLayer sliceNum={sliceZ} series={props.series} view={props.view}></CTLayer>
+            <OverlayLayer
+                sliceNum={sliceZ}
+                rs={props.rs}
+                rd={props.rd}
+                view={props.view}
+                minSlice={minSlice}
+                selected={props.selected}
+                isDose={props.isDose}
+                canvasOffset={[drawXOffset, drawYOffset]}
+            ></OverlayLayer>
             <canvas
                 ref={canvasRef}
                 className={classes.canvas}
