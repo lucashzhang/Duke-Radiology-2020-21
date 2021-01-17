@@ -46,7 +46,7 @@ export class SeriesWrapper extends Wrapper {
         let data = imageData.data;
         for (let i = 0; i < this.depth; i++) {
             for (let j = 0; j < this.width; j++) {
-                let pixelVal = this.imageArray[i][sliceNum * this.height + j];
+                let pixelVal = this.imageArray[i][sliceNum * this.width + j];
                 data[k - 3] = data[k - 2] = data[k - 1] = pixelVal;
                 data[k] = 255;
                 k += 4;
@@ -102,7 +102,7 @@ export class RDWrapper extends Wrapper {
             data[i - 3] = this.colors[pixelVal][0];
             data[i - 2] = this.colors[pixelVal][1];
             data[i - 1] = this.colors[pixelVal][2];
-            data[i] = this.imageArray[sliceNum][k] === 0 ? 0 : 88;
+            data[i] = pixelVal === 0 ? 0 : 88;
         }
         console.log(Math.max(...this.imageArray[sliceNum].map(pxl => pxl * this.doseGridScaling * 100)))
         return imageData;
@@ -116,7 +116,7 @@ export class RDWrapper extends Wrapper {
         let data = imageData.data;
         for (let i = 0; i < this.depth; i++) {
             for (let j = 0; j < this.width; j++) {
-                let pixelVal = Math.round(this.imageArray[i][sliceNum * this.height + j] * this.doseGridScaling * 100);
+                let pixelVal = Math.round(this.imageArray[i][sliceNum * this.width + j] * this.doseGridScaling * 100);
                 pixelVal = pixelVal > this.maxColorsIndex ? this.maxColorsIndex : pixelVal;
                 data[k - 3] = this.colors[pixelVal][0];
                 data[k - 2] = this.colors[pixelVal][1];
