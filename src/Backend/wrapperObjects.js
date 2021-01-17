@@ -91,7 +91,9 @@ export class RDWrapper extends Wrapper {
         let imageData = new ImageData(this.width, this.height);
         let data = imageData.data;
         for (let i = 3, k = 0; i < data.byteLength; i += 4, k++) {
-            data[i - 3] = data[i - 2] = data[i - 1] = this.imageArray[sliceNum][k] * this.doseGridScaling * 255;
+            let pixelVal = this.imageArray[sliceNum][k] * this.doseGridScaling;
+            data[i - 3] = pixelVal * 255;
+            data[i - 1] = (1 - pixelVal) * 255;
             data[i] = this.imageArray[sliceNum][k] === 0 ? 0 : 128;
         }
         return imageData;
@@ -105,9 +107,10 @@ export class RDWrapper extends Wrapper {
         let data = imageData.data;
         for (let i = 0; i < this.depth; i++) {
             for (let j = 0; j < this.width; j++) {
-                let pixelVal = this.imageArray[i][sliceNum * this.height + j];
+                let pixelVal = this.imageArray[i][sliceNum * this.height + j] * this.doseGridScaling;
 
-                data[k - 3] = data[k - 2] = data[k - 1] = pixelVal * this.doseGridScaling * 255;
+                data[k - 3] = pixelVal * 255;
+                data[k - 1] = (1 - pixelVal) * 255;
                 data[k] = pixelVal === 0 ? 0 : 128;
                 k += 4;
             }
@@ -123,8 +126,9 @@ export class RDWrapper extends Wrapper {
         let data = imageData.data;
         for (let j = 0; j < this.depth; j++) {
             for (let i = 0; i < this.height; i++) {
-                let pixelVal = this.imageArray[j][sliceNum + this.width * i];
-                data[k - 3] = data[k - 2] = data[k - 1] = pixelVal * this.doseGridScaling * 255;
+                let pixelVal = this.imageArray[j][sliceNum + this.width * i] * this.doseGridScaling;
+                data[k - 3] = pixelVal * 255;
+                data[k - 1] = (1 - pixelVal) * 255;
                 data[k] = pixelVal === 0 ? 0 : 128;
                 k += 4;
             }
