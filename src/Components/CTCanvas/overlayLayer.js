@@ -49,9 +49,9 @@ function CTLayer(props) {
                     case 'AXIAL':
                         return [-1 * rd.offsetVector[0] + canvasOffset[0], -1 * rd.offsetVector[1] + canvasOffset[1]]
                     case 'CORONAL':
-                        return [-1 * rd.offsetVector[0] + canvasOffset[0], -1 * rd.offsetVector[2] + canvasOffset[1]]
+                        return [-1 * rd.offsetVector[0] + canvasOffset[0], rd.offsetVector[2] + canvasOffset[1]]
                     case 'SAGITTAL':
-                        return [-1 * rd.offsetVector[1] + canvasOffset[0], -1 * rd.offsetVector[2] + canvasOffset[1]]
+                        return [-1 * rd.offsetVector[1] + canvasOffset[0], rd.offsetVector[2] + canvasOffset[1]]
                     default:
                         return [0, 0];
                 }
