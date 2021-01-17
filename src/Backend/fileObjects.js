@@ -214,8 +214,8 @@ export class RD extends DCM {
         const cols = this.imageData.getCols();
         const scaleW = this.imageData.getPixelSpacing()[1] / ct.pixelSpacing[1];
         const scaleH = this.imageData.getPixelSpacing()[0] / ct.pixelSpacing[0];
-        this.width = Math.floor(cols * scaleW);
-        this.height = Math.floor(rows * scaleH);
+        this.width = Math.round(cols * scaleW);
+        this.height = Math.round(rows * scaleH);
         this.depth = this.imageArray.length;
         this.offsetVector = [
             ((ct.position[0] - this.position[0]) / ct.pixelSpacing[0]),
