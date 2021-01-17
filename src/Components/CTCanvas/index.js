@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
         boxSizing: 'border-box',
         "&:focus": {
             outline: 'none',
-            boxShadow: `0 0 0 2pt ${theme.palette.primary.main}`
+            boxShadow: `0px 0px 0px 3px ${theme.palette.primary.main}`
             // border: 'solid 3px'
         }
     },
