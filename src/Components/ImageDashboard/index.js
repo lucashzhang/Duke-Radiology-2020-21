@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
         width: 'calc(100vw - 270px)',
         height: '100vh',
         display: 'grid',
-        gridTemplateColumns: '1fr 784px 784px 1fr',
+        gridTemplateColumns: '1fr 792px 792px 1fr',
         gridTemplateRows: '2rem 1fr 3fr 2rem',
         overflow: 'auto',
     },
@@ -43,12 +43,15 @@ const useStyles = makeStyles((theme) => ({
     canvasView: {
         margin: 'auto',
         marginBottom: '2rem',
-        padding: '1rem',
+        padding: '1rem 1rem 1rem 0.5rem',
         display: 'flex',
         flexDirection: 'row',
         height: '512px',
-        width: '1536px'
+        width: '1568px'
 
+    },
+    canvas: {
+        marginLeft: '0.5rem'
     }
 }));
 
@@ -128,9 +131,15 @@ function Dashboard() {
                 </Paper>
                 <div className={classes.canvasContainer}>
                     <Paper className={classes.canvasView}>
-                        <CTCanvas view='AXIAL' handleSlice={handleSlice} series={series} rs={rs} rd={rd} selected={selected} loading={isLoading} sliceCoords={sliceCoord} isDose={isDose}></CTCanvas>
-                        <CTCanvas view='CORONAL' handleSlice={handleSlice} series={series} rs={rs} rd={rd} selected={selected} loading={isLoading} sliceCoords={sliceCoord} isDose={isDose}></CTCanvas>
-                        <CTCanvas view='SAGITTAL' handleSlice={handleSlice} series={series} rs={rs} rd={rd} selected={selected} loading={isLoading} sliceCoords={sliceCoord} isDose={isDose}></CTCanvas>
+                        <div className={classes.canvas}>
+                            <CTCanvas view='AXIAL' handleSlice={handleSlice} series={series} rs={rs} rd={rd} selected={selected} loading={isLoading} sliceCoords={sliceCoord} isDose={isDose}></CTCanvas>
+                        </div>
+                        <div className={classes.canvas}>
+                            <CTCanvas view='CORONAL' handleSlice={handleSlice} series={series} rs={rs} rd={rd} selected={selected} loading={isLoading} sliceCoords={sliceCoord} isDose={isDose}></CTCanvas>
+                        </div>
+                        <div className={classes.canvas}>
+                            <CTCanvas view='SAGITTAL' handleSlice={handleSlice} series={series} rs={rs} rd={rd} selected={selected} loading={isLoading} sliceCoords={sliceCoord} isDose={isDose}></CTCanvas>
+                        </div>
                     </Paper>
                 </div>
             </div>

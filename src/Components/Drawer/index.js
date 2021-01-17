@@ -2,13 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
 import { Paper, FormGroup, FormControlLabel, Checkbox, CircularProgress, FormControl, Divider, List, ListItem, Typography, Switch } from '@material-ui/core';
-import theme from '../../Utilities/theme';
 
 
 const useStyles = makeStyles((theme) => ({
     drawerContainer: {
-        width: 'calc(240px)',
-        height: 'calc(100vh)',
+        width: '232px',
+        height: '100vh',
         overflow: 'auto',
         // overflow: 'hidden',
         // transition: '0.5s',
@@ -79,7 +78,17 @@ function StructMenu(props) {
                                 structs.map((struct) => (
                                     <FormControlLabel
                                         key={`${struct.name}${struct.roi}`}
-                                        control={<Checkbox name={`${struct.roi}`} checked={!!checked[struct.roi]} onChange={() => toggleChecked(struct.roi)} style={{ color: `rgb(${struct.displayColor[0]},${struct.displayColor[1]},${struct.displayColor[2]})` }} />}
+                                        control={
+                                            <Checkbox
+                                                name={`${struct.roi}`}
+                                                checked={!!checked[struct.roi]}
+                                                onChange={() => toggleChecked(struct.roi)}
+                                                color={'default'}
+                                                style={{ 
+                                                    color: `rgb(${struct.displayColor[0]},${struct.displayColor[1]},${struct.displayColor[2]})`,
+                                                }}
+                                            />
+                                        }
                                         label={struct.name}
                                     />
                                 ))
