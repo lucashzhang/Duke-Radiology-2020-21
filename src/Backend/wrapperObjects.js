@@ -85,11 +85,6 @@ export class SeriesWrapper extends Wrapper {
 
 export class RDWrapper extends Wrapper {
 
-    constructor(obj) {
-        super(obj);
-
-    }
-
     getAxialSlice(sliceNum) {
 
         sliceNum = Math.floor(sliceNum) - Math.round(this.offsetVector[2]);
