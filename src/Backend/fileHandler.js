@@ -119,13 +119,7 @@ function readTagString(tag, level = 0) {
     return `${padding} ${tagStr} ${des}: ${valueStr}`;
 }
 
-export async function readRS(absDir, rsWorker = null) {
-
-    let ownWorker = false;
-    if (rsWorker == null) {
-        rsWorker = new Worker();
-        ownWorker = true;
-    }
+export async function readRS(absDir, rsWorker) {
 
     let ctImages = await readCT(absDir, rsWorker, true);
     let firstCT = ctImages[0];
@@ -136,17 +130,10 @@ export async function readRS(absDir, rsWorker = null) {
     let builtRS = await rsWorker.buildRS(rawRS, firstCT);
     let wrappedRS = Factory.createWrapper(builtRS[0], 'RS');
 
-    if (ownWorker) rsWorker.terminate();
     return wrappedRS;
 }
 
-export async function readRD(absDir, rdWorker = null) {
-
-    let ownWorker = false;
-    if (rdWorker == null) {
-        rdWorker = new Worker();
-        ownWorker = true;
-    }
+export async function readRD(absDir, rdWorker) {
 
     let ctImages = await readCT(absDir, rdWorker);
     let firstCT = ctImages[0];
@@ -157,16 +144,10 @@ export async function readRD(absDir, rdWorker = null) {
     let builtRD = await rdWorker.buildRD(rawRD, firstCT);
     let wrappedRD = Factory.createWrapper(builtRD[0], 'RD');
 
-    if (ownWorker) rdWorker.terminate();
     return wrappedRD;
 }
 
-export async function readCT(absDir, ctWorker = null, one = false) {
-    let ownWorker = false;
-    if (ctWorker == null) {
-        ctWorker = new Worker();
-        ownWorker = true;
-    }
+export async function readCT(absDir, ctWorker, one = false) {
 
     let rawCT = await getFiles(absDir, 'CT');
     if (one) rawCT = [rawCT[0]];
@@ -176,23 +157,15 @@ export async function readCT(absDir, ctWorker = null, one = false) {
         return {};
     }
 
-    if (ownWorker) ctWorker.terminate();
     return builtCT;
 }
 
-export async function readSeries(absDir, seriesWorker = null) {
-
-    let ownWorker = false;
-    if (seriesWorker == null) {
-        seriesWorker = new Worker();
-        ownWorker = true;
-    }
+export async function readSeries(absDir, seriesWorker) {
 
     let ctImages = await readCT(absDir, seriesWorker);
     let builtSeries = await seriesWorker.buildSeries(ctImages);
     let wrappedSeries = Factory.createWrapper(builtSeries, 'SERIES');
 
-    if (ownWorker) seriesWorker.terminate();
     return wrappedSeries;
 }
 
