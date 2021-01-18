@@ -104,7 +104,6 @@ export class RDWrapper extends Wrapper {
             data[i - 1] = this.colors[pixelVal][2];
             data[i] = pixelVal === 0 ? 0 : 88;
         }
-        console.log(Math.max(...this.imageArray[sliceNum].map(pxl => pxl * this.doseGridScaling * 100)))
         return imageData;
     }
 
