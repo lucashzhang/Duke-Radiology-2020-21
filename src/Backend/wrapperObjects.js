@@ -93,10 +93,10 @@ export class RDWrapper extends Wrapper {
         let data = imageData.data;
         for (let i = 3, k = 0; i < data.byteLength; i += 4, k++) {
             let pixelVal = Math.round(this.imageArray[sliceNum][k] * this.doseGridScaling * 100);
-            pixelVal = pixelVal > this.maxColorsIndex ? this.maxColorsIndex : pixelVal;
-            data[i - 3] = this.colors[pixelVal][0];
-            data[i - 2] = this.colors[pixelVal][1];
-            data[i - 1] = this.colors[pixelVal][2];
+            const color = this.colors[pixelVal > this.maxColorsIndex ? this.maxColorsIndex : pixelVal] || [0, 0, 0];
+            data[i - 3] = color[0];
+            data[i - 2] = color[1];
+            data[i - 1] = color[2];
             data[i] = pixelVal === 0 ? 0 : 88;
         }
         return imageData;
@@ -111,10 +111,10 @@ export class RDWrapper extends Wrapper {
         for (let i = 0; i < this.depth; i++) {
             for (let j = 0; j < this.width; j++) {
                 let pixelVal = Math.round(this.imageArray[i][sliceNum * this.width + j] * this.doseGridScaling * 100);
-                pixelVal = pixelVal > this.maxColorsIndex ? this.maxColorsIndex : pixelVal;
-                data[k - 3] = this.colors[pixelVal][0];
-                data[k - 2] = this.colors[pixelVal][1];
-                data[k - 1] = this.colors[pixelVal][2];
+                const color = this.colors[pixelVal > this.maxColorsIndex ? this.maxColorsIndex : pixelVal] || [0, 0, 0];
+                data[k - 3] = color[0];
+                data[k - 2] = color[1];
+                data[k - 1] = color[2];
                 data[k] = pixelVal === 0 ? 0 : 88;
                 k += 4;
             }
@@ -131,10 +131,10 @@ export class RDWrapper extends Wrapper {
         for (let j = 0; j < this.depth; j++) {
             for (let i = 0; i < this.height; i++) {
                 let pixelVal = Math.round(this.imageArray[j][sliceNum + this.width * i] * this.doseGridScaling * 100);
-                pixelVal = pixelVal > this.maxColorsIndex ? this.maxColorsIndex : pixelVal;
-                data[k - 3] = this.colors[pixelVal][0];
-                data[k - 2] = this.colors[pixelVal][1];
-                data[k - 1] = this.colors[pixelVal][2];
+                const color = this.colors[pixelVal > this.maxColorsIndex ? this.maxColorsIndex : pixelVal] || [0, 0, 0];
+                data[k - 3] = color[0];
+                data[k - 2] = color[1];
+                data[k - 1] = color[2];
                 data[k] = pixelVal === 0 ? 0 : 88;
                 k += 4;
             }
