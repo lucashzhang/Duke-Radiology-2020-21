@@ -72,21 +72,11 @@ export class SeriesWrapper extends Wrapper {
         return imageData;
 
     }
-
-    // isSeries() {
-    //     for (let i = 1; i < this.images.length; i++) {
-    //         if (Math.abs(this.images[i].position[2] - this.images[i - 1].position[2]) !== this.thickness) {
-    //             return false
-    //         }
-    //     }
-    //     return true;
-    // }
 }
 
 export class RDWrapper extends Wrapper {
 
     getAxialSlice(sliceNum) {
-
         sliceNum = Math.floor(sliceNum) - Math.round(this.offsetVector[2]);
         if (sliceNum > this.depth || sliceNum < 0 || this.imageArray[sliceNum] == null) return null;
         let imageData = new ImageData(this.width, this.height);
@@ -123,7 +113,7 @@ export class RDWrapper extends Wrapper {
     }
 
     getSagittalSlice(sliceNum) {
-        sliceNum = Math.floor(sliceNum) + Math.round(this.offsetVector[0])
+        sliceNum = Math.floor(sliceNum) + Math.round(this.offsetVector[0]);
         if (sliceNum > this.width || sliceNum < 0) return null;
         let k = 3;
         let imageData = new ImageData(this.height, this.depth);
