@@ -1,4 +1,4 @@
-# Duke Radiology Project <True Name Pending>
+# Duke Radiology Project (True Name Pending)
 
 This is the second iteration of the project created for radiologists Yang Sheng and Jackie Wu at Duke Radiology.
 
