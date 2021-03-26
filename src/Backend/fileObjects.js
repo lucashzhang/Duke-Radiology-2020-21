@@ -266,14 +266,15 @@ export class Series {
             return res;
         }
 
-        this.images = ctArray.sort((a, b) => b.position[2] - a.position[2]);
+        let images = ctArray.sort((a, b) => b.position[2] - a.position[2]);
+        // images used to this.images change back if issues arise
         this.thickness = ctArray[0].thickness;
         this.width = ctArray[0].cols;
         this.height = ctArray[0].imageData.tags["00280010"].value[0];
         this.depth = (ctArray.length - 1) * this.thickness + 1;
-        this.imageArray = buildInterpolatedArray(this.images, this.thickness);
-        this.pixelSpacing = this.images[0].pixelSpacing;
-        this.position = [this.images[0].position[0], this.images[0].position[1], this.images[0].position[2]];
+        this.imageArray = buildInterpolatedArray(images, this.thickness);
+        this.pixelSpacing = images[0].pixelSpacing;
+        this.position = [images[0].position[0], images[0].position[1], images[0].position[2]];
     }
 }
 
