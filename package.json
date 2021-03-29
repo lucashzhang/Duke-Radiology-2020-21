@@ -1,10 +1,10 @@
 {
-  "name": "duke-radiology-project",
+  "name": "varian-project",
   "version": "0.0.1",
   "description": "Pending",
   "author": "Lucas Zhang",
   "build": {
-    "appId": "com.electron.dukeradiologyproject",
+    "appId": "com.electron.varianproject",
     "win": {
       "target": [
         {
