@@ -81,6 +81,7 @@ export class RS extends DCM {
         this.imageThickness = ct.thickness;
         this.contourData = getContour();
         this.structList = getStructList();
+        this.imageData = null;
     }
 }
 
@@ -95,6 +96,7 @@ export class CT extends DCM {
         this.position = this.imageData.getImagePosition();
         this.interpretedData = this.imageData.getInterpretedData();
         this.pixelSpacing = this.imageData.getPixelSpacing();
+        this.imageData = null;
     }
 }
 
@@ -229,6 +231,7 @@ export class RD extends DCM {
             alpha: 1
         });
         this.maxColorsIndex = this.colors.length - 1;
+        this.imageData = null;
     }
 }
 
@@ -270,7 +273,7 @@ export class Series {
         // images used to this.images change back if issues arise
         this.thickness = ctArray[0].thickness;
         this.width = ctArray[0].cols;
-        this.height = ctArray[0].imageData.tags["00280010"].value[0];
+        this.height = ctArray[0].rows;
         this.depth = (ctArray.length - 1) * this.thickness + 1;
         this.imageArray = buildInterpolatedArray(images, this.thickness);
         this.pixelSpacing = images[0].pixelSpacing;
