@@ -96,9 +96,9 @@ function CTCanvas(props) {
             case 'AXIAL':
                 return [series.depth, series.width, series.height];
             case 'CORONAL':
-                return [series.height, series.width, series.depth];
+                return [series.height, series.width, (series.depth - 1) * series.thickness + 1];
             case 'SAGITTAL':
-                return [series.width, series.height, series.depth];
+                return [series.width, series.height, (series.depth - 1) * series.thickness + 1];
             default:
                 return 1;
         }
@@ -124,7 +124,7 @@ function CTCanvas(props) {
             if (series == null || series.pixelSpacing == null) return 1;
             switch (props.view.toUpperCase()) {
                 case 'AXIAL':
-                    return -1;
+                    return -series.thickness;
                 case 'CORONAL':
                     return series.pixelSpacing[1];
                 case 'SAGITTAL':
@@ -173,14 +173,32 @@ function CTCanvas(props) {
         const rect = e.target.getBoundingClientRect();
         let x = e.clientX - rect.left;
         let y = e.clientY - rect.top;
-        props.handleSlice(props.view, x - drawXOffset, y - drawYOffset, sliceZ);
+        switch (view.toUpperCase()) {
+            case 'CORONAL':
+            case 'SAGITTAL':
+                props.handleSlice(props.view, x - drawXOffset, Math.round((y - drawYOffset) / series.thickness), sliceZ);
+                break;
+            default:
+                props.handleSlice(props.view, x - drawXOffset, y - drawYOffset, sliceZ);
+
+        }
+        // props.handleSlice(props.view, x - drawXOffset, y - drawYOffset, sliceZ);
     }
 
     useEffect(() => {
         const ctx = canvasRef.current.getContext('2d');
         ctx.clearRect(0, 0, 512, 512);
         drawTextOverlay();
-        drawCrosshairs(sliceX + drawXOffset, sliceY + drawYOffset)
+        // drawCrosshairs(sliceX + drawXOffset, sliceY + drawYOffset);
+        switch (view.toUpperCase()) {
+            case 'CORONAL':
+            case 'SAGITTAL':
+                drawCrosshairs(sliceX + drawXOffset, sliceY * series.thickness + drawYOffset)
+                break;
+            default:
+                drawCrosshairs(sliceX + drawXOffset, sliceY + drawYOffset)
+
+        }
     }, [sliceX, sliceY, sliceZ])
 
 

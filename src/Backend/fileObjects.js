@@ -197,9 +197,10 @@ export class RD extends DCM {
                 pixelDataArray.push(bilinearInterpolation(pixelData.slice(i, j), width, height, scaleW, scaleH));
             }
 
-            let interpolatedArray = linearInterpolation(pixelDataArray, ct.thickness)
+            // let interpolatedArray = linearInterpolation(pixelDataArray, ct.thickness)
 
-            return interpolatedArray;
+            // return interpolatedArray;
+            return pixelDataArray
         }
 
 
@@ -274,8 +275,10 @@ export class Series {
         this.thickness = ctArray[0].thickness;
         this.width = ctArray[0].cols;
         this.height = ctArray[0].rows;
-        this.depth = (ctArray.length - 1) * this.thickness + 1;
-        this.imageArray = buildInterpolatedArray(images, this.thickness);
+        // this.depth = (ctArray.length - 1) * this.thickness + 1;
+        this.depth = ctArray.length;
+        // this.imageArray = buildInterpolatedArray(images, this.thickness);
+        this.imageArray = images.map((image) => image.interpretedData);
         this.pixelSpacing = images[0].pixelSpacing;
         this.position = [images[0].position[0], images[0].position[1], images[0].position[2]];
     }

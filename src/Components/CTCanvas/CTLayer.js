@@ -6,6 +6,8 @@ function CTLayer(props) {
     const sliceNum = props.sliceNum;
     const series = props.series;
     const view = props.view;
+    const offscreenRef = useRef(new OffscreenCanvas(512,512));
+
 
     function buildCTCanvas() {
 
@@ -13,25 +15,26 @@ function CTLayer(props) {
             if (series == null) return [512, 512];
             switch (view.toUpperCase()) {
                 case 'AXIAL':
-                    return [series.width, series.height];
+                    return [series.width, series.height, series.height];
                 case 'CORONAL':
-                    return [series.width, series.depth];
+                    return [series.width, (series.depth - 1) * series.thickness + 1, series.depth];
                 case 'SAGITTAL':
-                    return [series.height, series.depth];
+                    return [series.height, (series.depth - 1) * series.thickness + 1, series.depth];
                 default:
                     return [512, 512];
             }
         }
-
         if (canvasRef.current == null || series == null || series.getAxialSlice == null) return;
         // const ctSeries = new CTSeries(series);
         let imgData;
-        const [maxWidth, maxHeight] = getMax();
+        const [maxWidth, maxHeight, trueHeight] = getMax();
         const drawXOffset = Math.floor((series.width - maxWidth) / 2);
         const drawYOffset = Math.floor((series.height - maxHeight) / 2);
 
         canvasRef.current.width = series.width;
         canvasRef.current.height = series.height;
+        offscreenRef.current.width = maxWidth;
+        offscreenRef.current.height = trueHeight;
         switch (view.toUpperCase()) {
             case 'AXIAL':
                 imgData = series.getAxialSlice(sliceNum);
@@ -45,9 +48,10 @@ function CTLayer(props) {
             default:
                 return;
         }
-        const ctx = canvasRef.current.getContext('2d');
         if (imgData == null) return;
-        ctx.putImageData(imgData, drawXOffset, drawYOffset);
+        offscreenRef.current.getContext('2d').putImageData(imgData, 0, 0);
+        const ctx = canvasRef.current.getContext('2d');
+        ctx.drawImage(offscreenRef.current, drawXOffset, drawYOffset, maxWidth, maxHeight);
     }
 
     useEffect(buildCTCanvas, [series, sliceNum])
