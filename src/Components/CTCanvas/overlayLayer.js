@@ -3,6 +3,7 @@ import React, { useRef, useEffect } from 'react';
 function CTLayer(props) {
 
     const canvasRef = useRef(null);
+    const offscreenRef = useRef(new OffscreenCanvas(512,512));
     const { sliceNum, selected, view, rs, rd, minSlice, canvasOffset, isDose } = props
 
     useEffect(() => {
@@ -30,7 +31,7 @@ function CTLayer(props) {
             const contours = getSelectedContours()
             switch (view.toUpperCase()) {
                 case 'AXIAL':
-                    return rs.getContourAtZ(contours, minSlice - Math.floor(sliceNum / rs.imageThickness) * rs.imageThickness);
+                    return rs.getContourAtZ(contours, minSlice - sliceNum * rs.imageThickness);
                 case 'CORONAL':
                     break;
                 case 'SAGITTAL':
@@ -47,17 +48,33 @@ function CTLayer(props) {
 
                 switch (view.toUpperCase()) {
                     case 'AXIAL':
-                        return [-1 * rd.offsetVector[0] + canvasOffset[0], -1 * rd.offsetVector[1] + canvasOffset[1]]
+                        return [-1 * rd.offsetVector[0] + canvasOffset[0], canvasOffset[1]]
                     case 'CORONAL':
-                        return [-1 * rd.offsetVector[0] + canvasOffset[0], rd.offsetVector[2] + canvasOffset[1]]
+                        return [-1 * rd.offsetVector[0] + canvasOffset[0], canvasOffset[1]]
                     case 'SAGITTAL':
-                        return [-1 * rd.offsetVector[1] + canvasOffset[0], rd.offsetVector[2] + canvasOffset[1]]
+                        return [-1 * rd.offsetVector[1] + canvasOffset[0], canvasOffset[1]]
                     default:
                         return [0, 0];
                 }
             }
+
+            function getMax() {
+                if (rd == null) return [512, 512];
+                switch (view.toUpperCase()) {
+                    case 'AXIAL':
+                        return [rd.width, rd.height];
+                    case 'CORONAL':
+                        return [rd.width, rd.depth];
+                    case 'SAGITTAL':
+                        return [rd.height, rd.depth];
+                    default:
+                        return [512, 512];
+                }
+            }
+            
             if (rd.imageArray == null || canvasOffset == null || rd.offsetVector == null) return;
             let pixelArray;
+            const [maxWidth, maxHeight] = getMax();
             switch (view.toUpperCase()) {
                 case 'AXIAL':
                     pixelArray = rd.getAxialSlice(sliceNum);
@@ -74,8 +91,10 @@ function CTLayer(props) {
 
             if (pixelArray == null || pixelArray.length === 0) return;
             const ctx = canvasRef.current.getContext('2d');
-            const offsets = imgOffset();
-            ctx.putImageData(pixelArray, offsets[0] || 0, offsets[1] || 0);
+            offscreenRef.current.width = pixelArray.width;
+            offscreenRef.current.height = pixelArray.height;
+            offscreenRef.current.getContext('2d').putImageData(pixelArray, 0, 0);
+            ctx.drawImage(offscreenRef.current, canvasOffset[0], canvasOffset[1], maxWidth, maxHeight)
 
         }
 

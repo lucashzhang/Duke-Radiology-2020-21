@@ -194,7 +194,7 @@ export class RD extends DCM {
             const scaleH = this.imageData.getPixelSpacing()[0] / ct.pixelSpacing[1];
             const arrayLength = width * height;
             for (let i = pixelData.length - arrayLength, j = pixelData.length; i >= 0; i -= arrayLength, j -= arrayLength) {
-                pixelDataArray.push(bilinearInterpolation(pixelData.slice(i, j), width, height, scaleW, scaleH));
+                pixelDataArray.push(pixelData.slice(i, j));
             }
 
             // let interpolatedArray = linearInterpolation(pixelDataArray, ct.thickness)
@@ -213,13 +213,14 @@ export class RD extends DCM {
         this.imageArray = calculatePixelData();
         this.thickness = ct.thickness;
         // Thickness of the dose is the same as in the CT
-        const rows = this.imageData.getRows();
-        const cols = this.imageData.getCols();
-        const scaleW = this.imageData.getPixelSpacing()[1] / ct.pixelSpacing[1];
-        const scaleH = this.imageData.getPixelSpacing()[0] / ct.pixelSpacing[0];
-        this.width = Math.round(cols * scaleW);
-        this.height = Math.round(rows * scaleH);
-        this.depth = this.imageArray.length;
+        this.trueWidth = this.imageData.getCols();
+        this.trueHeight = this.imageData.getRows();
+        this.trueDepth = this.imageArray.length;
+        const scaleW = this.imageData.getPixelSpacing()[0] / ct.pixelSpacing[0];
+        const scaleH = this.imageData.getPixelSpacing()[1] / ct.pixelSpacing[1];
+        this.width = Math.round(this.trueWidth * scaleW);
+        this.height = Math.round(this.trueHeight * scaleH);
+        this.depth = (this.trueDepth - 1) * this.thickness + 1;
         this.offsetVector = [
             ((ct.position[0] - this.position[0]) / ct.pixelSpacing[0]),
             ((ct.position[1] - this.position[1]) / ct.pixelSpacing[1]),
@@ -233,6 +234,7 @@ export class RD extends DCM {
         });
         this.maxColorsIndex = this.colors.length - 1;
         this.imageData = null;
+        console.log(this.height, this.trueHeight, scaleW)
     }
 }
 
