@@ -77,9 +77,9 @@ export class SeriesWrapper extends Wrapper {
 export class RDWrapper extends Wrapper {
 
     getAxialSlice(sliceNum) {
-        sliceNum = Math.floor(sliceNum);
+        sliceNum = Math.floor(sliceNum) + Math.round(this.offsetVector[2]);
         if (sliceNum > this.trueDepth || sliceNum < 0 || this.imageArray[sliceNum] == null) return null;
-        let imageData = new ImageData(this.trueWidth, this.trueWidth);
+        let imageData = new ImageData(this.trueWidth, this.trueHeight);
         let data = imageData.data;
         for (let i = 3, k = 0; i < data.byteLength; i += 4, k++) {
             let pixelVal = Math.round(this.imageArray[sliceNum][k] * this.doseGridScaling * 100);
@@ -93,7 +93,7 @@ export class RDWrapper extends Wrapper {
     }
 
     getCoronalSlice(sliceNum) {
-        sliceNum = Math.floor(sliceNum) + Math.round(this.offsetVector[1]);
+        sliceNum = Math.floor((sliceNum + this.offsetVector[1]) / this.scaleH);
         if (sliceNum > this.trueHeight || sliceNum < 0) return null;
         let k = 3;
         let imageData = new ImageData(this.trueWidth, this.trueDepth);
@@ -113,7 +113,7 @@ export class RDWrapper extends Wrapper {
     }
 
     getSagittalSlice(sliceNum) {
-        sliceNum = Math.floor(sliceNum) + Math.round(this.offsetVector[0]);
+        sliceNum = Math.floor((sliceNum + this.offsetVector[0]) / this.scaleW);
         if (sliceNum > this.trueWidth || sliceNum < 0) return null;
         let k = 3;
         let imageData = new ImageData(this.trueHeight, this.trueDepth);

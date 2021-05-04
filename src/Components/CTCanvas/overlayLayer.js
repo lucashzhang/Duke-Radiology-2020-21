@@ -48,11 +48,11 @@ function CTLayer(props) {
 
                 switch (view.toUpperCase()) {
                     case 'AXIAL':
-                        return [-1 * rd.offsetVector[0] + canvasOffset[0], canvasOffset[1]]
+                        return [-rd.offsetVector[0] + canvasOffset[0], -rd.offsetVector[1] + canvasOffset[1]]
                     case 'CORONAL':
-                        return [-1 * rd.offsetVector[0] + canvasOffset[0], canvasOffset[1]]
+                        return [-rd.offsetVector[0] + canvasOffset[0], -rd.offsetVector[2] + canvasOffset[1]]
                     case 'SAGITTAL':
-                        return [-1 * rd.offsetVector[1] + canvasOffset[0], canvasOffset[1]]
+                        return [-rd.offsetVector[1] + canvasOffset[0], -rd.offsetVector[2] + canvasOffset[1]]
                     default:
                         return [0, 0];
                 }
@@ -94,7 +94,8 @@ function CTLayer(props) {
             offscreenRef.current.width = pixelArray.width;
             offscreenRef.current.height = pixelArray.height;
             offscreenRef.current.getContext('2d').putImageData(pixelArray, 0, 0);
-            ctx.drawImage(offscreenRef.current, canvasOffset[0], canvasOffset[1], maxWidth, maxHeight)
+            const offsets = imgOffset();
+            ctx.drawImage(offscreenRef.current, offsets[0], offsets[1], maxWidth, maxHeight)
 
         }
 

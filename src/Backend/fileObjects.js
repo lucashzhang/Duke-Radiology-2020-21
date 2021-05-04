@@ -216,10 +216,10 @@ export class RD extends DCM {
         this.trueWidth = this.imageData.getCols();
         this.trueHeight = this.imageData.getRows();
         this.trueDepth = this.imageArray.length;
-        const scaleW = this.imageData.getPixelSpacing()[0] / ct.pixelSpacing[0];
-        const scaleH = this.imageData.getPixelSpacing()[1] / ct.pixelSpacing[1];
-        this.width = Math.round(this.trueWidth * scaleW);
-        this.height = Math.round(this.trueHeight * scaleH);
+        this.scaleW = this.imageData.getPixelSpacing()[0] / ct.pixelSpacing[0];
+        this.scaleH = this.imageData.getPixelSpacing()[1] / ct.pixelSpacing[1];
+        this.width = Math.round(this.trueWidth * this.scaleW);
+        this.height = Math.round(this.trueHeight * this.scaleH);
         this.depth = (this.trueDepth - 1) * this.thickness + 1;
         this.offsetVector = [
             ((ct.position[0] - this.position[0]) / ct.pixelSpacing[0]),
@@ -234,7 +234,6 @@ export class RD extends DCM {
         });
         this.maxColorsIndex = this.colors.length - 1;
         this.imageData = null;
-        console.log(this.height, this.trueHeight, scaleW)
     }
 }
 
