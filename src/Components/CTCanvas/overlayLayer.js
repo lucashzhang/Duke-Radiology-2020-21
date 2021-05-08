@@ -1,6 +1,13 @@
 import React, { useRef, useEffect } from 'react';
 import * as colormap from 'colormap';
 
+const jet = colormap({
+    colormap: 'jet',
+    nshades: 80,
+    format: 'rgba',
+    alpha: 1
+});
+
 function CTLayer(props) {
 
     const canvasRef = useRef(null);
@@ -10,7 +17,7 @@ function CTLayer(props) {
     function colorFilter(doseVal) {
         const adjusted = Math.max(0, Math.floor(doseVal / rd.maxDose * 10) * 10 - 20);
         if (adjusted === 0) return [0,0,0,0];
-        return rd.colors[Math.min(adjusted, rd.colors.length - 1)]
+        return jet[Math.min(adjusted, jet.length - 1)]
     }
 
     useEffect(() => {

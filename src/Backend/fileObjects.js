@@ -228,12 +228,6 @@ export class RD extends DCM {
             ((ct.position[1] - this.position[1]) / ct.pixelSpacing[1]),
             Math.round(ct.position[2] - this.position[2] - (this.depth - 1))
         ];
-        this.colors = colormap({
-            colormap: 'jet',
-            nshades: 80,
-            format: 'rgba',
-            alpha: 1
-        });
         this.imageData = null;
     }
 }
