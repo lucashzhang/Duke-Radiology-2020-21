@@ -81,9 +81,10 @@ export class RDWrapper extends Wrapper {
         if (sliceNum > this.trueDepth || sliceNum < 0 || this.imageArray[sliceNum] == null) return null;
         let imageData = new ImageData(this.trueWidth, this.trueHeight);
         let data = imageData.data;
+        // console.log(this.imageArray[sliceNum])
         for (let i = 3, k = 0; i < data.byteLength; i += 4, k++) {
-            let pixelVal = Math.round(this.imageArray[sliceNum][k] * this.doseGridScaling * 100);
-            const color = this.colors[pixelVal > this.maxColorsIndex ? this.maxColorsIndex : pixelVal] || [0, 0, 0];
+            let pixelVal = Math.floor((this.imageArray[sliceNum][k] * this.doseGridScaling) / this.maxDose * 10);
+            const color = this.colors[Math.min(pixelVal, this.colors.length - 1)] || [0, 0, 0];
             data[i - 3] = color[0];
             data[i - 2] = color[1];
             data[i - 1] = color[2];
@@ -100,8 +101,8 @@ export class RDWrapper extends Wrapper {
         let data = imageData.data;
         for (let i = 0; i < this.trueDepth; i++) {
             for (let j = 0; j < this.trueWidth; j++) {
-                let pixelVal = Math.round(this.imageArray[i][sliceNum * this.trueWidth + j] * this.doseGridScaling * 100);
-                const color = this.colors[pixelVal > this.maxColorsIndex ? this.maxColorsIndex : pixelVal] || [0, 0, 0];
+                let pixelVal = Math.floor((this.imageArray[i][sliceNum * this.trueWidth + j] * this.doseGridScaling) / this.maxDose * 10);
+                let color = this.colors[Math.min(pixelVal, this.colors.length - 1)] || [0, 0, 0];
                 data[k - 3] = color[0];
                 data[k - 2] = color[1];
                 data[k - 1] = color[2];
@@ -120,8 +121,8 @@ export class RDWrapper extends Wrapper {
         let data = imageData.data;
         for (let j = 0; j < this.trueDepth; j++) {
             for (let i = 0; i < this.trueHeight; i++) {
-                let pixelVal = Math.round(this.imageArray[j][sliceNum + this.trueWidth * i] * this.doseGridScaling * 100);
-                const color = this.colors[pixelVal > this.maxColorsIndex ? this.maxColorsIndex : pixelVal] || [0, 0, 0];
+                let pixelVal = Math.floor((this.imageArray[j][sliceNum + this.trueWidth * i] * this.doseGridScaling) / this.maxDose * 10);
+                const color = this.colors[Math.min(pixelVal, this.colors.length - 1)] || [0, 0, 0];
                 data[k - 3] = color[0];
                 data[k - 2] = color[1];
                 data[k - 1] = color[2];

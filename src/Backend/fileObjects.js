@@ -193,14 +193,16 @@ export class RD extends DCM {
             const scaleW = this.imageData.getPixelSpacing()[1] / ct.pixelSpacing[1];
             const scaleH = this.imageData.getPixelSpacing()[0] / ct.pixelSpacing[1];
             const arrayLength = width * height;
+            let max = 0;
             for (let i = pixelData.length - arrayLength, j = pixelData.length; i >= 0; i -= arrayLength, j -= arrayLength) {
                 pixelDataArray.push(pixelData.slice(i, j));
+                let rowMax = Math.max(...pixelData.slice(i, j));
+                max = Math.max(rowMax, max)
             }
 
             // let interpolatedArray = linearInterpolation(pixelDataArray, ct.thickness)
-
             // return interpolatedArray;
-            return pixelDataArray
+            return [pixelDataArray, max * this.imageData.tags["3004000E"].value[0]]
         }
 
 
@@ -210,7 +212,7 @@ export class RD extends DCM {
         this.pixelSpacing = this.imageData.getPixelSpacing();
         this.doseGridScaling = this.imageData.tags["3004000E"].value[0];
         this.doseUnits = this.imageData.tags["30040002"].value[0];
-        this.imageArray = calculatePixelData();
+        [this.imageArray, this.maxDose] = calculatePixelData();
         this.thickness = ct.thickness;
         // Thickness of the dose is the same as in the CT
         this.trueWidth = this.imageData.getCols();
@@ -228,7 +230,7 @@ export class RD extends DCM {
         ];
         this.colors = colormap({
             colormap: 'jet',
-            nshades: 2700,
+            nshades: 10,
             format: 'rgba',
             alpha: 1
         });
