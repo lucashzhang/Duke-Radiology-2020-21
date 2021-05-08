@@ -76,7 +76,7 @@ export class SeriesWrapper extends Wrapper {
 
 export class RDWrapper extends Wrapper {
 
-    getAxialSlice(sliceNum, colorFilter = () => [0, 0, 0]) {
+    getAxialSlice(sliceNum, colorFilter = () => [0, 0, 0, 0], alpha = 128) {
         sliceNum = Math.floor(sliceNum) + Math.round(this.offsetVector[2]);
         if (sliceNum > this.trueDepth || sliceNum < 0 || this.imageArray[sliceNum] == null) return null;
         let imageData = new ImageData(this.trueWidth, this.trueHeight);
@@ -88,12 +88,12 @@ export class RDWrapper extends Wrapper {
             data[i - 3] = color[0];
             data[i - 2] = color[1];
             data[i - 1] = color[2];
-            data[i] = color[3] * 100;
+            data[i] = color[3] * alpha;
         }
         return imageData;
     }
 
-    getCoronalSlice(sliceNum, colorFilter = () => [0, 0, 0]) {
+    getCoronalSlice(sliceNum, colorFilter = () => [0, 0, 0, 0], alpha = 128) {
         sliceNum = Math.floor((sliceNum + this.offsetVector[1]) / this.scaleH);
         if (sliceNum > this.trueHeight || sliceNum < 0) return null;
         let k = 3;
@@ -102,18 +102,18 @@ export class RDWrapper extends Wrapper {
         for (let i = 0; i < this.trueDepth; i++) {
             for (let j = 0; j < this.trueWidth; j++) {
                 let pixelVal = this.imageArray[i][sliceNum * this.trueWidth + j] * this.doseGridScaling;
-                const color = colorFilter(pixelVal) || [0, 0, 0];
+                const color = colorFilter(pixelVal) || [0, 0, 0, 0];
                 data[k - 3] = color[0];
                 data[k - 2] = color[1];
                 data[k - 1] = color[2];
-                data[k] = color[3] * 100;
+                data[k] = color[3] * alpha;
                 k += 4;
             }
         }
         return imageData;
     }
 
-    getSagittalSlice(sliceNum, colorFilter = () => [0, 0, 0]) {
+    getSagittalSlice(sliceNum, colorFilter = () => [0, 0, 0, 0], alpha = 128) {
         sliceNum = Math.floor((sliceNum + this.offsetVector[0]) / this.scaleW);
         if (sliceNum > this.trueWidth || sliceNum < 0) return null;
         let k = 3;
@@ -126,7 +126,7 @@ export class RDWrapper extends Wrapper {
                 data[k - 3] = color[0];
                 data[k - 2] = color[1];
                 data[k - 1] = color[2];
-                data[k] = color[3] * 100;
+                data[k] = color[3] * alpha;
                 k += 4;
             }
         }
