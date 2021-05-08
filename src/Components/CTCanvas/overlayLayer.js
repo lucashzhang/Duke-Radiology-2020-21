@@ -9,7 +9,7 @@ function CTLayer(props) {
 
     function colorFilter(doseVal) {
         const adjusted = Math.max(0, Math.floor(doseVal / rd.maxDose * 10) * 10 - 20);
-        if (adjusted === 0) return [0,0,0];
+        if (adjusted === 0) return [0,0,0,0];
         return rd.colors[Math.min(adjusted, rd.colors.length - 1)]
     }
 

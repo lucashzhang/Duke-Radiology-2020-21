@@ -84,11 +84,11 @@ export class RDWrapper extends Wrapper {
         // console.log(this.imageArray[sliceNum])
         for (let i = 3, k = 0; i < data.byteLength; i += 4, k++) {
             let pixelVal = this.imageArray[sliceNum][k] * this.doseGridScaling;
-            const color = colorFilter(pixelVal);
+            const color = colorFilter(pixelVal) || [0, 0, 0, 0];
             data[i - 3] = color[0];
             data[i - 2] = color[1];
             data[i - 1] = color[2];
-            data[i] = pixelVal === 0 ? 0 : 100;
+            data[i] = color[3] * 100;
         }
         return imageData;
     }
@@ -102,11 +102,11 @@ export class RDWrapper extends Wrapper {
         for (let i = 0; i < this.trueDepth; i++) {
             for (let j = 0; j < this.trueWidth; j++) {
                 let pixelVal = this.imageArray[i][sliceNum * this.trueWidth + j] * this.doseGridScaling;
-                let color = colorFilter(pixelVal)
+                const color = colorFilter(pixelVal) || [0, 0, 0];
                 data[k - 3] = color[0];
                 data[k - 2] = color[1];
                 data[k - 1] = color[2];
-                data[k] = pixelVal === 0 ? 0 : 100;
+                data[k] = color[3] * 100;
                 k += 4;
             }
         }
@@ -122,11 +122,11 @@ export class RDWrapper extends Wrapper {
         for (let j = 0; j < this.trueDepth; j++) {
             for (let i = 0; i < this.trueHeight; i++) {
                 let pixelVal = this.imageArray[j][sliceNum + this.trueWidth * i] * this.doseGridScaling
-                const color = colorFilter(pixelVal);
+                const color = colorFilter(pixelVal) || [0, 0, 0, 0];
                 data[k - 3] = color[0];
                 data[k - 2] = color[1];
                 data[k - 1] = color[2];
-                data[k] = pixelVal === 0 ? 0 : 100;
+                data[k] = color[3] * 100;
                 k += 4;
             }
         }
