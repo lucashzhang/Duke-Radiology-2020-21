@@ -1,10 +1,17 @@
 import React, { useRef, useEffect } from 'react';
+import * as colormap from 'colormap';
 
 function CTLayer(props) {
 
     const canvasRef = useRef(null);
     const offscreenRef = useRef(new OffscreenCanvas(512,512));
-    const { sliceNum, selected, view, rs, rd, minSlice, canvasOffset, isDose } = props
+    const { sliceNum, selected, view, rs, rd, minSlice, canvasOffset, isDose } = props;
+
+    function colorFilter(doseVal) {
+        const adjusted = Math.max(0, Math.floor(doseVal / rd.maxDose * 10) * 10 - 20);
+        if (adjusted === 0) return [0,0,0];
+        return rd.colors[Math.min(adjusted, rd.colors.length - 1)]
+    }
 
     useEffect(() => {
         function getSelectedContours() {
@@ -77,13 +84,13 @@ function CTLayer(props) {
             const [maxWidth, maxHeight] = getMax();
             switch (view.toUpperCase()) {
                 case 'AXIAL':
-                    pixelArray = rd.getAxialSlice(sliceNum);
+                    pixelArray = rd.getAxialSlice(sliceNum, colorFilter);
                     break;
                 case 'CORONAL':
-                    pixelArray = rd.getCoronalSlice(sliceNum);
+                    pixelArray = rd.getCoronalSlice(sliceNum, colorFilter);
                     break;
                 case 'SAGITTAL':
-                    pixelArray = rd.getSagittalSlice(sliceNum);
+                    pixelArray = rd.getSagittalSlice(sliceNum, colorFilter);
                     break;
                 default:
                     return;

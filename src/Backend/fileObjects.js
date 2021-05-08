@@ -230,11 +230,10 @@ export class RD extends DCM {
         ];
         this.colors = colormap({
             colormap: 'jet',
-            nshades: 10,
+            nshades: 80,
             format: 'rgba',
             alpha: 1
         });
-        this.maxColorsIndex = this.colors.length - 1;
         this.imageData = null;
     }
 }
