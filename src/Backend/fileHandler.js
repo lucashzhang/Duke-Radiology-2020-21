@@ -3,7 +3,7 @@ import { Factory } from './wrapperObjects';
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import Worker from 'workerize-loader!./file.worker.js'
 const fs = window.require('fs'); // Load the File System to execute our common tasks (CRUD);
-const { dialog } = window.require('electron').remote;
+const { dialog } = window.require('@electron/remote');
 
 async function getFiles(absDir, fileType = "ALL") {
     if (!absDir.endsWith('/')) absDir += '/';
