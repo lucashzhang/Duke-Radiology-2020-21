@@ -1,4 +1,3 @@
-import * as colormap from 'colormap';
 import * as daikon from 'daikon';
 // import greenlet from 'greenlet';
 
