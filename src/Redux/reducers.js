@@ -138,9 +138,13 @@ export default combineReducers({
         patientLast
     }),
     selectionDrawer: combineReducers({
-        structureList,
-        selectedStructures,
-        selectedDoses
+        structures: combineReducers({
+            structureList,
+            selectedStructures,
+        }),
+        doses: combineReducers({
+            selectedDoses
+        })
     })
 
 })

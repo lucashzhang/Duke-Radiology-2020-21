@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, shallowEqual, useDispatch } from "react-redux";
-import { Paper, FormGroup, FormControlLabel, Checkbox, CircularProgress, FormControl, Divider, List, ListItem, Typography, Switch } from '@material-ui/core';
+import { Paper, FormGroup, FormControlLabel, Checkbox, CircularProgress, FormControl, Divider, List, ListItem, Typography, Switch, Accordion } from '@material-ui/core';
 import { handleCheckedStructs } from '../../Redux/actions';
 
 
@@ -22,6 +22,9 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    tabs: {
+        width: '100%'
     }
 }));
 
@@ -33,8 +36,8 @@ function StructMenu(props) {
     const toggleSwitch = props.toggleDose;
     const isLoading = props.loading != null ? props.loading : false;
 
-    const checked = useSelector(state => state.selectionDrawer.selectedStructures, shallowEqual);
-    const structs = useSelector(state => state.selectionDrawer.structureList, shallowEqual);
+    const checked = useSelector(state => state.selectionDrawer.structures.selectedStructures, shallowEqual);
+    const structs = useSelector(state => state.selectionDrawer.structures.structureList, shallowEqual);
     const dispatch = useDispatch();
 
     function toggleChecked(roi) {

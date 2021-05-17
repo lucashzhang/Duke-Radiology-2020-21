@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { useSelector, shallowEqual, useDispatch } from "react-redux";
+import { useSelector, shallowEqual } from "react-redux";
 import * as colormap from 'colormap';
 
 const jet = colormap({
@@ -14,7 +14,7 @@ function CTLayer(props) {
     const canvasRef = useRef(null);
     const offscreenRef = useRef(new OffscreenCanvas(512,512));
     const { sliceNum, view, rs, rd, minSlice, canvasOffset, isDose } = props;
-    const structures = useSelector(state => state.selectionDrawer.selectedStructures, shallowEqual);
+    const structures = useSelector(state => state.selectionDrawer.structures.selectedStructures, shallowEqual);
 
     function colorFilter(doseVal) {
         const adjusted = Math.max(0, Math.floor(doseVal / rd.maxDose * 10) - 2);

@@ -69,6 +69,7 @@ export const setNewStructs = (structs) => (dispatch) => {
 
 export const handleNewFolder = (newDir, fileSummary) => (dispatch) => {
 
+    console.log(fileSummary)
     batch(() => {
         // Set new folder directory
         dispatch(setFolderDirectory(newDir));
@@ -77,9 +78,7 @@ export const handleNewFolder = (newDir, fileSummary) => (dispatch) => {
         dispatch(setCTSummary(fileSummary.seriesInfo));
         dispatch(setRDSummary(fileSummary.rdInfo));
         dispatch(setFolderStatus(fileSummary.isValid));
-        // Clearing selections from drawer
-        dispatch({ type: C.SELECTIONDRAWER.CLEAR_STRUCTURES});
-        dispatch({ type: C.SELECTIONDRAWER.CLEAR_SELECTED_STRUCTURES});
-        dispatch({ type: C.SELECTIONDRAWER.CLEAR_SELECTED_DOSES});
+        // Set new structs
+        dispatch(setNewStructs(fileSummary.rsInfo.structList))
     })
 }

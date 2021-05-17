@@ -45,7 +45,6 @@ export function useSeries() {
 export function useRS() {
   const absDir = useSelector(state => state.files.folderDirectory, shallowEqual);
   const [rs, setRS] = useState({});
-  const dispatch = useDispatch();
 
   useEffect(() => {
     if (absDir == null || absDir === '') return;
@@ -53,7 +52,6 @@ export function useRS() {
     const rsWorker = new Worker();
     readRS(absDir, rsWorker).then(newRS => {
       if (newRS !== {} && newRS != null) setRS(newRS);
-      dispatch(setNewStructs(newRS.structList));
       // console.log(newRS)
       rsWorker.terminate();
     });

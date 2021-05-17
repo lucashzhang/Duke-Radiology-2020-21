@@ -79,7 +79,7 @@ export class RS extends DCM {
         this.pixelSpacing = ct.pixelSpacing;
         this.imageThickness = ct.thickness;
         this.contourData = getContour();
-        this.structList = getStructList();
+        // this.structList = getStructList();
         this.imageData = null;
     }
 }
@@ -350,10 +350,38 @@ export class BasicRS {
             return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength);
         }
 
+        function getStructList(imageData) {
+
+            let roiContourSequence = imageData.tags["30060039"].value
+            if (roiContourSequence == null) return null;
+            let colors = {}
+            for (let roiSeq of roiContourSequence) {
+                let roi = Number(roiSeq.value.find(obj => obj.id === "30060084").value[0]);
+                let displayColor = roiSeq.value.find(obj => obj.id === "3006002A").value;
+                colors[roi] = displayColor;
+            }
+
+            let structs = [];
+            let observations = imageData.tags['30060080'].value;
+            if (observations == null) return structs;
+            for (let obs of observations) {
+                let dataVals = obs.value;
+                let roi = Number(dataVals.find(obj => obj.id === "30060084").value[0]);
+                structs.push({
+                    name: String(dataVals.find(obj => obj.id === "30060085").value[0]),
+                    roi: roi,
+                    displayColor: colors[roi]
+                })
+            }
+
+            return structs;
+        }
+
         this.isValid = structFile != null;
         this.filename = structFile.filename;
         const imageData = daikon.Series.parseImage(new DataView(toArrayBuffer(structFile.contents)));
         this.studyUID = imageData.tags["0020000D"].value[0];
+        this.structList = getStructList(imageData);
     }
 }
 
