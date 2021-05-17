@@ -38,5 +38,5 @@ export function scanRS(fileArray) {
 }
 
 export function scanRD(fileArray) {
-    return new BasicRD(fileArray[0]);
+    return new BasicRD(fileArray);
 }

@@ -386,14 +386,26 @@ export class BasicRS {
 }
 
 export class BasicRD {
-    constructor(doseFile) {
+    constructor(doseFiles) {
         function toArrayBuffer(b) {
             return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength);
         }
 
-        this.isValid = doseFile != null;
-        this.filename = doseFile.filename;
-        const imageData = daikon.Series.parseImage(new DataView(toArrayBuffer(doseFile.contents)));
-        this.studyUID = imageData.tags["0020000D"].value[0];
+        this.files = [];
+        this.isValid = true
+        for (let doseFile of doseFiles) {
+            try {
+                let file = {}
+                file.filename = doseFile.filename;
+                const imageData = daikon.Series.parseImage(new DataView(toArrayBuffer(doseFile.contents)));
+                file.studyUID = imageData.tags["0020000D"].value[0];
+                this.files.push(file);
+            } catch (error) {
+                console.error(error);
+                this.isValid = false;
+            }
+
+        }
+
     }
 }

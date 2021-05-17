@@ -183,9 +183,9 @@ function Landing() {
                         </AccordionSummary>
                         <AccordionDetails className={classes.fileDetails}>
                             <List className={classes.fileList}>
-                                {rdSummary.filename ? (
-                                    <ListItem key={rdSummary.filename} button onClick={() => handleFileClick(rdSummary.filename)}>{rdSummary.filename}</ListItem>
-                                ) : <ListItem>No RD Files Selected</ListItem>}
+                                {rdSummary.files ? rdSummary.files.map(rd => (
+                                    <ListItem key={rd.filename} button onClick={() => handleFileClick(rd.filename)} divider>{rd.filename}</ListItem>
+                                )) : <ListItem>No RD Files Selected</ListItem>}
                             </List>
                         </AccordionDetails>
                     </Accordion>

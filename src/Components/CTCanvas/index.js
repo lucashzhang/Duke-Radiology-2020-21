@@ -137,7 +137,7 @@ function CTCanvas(props) {
         const ctx = canvasRef.current.getContext('2d');
         ctx.font = '16px sans-serif';
         ctx.textAlign = "center";
-        ctx.fillStyle = '#FFFFFF';
+        ctx.fillStyle = '#90caf9';
         ctx.fillText(props.view.toUpperCase(), 256, 24);
         ctx.fillText(`Slice Position: ${(sliceZ * getSpacing() + minSlice).toFixed(4)}mm`, series.width / 2, series.height - 12);
     }

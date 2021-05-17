@@ -196,7 +196,7 @@ export async function scanFiles(absDir, validationWorker = null) {
     res.isValid = !!(res.seriesInfo.isValid
         && res.rsInfo.isValid
         && res.seriesInfo.studyUID === res.rsInfo.studyUID
-        && res.rsInfo.studyUID === res.rdInfo.studyUID
+        && res.rsInfo.studyUID === res.rdInfo.files[0].studyUID
     );
 
     if (ownWorker) validationWorker.terminate();
