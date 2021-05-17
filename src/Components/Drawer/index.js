@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-
+import { useSelector, shallowEqual, useDispatch } from "react-redux";
 import { Paper, FormGroup, FormControlLabel, Checkbox, CircularProgress, FormControl, Divider, List, ListItem, Typography, Switch } from '@material-ui/core';
+import { handleCheckedStructs } from '../../Redux/actions';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -28,33 +29,18 @@ const useStyles = makeStyles((theme) => ({
 function StructMenu(props) {
 
     const classes = useStyles();
-    const structs = props.rs != null ? props.rs.structList : null;
     const isSwitchOn = props.isDose;
     const toggleSwitch = props.toggleDose;
     const isLoading = props.loading != null ? props.loading : false;
 
-    const [checked, setChecked] = useState({});
-
-    function initChecks() {
-        if (structs == null) return;
-        let checkBoxes = {};
-        for (let struct of structs) {
-            checkBoxes[struct.roi] = false;
-        }
-        setChecked(checkBoxes);
-    }
+    const checked = useSelector(state => state.selectionDrawer.selectedStructures, shallowEqual);
+    const structs = useSelector(state => state.selectionDrawer.structureList, shallowEqual);
+    const dispatch = useDispatch();
 
     function toggleChecked(roi) {
         const newState = { ...checked, [roi]: !checked[roi] };
-        setChecked(newState);
-        let res = [];
-        Object.keys(newState).forEach((key) => {
-            if (newState[key]) res.push(Number(key))
-        });
-        props.handleChecked(res);
+        dispatch(handleCheckedStructs(newState));
     }
-
-    useEffect(initChecks, [structs]);
 
     return (
         <Paper className={classes.drawerContainer}>

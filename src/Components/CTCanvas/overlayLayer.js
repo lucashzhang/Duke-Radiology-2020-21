@@ -1,9 +1,10 @@
 import React, { useRef, useEffect } from 'react';
+import { useSelector, shallowEqual, useDispatch } from "react-redux";
 import * as colormap from 'colormap';
 
 const jet = colormap({
     colormap: 'jet',
-    nshades: 80,
+    nshades: 9,
     format: 'rgba',
     alpha: 1
 });
@@ -12,18 +13,20 @@ function CTLayer(props) {
 
     const canvasRef = useRef(null);
     const offscreenRef = useRef(new OffscreenCanvas(512,512));
-    const { sliceNum, selected, view, rs, rd, minSlice, canvasOffset, isDose } = props;
+    const { sliceNum, view, rs, rd, minSlice, canvasOffset, isDose } = props;
+    const structures = useSelector(state => state.selectionDrawer.selectedStructures, shallowEqual);
 
     function colorFilter(doseVal) {
-        const adjusted = Math.max(0, Math.floor(doseVal / rd.maxDose * 10) * 10 - 20);
+        const adjusted = Math.max(0, Math.floor(doseVal / rd.maxDose * 10) - 2);
         if (adjusted === 0) return [0,0,0,0];
         return jet[Math.min(adjusted, jet.length - 1)]
     }
 
     useEffect(() => {
         function getSelectedContours() {
-            if (rs.getSpecificContours == null || selected.length === 0) return null;
-            return rs.getSpecificContours(props.selected);
+            const selected = Object.keys(structures)?.filter(struct => structures[struct])
+            if (rs.getSpecificContours == null || selected == null || selected.length === 0) return null;
+            return rs.getSpecificContours(selected);
         }
 
         function drawContour(contourData = null) {
@@ -91,13 +94,13 @@ function CTLayer(props) {
             const [maxWidth, maxHeight] = getMax();
             switch (view.toUpperCase()) {
                 case 'AXIAL':
-                    pixelArray = rd.getAxialSlice(sliceNum, colorFilter);
+                    pixelArray = rd.getAxialSlice(sliceNum, colorFilter, 180);
                     break;
                 case 'CORONAL':
-                    pixelArray = rd.getCoronalSlice(sliceNum, colorFilter);
+                    pixelArray = rd.getCoronalSlice(sliceNum, colorFilter, 180);
                     break;
                 case 'SAGITTAL':
-                    pixelArray = rd.getSagittalSlice(sliceNum, colorFilter);
+                    pixelArray = rd.getSagittalSlice(sliceNum, colorFilter, 180);
                     break;
                 default:
                     return;
@@ -117,7 +120,7 @@ function CTLayer(props) {
         ctx.clearRect(0, 0, 512, 512);
         if (!!isDose) drawDoseOverlay();
         drawContour(createContourPoints());
-    }, [rs, rd, sliceNum, selected, canvasOffset, isDose])
+    }, [rs, rd, sliceNum, structures, canvasOffset, isDose])
 
     return (
         <canvas

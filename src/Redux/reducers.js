@@ -91,6 +91,39 @@ export const patientLast = (state = '', action) => {
     }
 }
 
+export const structureList = (state = [], action) => {
+    switch (action.type) {
+        case C['SELECTIONDRAWER'].SET_STRUCTURES:
+            return action.payload;
+        case C['SELECTIONDRAWER'].CLEAR_STRUCTURES:
+            return [];
+        default:
+            return state;
+    }
+}
+
+export const selectedStructures = (state = {}, action) => {
+    switch (action.type) {
+        case C['SELECTIONDRAWER'].SET_SELECTED_STUCTURES:
+            return action.payload;
+        case C['SELECTIONDRAWER'].CLEAR_SELECTED_STRUCTURES:
+            return {};
+        default:
+            return state;
+    }
+}
+
+export const selectedDoses = (state = {}, action) => {
+    switch (action.type) {
+        case C['SELECTIONDRAWER'].SET_SELECTED_DOSES:
+            return action.payload;
+        case C['SELECTIONDRAWER'].CLEAR_SELECTED_DOSES:
+            return {};
+        default:
+            return state;
+    }
+}
+
 export default combineReducers({
     files: combineReducers({
         folderDirectory: folderDirectory,
@@ -103,6 +136,11 @@ export default combineReducers({
         patientFirst,
         patientMiddle,
         patientLast
+    }),
+    selectionDrawer: combineReducers({
+        structureList,
+        selectedStructures,
+        selectedDoses
     })
-    
+
 })

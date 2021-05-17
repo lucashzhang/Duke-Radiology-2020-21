@@ -45,13 +45,41 @@ export const setRDSummary = (rd) => {
     }
 }
 
+export const handleCheckedStructs = (structs) => {
+    return {
+        type: C.SELECTIONDRAWER.SET_SELECTED_STUCTURES,
+        payload: structs
+    }
+}
+
+export const setNewStructs = (structs) => (dispatch) => {
+
+    const selected = {};
+    for (let struct of structs) {
+        selected[struct.roi] = false;
+    }
+    batch(() => {
+        dispatch(handleCheckedStructs(selected));
+        dispatch({
+            type: C.SELECTIONDRAWER.SET_STRUCTURES,
+            payload: structs
+        })
+    })
+}
+
 export const handleNewFolder = (newDir, fileSummary) => (dispatch) => {
 
     batch(() => {
+        // Set new folder directory
         dispatch(setFolderDirectory(newDir));
+        // Set new summaries
         dispatch(setRSSummary(fileSummary.rsInfo));
         dispatch(setCTSummary(fileSummary.seriesInfo));
-        dispatch(setRDSummary(fileSummary.rdInfo))
+        dispatch(setRDSummary(fileSummary.rdInfo));
         dispatch(setFolderStatus(fileSummary.isValid));
+        // Clearing selections from drawer
+        dispatch({ type: C.SELECTIONDRAWER.CLEAR_STRUCTURES});
+        dispatch({ type: C.SELECTIONDRAWER.CLEAR_SELECTED_STRUCTURES});
+        dispatch({ type: C.SELECTIONDRAWER.CLEAR_SELECTED_DOSES});
     })
 }

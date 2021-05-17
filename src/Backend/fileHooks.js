@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useSelector, shallowEqual } from "react-redux";
-import { useDispatch } from "react-redux";
+import { useSelector, shallowEqual, useDispatch } from "react-redux";
 import { readRS, readSeries, readRD, scanFiles } from './fileHandler';
-import { handleNewFolder } from '../Redux/actions';
+import { handleNewFolder, setNewStructs } from '../Redux/actions';
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import Worker from 'workerize-loader!./file.worker.js';
 
@@ -46,6 +45,7 @@ export function useSeries() {
 export function useRS() {
   const absDir = useSelector(state => state.files.folderDirectory, shallowEqual);
   const [rs, setRS] = useState({});
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (absDir == null || absDir === '') return;
@@ -53,6 +53,7 @@ export function useRS() {
     const rsWorker = new Worker();
     readRS(absDir, rsWorker).then(newRS => {
       if (newRS !== {} && newRS != null) setRS(newRS);
+      dispatch(setNewStructs(newRS.structList));
       // console.log(newRS)
       rsWorker.terminate();
     });
