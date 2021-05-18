@@ -77,9 +77,9 @@ function RDLayer(props) {
         }
 
         rds?.forEach(rd => drawDoseOverlay(rd));
-        
+        const ctx = canvasRef.current.getContext('2d');
+
         return function cleanup() {
-            const ctx = canvasRef.current.getContext('2d');
             ctx.clearRect(0, 0, 512, 512);
         }
     }, [rds, sliceNum, canvasOffset, view])

@@ -54,7 +54,6 @@ function CTLayer(props) {
         ctx.drawImage(offscreenRef.current, drawXOffset, drawYOffset, maxWidth, maxHeight);
 
         return function cleanup() {
-            const ctx = canvasRef.current.getContext('2d');
             ctx.clearRect(0, 0, 512, 512);
         }
     }
