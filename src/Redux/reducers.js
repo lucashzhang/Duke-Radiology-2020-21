@@ -115,9 +115,9 @@ export const selectedStructures = (state = {}, action) => {
 
 export const selectedDoses = (state = {}, action) => {
     switch (action.type) {
-        case C['SELECTIONDRAWER'].SET_SELECTED_DOSES:
+        case C['SELECTIONDRAWER'].SET_DOSES:
             return action.payload;
-        case C['SELECTIONDRAWER'].CLEAR_SELECTED_DOSES:
+        case C['SELECTIONDRAWER'].CLEAR_DOSES:
             return {};
         default:
             return state;
@@ -126,11 +126,11 @@ export const selectedDoses = (state = {}, action) => {
 
 export default combineReducers({
     files: combineReducers({
-        folderDirectory: folderDirectory,
-        folderStatus: folderStatus,
-        ctSummary: ctSummary,
-        rsSummary: rsSummary,
-        rdSummary: rdSummary
+        folderDirectory,
+        folderStatus,
+        ctSummary,
+        rsSummary,
+        rdSummary
     }),
     patient: combineReducers({
         patientFirst,
@@ -138,13 +138,8 @@ export default combineReducers({
         patientLast
     }),
     selectionDrawer: combineReducers({
-        structures: combineReducers({
-            structureList,
-            selectedStructures,
-        }),
-        doses: combineReducers({
-            selectedDoses
-        })
+        selectedStructures,
+        selectedDoses
     })
 
 })

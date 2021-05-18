@@ -65,14 +65,18 @@ export function useRS() {
 
 export function useRD() {
   const absDir = useSelector(state => state.files.folderDirectory, shallowEqual);
-  const [rd, setRD] = useState({});
+  const selected = useSelector(state => state.selectionDrawer.selectedDoses, shallowEqual);
+  const [rd, setRD] = useState([]);
 
   useEffect(() => {
-    if (absDir == null || absDir === '') return;
-    setRD({});
+    if (absDir == null || absDir === '') {
+      setRD([]);
+      return;
+    }
+    const files = Object.entries(selected).filter(dose => dose[1]).map(dose => dose[0]);
     const rdWorker = new Worker();
-    readRD(absDir, rdWorker).then(newRD => {
-      if (newRD !== {} && newRD != null) setRD(newRD);
+    readRD(absDir, files, rdWorker).then(newRD => {
+      if (newRD !== {} && newRD != null) setRD(newRD ?? []);
       // console.log(newRD);
       rdWorker.terminate();
     });
@@ -80,7 +84,7 @@ export function useRD() {
     return function cleanup() {
       rdWorker.terminate();
     }
-  }, [absDir]);
+  }, [absDir, selected]);
   return rd;
 }
 

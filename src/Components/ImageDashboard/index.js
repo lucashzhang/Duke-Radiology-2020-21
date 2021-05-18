@@ -64,7 +64,7 @@ function Dashboard() {
 
     const [sliceCoord, setSliceCoord] = useState({ x: 0, y: 0, z: 0 });
     const [isDose, setIsDose] = useState(false);
-    const isLoading = Object.keys(rs).length === 0 || Object.keys(series).length === 0 || Object.keys(rd).length === 0;
+    const isLoading = Object.keys(rs).length === 0 || Object.keys(series).length === 0;
 
     function initMiddle() {
         if (series == null || Object.keys(series).length === 0) return;
@@ -73,9 +73,6 @@ function Dashboard() {
             y: Math.round(series.height / 2),
             z: Math.round(series.depth / 2)
         })
-        // setSliceX(Math.round(series.width / 2));
-        // setSliceY(Math.round(series.height / 2));
-        // setSliceZ(Math.round(series.depth / 2));
     }
 
     function handleSlice(view, val1, val2, val3) {

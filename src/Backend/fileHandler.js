@@ -133,16 +133,18 @@ export async function readRS(absDir, rsWorker) {
     return wrappedRS;
 }
 
-export async function readRD(absDir, rdWorker) {
+export async function readRD(absDir, files, rdWorker) {
 
     let ctImages = await readCT(absDir, rdWorker);
     let firstCT = ctImages[0];
-    let rawRD = await getFiles(absDir, 'RD');
+    let rawRD;
+    if (files.length <= 0) return [];
+    else rawRD = await Promise.all(files.map(file => getFile(absDir, file)));
     if (rawRD.length <= 0) {
-        return {};
+        return [];
     }
     let builtRD = await rdWorker.buildRD(rawRD, firstCT);
-    let wrappedRD = Factory.createWrapper(builtRD[0], 'RD');
+    let wrappedRD = builtRD.map(rd => Factory.createWrapper(rd, 'RD'))
 
     return wrappedRD;
 }

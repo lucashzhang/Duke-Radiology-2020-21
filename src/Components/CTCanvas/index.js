@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { CircularProgress } from '@material-ui/core';
 import CTLayer from './CTLayer';
-import OverlayLayer from './overlayLayer';
+import OverlayLayer from './RSLayer';
+import RDLayer from './RDLayer';
 
 const useStyles = makeStyles((theme) => ({
     canvasContainer: {
@@ -207,14 +208,23 @@ function CTCanvas(props) {
             className={classes.canvasContainer}
         >
             <CTLayer sliceNum={sliceZ} series={props.series} view={props.view}></CTLayer>
+            {
+                props.rd.map(rd => (
+                    <RDLayer
+                        sliceNum={sliceZ}
+                        rd={rd}
+                        view={props.view}
+                        key={rd.filename}
+                        canvasOffset={[drawXOffset, drawYOffset]}
+                    ></RDLayer>
+                ))
+            }
             <OverlayLayer
                 sliceNum={sliceZ}
                 rs={props.rs}
-                rd={props.rd}
                 view={props.view}
                 minSlice={minSlice}
                 selected={props.selected}
-                isDose={props.isDose}
                 canvasOffset={[drawXOffset, drawYOffset]}
             ></OverlayLayer>
             <canvas

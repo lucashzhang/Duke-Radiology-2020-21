@@ -67,9 +67,26 @@ export const setNewStructs = (structs) => (dispatch) => {
     })
 }
 
+export const setNewDoses = (doses) => {
+    const selected = {};
+    for (let dose of doses) {
+        selected[dose.filename] = false;
+    }
+    return {
+        type: C.SELECTIONDRAWER.SET_DOSES,
+        payload: selected
+    }
+}
+
+export const handleCheckedDoses = (doses) => {
+    return {
+        type: C.SELECTIONDRAWER.SET_DOSES,
+        payload: doses
+    }
+}
+
 export const handleNewFolder = (newDir, fileSummary) => (dispatch) => {
 
-    console.log(fileSummary)
     batch(() => {
         // Set new folder directory
         dispatch(setFolderDirectory(newDir));
@@ -78,7 +95,8 @@ export const handleNewFolder = (newDir, fileSummary) => (dispatch) => {
         dispatch(setCTSummary(fileSummary.seriesInfo));
         dispatch(setRDSummary(fileSummary.rdInfo));
         dispatch(setFolderStatus(fileSummary.isValid));
-        // Set new structs
+        // Create new drawer info
         dispatch(setNewStructs(fileSummary.rsInfo.structList))
+        dispatch(setNewDoses(fileSummary.rdInfo.files))
     })
 }

@@ -2,14 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, shallowEqual, useDispatch } from "react-redux";
 import { Paper, FormGroup, FormControlLabel, Checkbox, CircularProgress, FormControl, Divider, List, ListItem, Typography, Switch, Accordion } from '@material-ui/core';
-import { handleCheckedStructs } from '../../Redux/actions';
+import { handleCheckedStructs, handleCheckedDoses } from '../../Redux/actions';
 
 
 const useStyles = makeStyles((theme) => ({
     drawerContainer: {
         width: '232px',
         height: '100vh',
-        overflow: 'auto',
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        textOverflow: "ellipsis"
         // overflow: 'hidden',
         // transition: '0.5s',
         // '&:hover': {
@@ -23,9 +25,6 @@ const useStyles = makeStyles((theme) => ({
         alignItems: 'center',
         justifyContent: 'center'
     },
-    tabs: {
-        width: '100%'
-    }
 }));
 
 
@@ -33,35 +32,43 @@ function StructMenu(props) {
 
     const classes = useStyles();
     const isSwitchOn = props.isDose;
-    const toggleSwitch = props.toggleDose;
     const isLoading = props.loading != null ? props.loading : false;
 
-    const checked = useSelector(state => state.selectionDrawer.structures.selectedStructures, shallowEqual);
-    const structs = useSelector(state => state.selectionDrawer.structures.structureList, shallowEqual);
+    const checkedStructs = useSelector(state => state.selectionDrawer.selectedStructures, shallowEqual);
+    const structs = useSelector(state => state.files.rsSummary.structList, shallowEqual);
+    const checkedDoses = useSelector(state => state.selectionDrawer.selectedDoses, shallowEqual);
     const dispatch = useDispatch();
-
     function toggleChecked(roi) {
-        const newState = { ...checked, [roi]: !checked[roi] };
+        const newState = { ...checkedStructs, [roi]: !checkedStructs[roi] };
         dispatch(handleCheckedStructs(newState));
+    }
+    function toggleSwitch(file) {
+        props.toggleDose();
+        const newState = { ...checkedDoses, [file]: !checkedDoses[file] };
+        dispatch(handleCheckedDoses(newState));
     }
 
     return (
         <Paper className={classes.drawerContainer}>
             <List>
-                <ListItem><Typography variant="h6">Dose</Typography></ListItem>
+                <ListItem><Typography variant="h6">Doses</Typography></ListItem>
                 <ListItem>
                     <FormGroup>
-                        <FormControlLabel
-                            control={<Switch color={'primary'} checked={isSwitchOn} onChange={toggleSwitch}></Switch>}
-                            label={"RD File"}
-                        />
+                        {
+                            Object.entries(checkedDoses).map(dose => (
+                                <FormControlLabel
+                                    control={<Checkbox color={'primary'} checked={!!dose[1]} onChange={() => toggleSwitch(dose[0])}></Checkbox>}
+                                    label={dose[0]}
+                                />
+                            ))
+                        }
 
                     </FormGroup>
                 </ListItem>
                 <Divider></Divider>
                 <ListItem><Typography variant="h6">Structures</Typography></ListItem>
                 <ListItem>
-                    {structs != null && Object.keys(checked).length !== 0 && !isLoading ? <FormControl component="fieldset">
+                    {structs != null && Object.keys(checkedStructs).length !== 0 && !isLoading ? <FormControl component="fieldset">
                         <FormGroup>
                             {
                                 structs.map((struct) => (
@@ -70,10 +77,10 @@ function StructMenu(props) {
                                         control={
                                             <Checkbox
                                                 name={`${struct.roi}`}
-                                                checked={!!checked[struct.roi]}
+                                                checked={!!checkedStructs[struct.roi]}
                                                 onChange={() => toggleChecked(struct.roi)}
                                                 color={'default'}
-                                                style={{ 
+                                                style={{
                                                     color: `rgb(${struct.displayColor[0]},${struct.displayColor[1]},${struct.displayColor[2]})`,
                                                 }}
                                             />
@@ -85,8 +92,8 @@ function StructMenu(props) {
 
                         </FormGroup>
                     </FormControl> : <div className={classes.loading}>
-                            <CircularProgress color='primary'></CircularProgress>
-                        </div>}
+                        <CircularProgress color='primary'></CircularProgress>
+                    </div>}
                 </ListItem>
             </List>
 

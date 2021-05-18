@@ -5,26 +5,17 @@ export function buildSeries(ctArray) {
 }
 
 export function buildRS(fileArray, ct) {
-    let newRS = [];
-    for (let file of fileArray) {
-        newRS.push(new RS(file.filename, file.contents, ct));
-    }
+    let newRS = fileArray.map(file => new RS(file.filename, file.contents, ct));
     return newRS;
 }
 
 export function buildRD(fileArray, ct) {
-    let newRD = [];
-    for (let file of fileArray) {
-        newRD.push(new RD(file.filename, file.contents, ct))
-    }
+    let newRD = fileArray.map(file => new RD(file.filename, file.contents, ct));
     return newRD;
 }
 
 export function buildCT(fileArray) {
-    let newCT = [];
-    for (let file of fileArray) {
-        newCT.push(new CT(file.filename, file.contents));
-    }
+    let newCT = fileArray.map(file => new CT(file.filename, file.contents));
     newCT = newCT.sort((a, b) => b.position[2] - a.position[2]);
     return newCT;
 }
