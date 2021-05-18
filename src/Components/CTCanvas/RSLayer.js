@@ -45,9 +45,11 @@ function CTLayer(props) {
             return {};
         }
 
-        const ctx = canvasRef.current.getContext('2d');
-        ctx.clearRect(0, 0, 512, 512);
         drawContour(createContourPoints());
+        return function cleanup() {
+            const ctx = canvasRef.current.getContext('2d');
+            ctx.clearRect(0, 0, 512, 512);
+        }
     }, [rs, sliceNum, structures, canvasOffset])
 
     return (

@@ -52,6 +52,11 @@ function CTLayer(props) {
         offscreenRef.current.getContext('2d').putImageData(imgData, 0, 0);
         const ctx = canvasRef.current.getContext('2d');
         ctx.drawImage(offscreenRef.current, drawXOffset, drawYOffset, maxWidth, maxHeight);
+
+        return function cleanup() {
+            const ctx = canvasRef.current.getContext('2d');
+            ctx.clearRect(0, 0, 512, 512);
+        }
     }
 
     useEffect(buildCTCanvas, [series, sliceNum])

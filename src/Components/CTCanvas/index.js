@@ -208,17 +208,12 @@ function CTCanvas(props) {
             className={classes.canvasContainer}
         >
             <CTLayer sliceNum={sliceZ} series={props.series} view={props.view}></CTLayer>
-            {
-                props.rd.map(rd => (
-                    <RDLayer
-                        sliceNum={sliceZ}
-                        rd={rd}
-                        view={props.view}
-                        key={rd.filename}
-                        canvasOffset={[drawXOffset, drawYOffset]}
-                    ></RDLayer>
-                ))
-            }
+            <RDLayer
+                sliceNum={sliceZ}
+                rds={props.rd}
+                view={props.view}
+                canvasOffset={[drawXOffset, drawYOffset]}
+            ></RDLayer>
             <OverlayLayer
                 sliceNum={sliceZ}
                 rs={props.rs}

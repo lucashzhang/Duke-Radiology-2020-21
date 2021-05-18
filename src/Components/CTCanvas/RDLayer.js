@@ -12,17 +12,11 @@ function RDLayer(props) {
 
     const canvasRef = useRef(null);
     const offscreenRef = useRef(new OffscreenCanvas(512,512));
-    const { sliceNum, view, rd, canvasOffset } = props;
-
-    function colorFilter(doseVal) {
-        const adjusted = Math.max(0, Math.floor(doseVal / rd.maxDose * 10) - 2);
-        if (adjusted === 0) return [0,0,0,0];
-        return jet[Math.min(adjusted, jet.length - 1)]
-    }
+    const { sliceNum, view, rds, canvasOffset } = props;
 
     useEffect(() => {
 
-        function drawDoseOverlay() {
+        function drawDoseOverlay(rd) {
 
             function imgOffset() {
 
@@ -51,8 +45,13 @@ function RDLayer(props) {
                         return [512, 512];
                 }
             }
-            
-            if (rd.imageArray == null || canvasOffset == null || rd.offsetVector == null) return;
+
+            function colorFilter(doseVal) {
+                const adjusted = Math.max(0, Math.floor(doseVal / rd.maxDose * 10) - 2);
+                if (adjusted === 0) return [0,0,0,0];
+                return jet[Math.min(adjusted, jet.length - 1)]
+            }
+            if (rd == null || rd.imageArray == null || canvasOffset == null || rd.offsetVector == null) return;
             let pixelArray;
             const [maxWidth, maxHeight] = getMax();
             switch (view.toUpperCase()) {
@@ -77,10 +76,13 @@ function RDLayer(props) {
             ctx.drawImage(offscreenRef.current, offsets[0], offsets[1], maxWidth, maxHeight)
         }
 
-        const ctx = canvasRef.current.getContext('2d');
-        ctx.clearRect(0, 0, 512, 512);
-        drawDoseOverlay();
-    }, [rd, sliceNum, canvasOffset, view])
+        rds?.forEach(rd => drawDoseOverlay(rd));
+        
+        return function cleanup() {
+            const ctx = canvasRef.current.getContext('2d');
+            ctx.clearRect(0, 0, 512, 512);
+        }
+    }, [rds, sliceNum, canvasOffset, view])
 
     return (
         <canvas
