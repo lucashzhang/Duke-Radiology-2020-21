@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import StructMenu from '../Drawer';
 import { makeStyles } from '@material-ui/core/styles';
-import { Paper, Typography } from '@material-ui/core';
+import { Paper, Grid } from '@material-ui/core';
 import CTCanvas from '../CTCanvas';
 import { useSeries, useRS, useRD } from '../../Backend/fileHooks';
 
@@ -14,44 +14,30 @@ const useStyles = makeStyles((theme) => ({
     main: {
         width: 'calc(100vw - 270px)',
         height: '100vh',
-        display: 'grid',
-        gridTemplateColumns: '1fr 49.5rem 49.5rem 1fr',
-        gridTemplateRows: '2rem 1fr 3fr 2rem',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
         overflow: 'auto',
     },
-    title: {
-        gridRow: '2',
-        gridColumn: '2',
-        marginTop: '2rem',
-        display: 'flex',
-        alignItems: 'center',
-        color: theme.palette.surfacePrimary.contrastText
-        // justifyContent: 'center'
-    },
-    infoContainer: {
-        gridRow: '2',
-        gridColumn: '3',
-        marginTop: '2rem',
-        marginBottom: '0px',
-        padding: '1rem'
-    },
     canvasContainer: {
-        gridRow: '3',
-        gridColumn: '2 / 4',
         display: 'flex',
     },
     canvasView: {
-        margin: 'auto',
-        marginBottom: '2rem',
-        padding: '0.75rem 0.75rem 0.75rem 0rem',
-        display: 'flex',
-        flexDirection: 'row',
-        height: '33.5rem',
-        width: '99rem'
-
+        // padding: '0.75rem 0.75rem 0.75rem 0rem',
+        padding: '1rem',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, min(45vh - 0.5rem, 45vw - 0.5rem))',
+        gridTemplateRows: 'repeat(2, min(45vh - 0.5rem, 45vw - 0.5rem))',
+        gridGap: '1rem',
+        height: 'min(90vh + 1.5rem, 90vw + 1.5rem)',
+        width: 'min(135vh + 2rem, 135vw + 2rem)'
     },
-    canvas: {
-        marginLeft: '0.75rem'
+    canvasMain: {
+        gridRow: '1/3',
+        gridColumn: '1/3',
+    },
+    canvasSide1: {
+        gridRow: '1/3'
     }
 }));
 
@@ -64,6 +50,7 @@ function Dashboard() {
 
     const [sliceCoord, setSliceCoord] = useState({ x: 0, y: 0, z: 0 });
     const [isDose, setIsDose] = useState(false);
+    const [canvasSize, setCanvasSize] = useState(512);
     const isLoading = Object.keys(rs).length === 0 || Object.keys(series).length === 0;
 
     function initMiddle() {
@@ -108,28 +95,59 @@ function Dashboard() {
         setIsDose(prevState => !prevState);
     }
 
+    useEffect(() => {
+        const newSize = Math.min(window.innerWidth * 0.9 - 16, window.innerHeight * 0.9 - 16);
+        setCanvasSize(newSize);
+    }, [window.innerWidth, window.innerHeight])
+
     useEffect(initMiddle, [series])
 
     return (
         <div className={classes.frame}>
             <StructMenu isDose={isDose} toggleDose={toggleDose}></StructMenu>
             <div className={classes.main}>
-                <div className={classes.title}>
-                    <Typography variant={'h1'}>CT Images</Typography>
-                </div>
-                <Paper className={classes.infoContainer}>
-                    <div><b>Basic CT Series Info Placeholder</b></div>
-                </Paper>
                 <div className={classes.canvasContainer}>
                     <Paper className={classes.canvasView}>
-                        <div className={classes.canvas}>
-                            <CTCanvas view='AXIAL' handleSlice={handleSlice} series={series} rs={rs} rd={rd} loading={isLoading} sliceCoords={sliceCoord} isDose={isDose}></CTCanvas>
+                        <div className={classes.canvasMain}>
+                            <CTCanvas
+                                view='AXIAL'
+                                width={canvasSize + 8}
+                                height={canvasSize + 8}
+                                handleSlice={handleSlice}
+                                series={series}
+                                rs={rs}
+                                rd={rd}
+                                loading={isLoading}
+                                sliceCoords={sliceCoord}
+                            ></CTCanvas>
                         </div>
                         <div className={classes.canvas}>
-                            <CTCanvas view='CORONAL' handleSlice={handleSlice} series={series} rs={rs} rd={rd} loading={isLoading} sliceCoords={sliceCoord} isDose={isDose}></CTCanvas>
+                            <CTCanvas
+                                view='CORONAL'
+                                width={canvasSize / 2 - 6}
+                                height={canvasSize / 2 - 6}
+                                handleSlice={handleSlice}
+                                series={series}
+                                rs={rs}
+                                rd={rd}
+                                loading={isLoading}
+                                sliceCoords={sliceCoord}
+                                isDose={isDose}
+                            ></CTCanvas>
                         </div>
                         <div className={classes.canvas}>
-                            <CTCanvas view='SAGITTAL' handleSlice={handleSlice} series={series} rs={rs} rd={rd} loading={isLoading} sliceCoords={sliceCoord} isDose={isDose}></CTCanvas>
+                            <CTCanvas
+                                view='SAGITTAL'
+                                width={canvasSize / 2 - 6}
+                                height={canvasSize / 2 - 6}
+                                handleSlice={handleSlice}
+                                series={series}
+                                rs={rs}
+                                rd={rd}
+                                loading={isLoading}
+                                sliceCoords={sliceCoord}
+                                isDose={isDose}
+                            ></CTCanvas>
                         </div>
                     </Paper>
                 </div>

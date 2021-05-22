@@ -4,7 +4,9 @@ import { useSelector, shallowEqual } from "react-redux";
 function CTLayer(props) {
 
     const canvasRef = useRef(null);
-    const { sliceNum, view, rs, minSlice, canvasOffset } = props;
+    const { sliceNum, view, rs, minSlice, canvasOffset, width, height } = props;
+    const scaleW = width / 512;
+    const scaleH = height / 512;
     const structures = useSelector(state => state.selectionDrawer.selectedStructures, shallowEqual);
 
 
@@ -23,7 +25,7 @@ function CTLayer(props) {
                 ctx.fillStyle = `rgb(${color[0]},${color[1]},${color[2]})`;
                 for (let sequence of contourData[roi].sequences) {
                     for (let point of sequence.contours) {
-                        ctx.fillRect(point[0] - 0.5, point[1] - 0.5, 2, 2);
+                        ctx.fillRect(point[0] * scaleW, point[1] * scaleH, 2 * scaleW, 2 * scaleH);
                     }
                 }
             }
@@ -44,20 +46,16 @@ function CTLayer(props) {
             }
             return {};
         }
-
-        drawContour(createContourPoints());
         const ctx = canvasRef.current.getContext('2d');
-
-        return function cleanup() {
-            ctx.clearRect(0, 0, 512, 512);
-        }
-    }, [rs, sliceNum, structures, canvasOffset])
+        ctx.clearRect(0, 0, width, height);
+        drawContour(createContourPoints());
+    }, [rs, sliceNum, structures, canvasOffset, width, height, scaleW, scaleH])
 
     return (
         <canvas
             ref={canvasRef}
-            width={512}
-            height={512}
+            width={width}
+            height={height}
             style={{ position: 'absolute' }}
         ></canvas>
     )

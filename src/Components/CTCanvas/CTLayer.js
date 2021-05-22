@@ -3,11 +3,8 @@ import React, { useEffect, useRef } from 'react';
 function CTLayer(props) {
 
     const canvasRef = useRef(null);
-    const sliceNum = props.sliceNum;
-    const series = props.series;
-    const view = props.view;
-    const offscreenRef = useRef(new OffscreenCanvas(512,512));
-
+    const { sliceNum, series, view, width, height } = props;
+    const offscreenRef = useRef(new OffscreenCanvas(512, 512));
 
     function buildCTCanvas() {
 
@@ -30,9 +27,10 @@ function CTLayer(props) {
         const [maxWidth, maxHeight, trueHeight] = getMax();
         const drawXOffset = Math.floor((series.width - maxWidth) / 2);
         const drawYOffset = Math.floor((series.height - maxHeight) / 2);
-
-        canvasRef.current.width = series.width;
-        canvasRef.current.height = series.height;
+        const scaleW = width / 512;
+        const scaleH = height / 512;
+        canvasRef.current.width = series.width * scaleW;
+        canvasRef.current.height = series.height * scaleH;
         offscreenRef.current.width = maxWidth;
         offscreenRef.current.height = trueHeight;
         switch (view.toUpperCase()) {
@@ -48,23 +46,20 @@ function CTLayer(props) {
             default:
                 return;
         }
-        if (imgData == null) return;
-        offscreenRef.current.getContext('2d').putImageData(imgData, 0, 0);
+        if (imgData == null || canvasRef.current == null) return;
         const ctx = canvasRef.current.getContext('2d');
-        ctx.drawImage(offscreenRef.current, drawXOffset, drawYOffset, maxWidth, maxHeight);
-
-        return function cleanup() {
-            ctx.clearRect(0, 0, 512, 512);
-        }
+        ctx.clearRect(0, 0, width, height);
+        offscreenRef.current.getContext('2d').putImageData(imgData, 0, 0);
+        ctx.drawImage(offscreenRef.current, drawXOffset * scaleW, drawYOffset * scaleH, maxWidth * scaleW, maxHeight * scaleH);
     }
 
-    useEffect(buildCTCanvas, [series, sliceNum])
+    useEffect(buildCTCanvas, [series, sliceNum, width, height])
 
     return (
         <canvas
             ref={canvasRef}
-            width={512}
-            height={512}
+            width={width}
+            height={height}
             style={{ position: 'absolute' }}
         ></canvas>
     )

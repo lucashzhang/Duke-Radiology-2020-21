@@ -11,8 +11,8 @@ const jet = colormap({
 function RDLayer(props) {
 
     const canvasRef = useRef(null);
-    const offscreenRef = useRef(new OffscreenCanvas(512,512));
-    const { sliceNum, view, rds, canvasOffset } = props;
+    const offscreenRef = useRef(new OffscreenCanvas(512, 512));
+    const { sliceNum, view, rds, canvasOffset, width, height } = props;
 
     useEffect(() => {
 
@@ -48,7 +48,7 @@ function RDLayer(props) {
 
             function colorFilter(doseVal) {
                 const adjusted = Math.max(0, Math.floor(doseVal / rd.maxDose * 10) - 2);
-                if (adjusted === 0) return [0,0,0,0];
+                if (adjusted === 0) return [0, 0, 0, 0];
                 return jet[Math.min(adjusted, jet.length - 1)]
             }
             if (rd == null || rd.imageArray == null || canvasOffset == null || rd.offsetVector == null) return;
@@ -73,22 +73,21 @@ function RDLayer(props) {
             offscreenRef.current.height = pixelArray.height;
             offscreenRef.current.getContext('2d').putImageData(pixelArray, 0, 0);
             const offsets = imgOffset();
-            ctx.drawImage(offscreenRef.current, offsets[0], offsets[1], maxWidth, maxHeight)
+            const scaleW = width / 512;
+            const scaleH = width / 512;
+            ctx.drawImage(offscreenRef.current, offsets[0] * scaleW, offsets[1] * scaleH, maxWidth * scaleW, maxHeight * scaleH)
         }
-
-        rds?.forEach(rd => drawDoseOverlay(rd));
         const ctx = canvasRef.current.getContext('2d');
+        ctx.clearRect(0, 0, width, height);
+        rds?.forEach(rd => drawDoseOverlay(rd));
 
-        return function cleanup() {
-            ctx.clearRect(0, 0, 512, 512);
-        }
-    }, [rds, sliceNum, canvasOffset, view])
+    }, [rds, sliceNum, canvasOffset, view, width, height])
 
     return (
         <canvas
             ref={canvasRef}
-            width={512}
-            height={512}
+            width={width}
+            height={height}
             style={{ position: 'absolute' }}
         ></canvas>
     )

@@ -8,8 +8,6 @@ import RDLayer from './RDLayer';
 const useStyles = makeStyles((theme) => ({
     canvasContainer: {
         position: 'relative',
-        width: '512px',
-        height: '512px',
         backgroundColor: 'black',
         borderRadius: '0.25rem',
         "& canvas": {
@@ -26,7 +24,6 @@ const useStyles = makeStyles((theme) => ({
         gridRow: '1',
         zIndex: '100',
         position: 'absolute',
-        borderRadius: '0.25rem',
         boxSizing: 'border-box',
         "&:focus": {
             outline: 'none',
@@ -50,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
 
 function CTCanvas(props) {
 
-    const { view, series } = props;
+    const { view, series, width, height } = props;
     const classes = useStyles();
     const canvasRef = useRef(null);
     const minSlice = getMinSlice();
@@ -59,6 +56,8 @@ function CTCanvas(props) {
     const drawYOffset = Math.floor((series.height - maxHeight) / 2);
     const [isHold, setIsHold] = useState(false);
     const [sliceX, sliceY, sliceZ] = getSliceNum();
+    const scaleW = width / 512;
+    const scaleH = height / 512;
 
     // const drawText = useCallback(drawTextOverlay, [sliceNum, props.view]);
 
@@ -139,8 +138,8 @@ function CTCanvas(props) {
         ctx.font = '16px sans-serif';
         ctx.textAlign = "center";
         ctx.fillStyle = '#FFFFFF';
-        ctx.fillText(props.view.toUpperCase(), 256, 24);
-        ctx.fillText(`Slice Position: ${(sliceZ * getSpacing() + minSlice).toFixed(4)}mm`, series.width / 2, series.height - 12);
+        ctx.fillText(props.view.toUpperCase(), width / 2, 24);
+        ctx.fillText(`Slice Position: ${(sliceZ * getSpacing() + minSlice).toFixed(4)}mm`, width / 2, height - 12);
     }
 
     function handleUserKeyPress(e) {
@@ -177,10 +176,10 @@ function CTCanvas(props) {
         switch (view.toUpperCase()) {
             case 'CORONAL':
             case 'SAGITTAL':
-                props.handleSlice(props.view, x - drawXOffset, Math.round((y - drawYOffset) / series.thickness), sliceZ);
+                props.handleSlice(props.view, Math.round((x - drawXOffset) / scaleW), Math.round((y - drawYOffset) / series.thickness / scaleH), sliceZ);
                 break;
             default:
-                props.handleSlice(props.view, x - drawXOffset, y - drawYOffset, sliceZ);
+                props.handleSlice(props.view, Math.round((x - drawXOffset) / scaleW), Math.round((y - drawYOffset) / scaleH), sliceZ);
 
         }
         // props.handleSlice(props.view, x - drawXOffset, y - drawYOffset, sliceZ);
@@ -188,31 +187,40 @@ function CTCanvas(props) {
 
     useEffect(() => {
         const ctx = canvasRef.current.getContext('2d');
-        ctx.clearRect(0, 0, 512, 512);
+        ctx.clearRect(0, 0, width, height);
         drawTextOverlay();
         // drawCrosshairs(sliceX + drawXOffset, sliceY + drawYOffset);
         switch (view.toUpperCase()) {
             case 'CORONAL':
             case 'SAGITTAL':
-                drawCrosshairs(sliceX + drawXOffset, sliceY * series.thickness + drawYOffset)
+                drawCrosshairs(sliceX * scaleW + drawXOffset, sliceY * series.thickness * scaleH + drawYOffset)
                 break;
             default:
-                drawCrosshairs(sliceX + drawXOffset, sliceY + drawYOffset)
+                drawCrosshairs(sliceX * scaleW + drawXOffset, sliceY * scaleH + drawYOffset)
 
         }
-    }, [sliceX, sliceY, sliceZ])
+    }, [sliceX, sliceY, sliceZ, scaleW, scaleH])
 
 
     return (
         <div
             className={classes.canvasContainer}
+            style={{ width: width, height: height }}
         >
-            <CTLayer sliceNum={sliceZ} series={props.series} view={props.view}></CTLayer>
+            <CTLayer
+                sliceNum={sliceZ}
+                series={props.series}
+                view={props.view}
+                width={width}
+                height={height}
+            ></CTLayer>
             <RDLayer
                 sliceNum={sliceZ}
                 rds={props.rd}
                 view={props.view}
                 canvasOffset={[drawXOffset, drawYOffset]}
+                width={width}
+                height={height}
             ></RDLayer>
             <OverlayLayer
                 sliceNum={sliceZ}
@@ -221,6 +229,8 @@ function CTCanvas(props) {
                 minSlice={minSlice}
                 selected={props.selected}
                 canvasOffset={[drawXOffset, drawYOffset]}
+                width={width}
+                height={height}
             ></OverlayLayer>
             <canvas
                 ref={canvasRef}
@@ -232,8 +242,8 @@ function CTCanvas(props) {
                 onMouseLeave={() => setIsHold(false)}
                 onMouseMove={handleCrosshair}
                 tabIndex="0"
-                width={512}
-                height={512}
+                width={width}
+                height={height}
             >
             </canvas>
             {series == null || Object.keys(series).length === 0 || isLoading ? <div className={classes.loading}>
