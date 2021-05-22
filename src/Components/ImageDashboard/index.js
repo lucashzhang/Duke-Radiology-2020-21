@@ -96,9 +96,18 @@ function Dashboard() {
     }
 
     useEffect(() => {
-        const newSize = Math.min(window.innerWidth * 0.9 - 16, window.innerHeight * 0.9 - 16);
-        setCanvasSize(newSize);
-    }, [window.innerWidth, window.innerHeight])
+
+        function handleResize() {
+            const newSize = Math.min(window.innerWidth * 0.9 - 16, window.innerHeight * 0.9 - 16);
+            setCanvasSize(newSize);
+        }
+        handleResize();
+        window.addEventListener('resize', handleResize);
+
+        return function cleanup() {
+            window.removeEventListener('resize', handleResize);
+        }
+    }, [])
 
     useEffect(initMiddle, [series])
 
