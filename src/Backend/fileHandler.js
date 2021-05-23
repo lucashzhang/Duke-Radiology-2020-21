@@ -139,6 +139,7 @@ export async function readRD(absDir, files, rdWorker) {
     let firstCT = ctImages[0];
     let rawRD;
     if (files.length <= 0) return [];
+    else if (files === 'all') rawRD = await getFiles(absDir, 'RD');
     else rawRD = await Promise.all(files.map(file => getFile(absDir, file)));
     if (rawRD.length <= 0) {
         return [];

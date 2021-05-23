@@ -189,8 +189,8 @@ export class RD extends DCM {
             let pixelDataArray = [];
             const width = this.imageData.getCols();
             const height = this.imageData.getRows();
-            const scaleW = this.imageData.getPixelSpacing()[1] / ct.pixelSpacing[1];
-            const scaleH = this.imageData.getPixelSpacing()[0] / ct.pixelSpacing[1];
+            // const scaleW = this.imageData.getPixelSpacing()[1] / ct.pixelSpacing[1];
+            // const scaleH = this.imageData.getPixelSpacing()[0] / ct.pixelSpacing[1];
             const arrayLength = width * height;
             let max = 0;
             for (let i = pixelData.length - arrayLength, j = pixelData.length; i >= 0; i -= arrayLength, j -= arrayLength) {

@@ -1,4 +1,5 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
+import { useSelector, shallowEqual } from "react-redux";
 import * as colormap from 'colormap';
 
 const jet = colormap({
@@ -13,6 +14,8 @@ function RDLayer(props) {
     const canvasRef = useRef(null);
     const offscreenRef = useRef(new OffscreenCanvas(512, 512));
     const { sliceNum, view, rds, canvasOffset, width, height } = props;
+    const selected = useSelector(state => state.selectionDrawer.selectedDoses, shallowEqual);
+    const files = useMemo(() => Object.entries(selected).filter(dose => dose[1]).map(dose => dose[0]));
 
     useEffect(() => {
 
@@ -79,9 +82,11 @@ function RDLayer(props) {
         }
         const ctx = canvasRef.current.getContext('2d');
         ctx.clearRect(0, 0, width, height);
-        rds?.forEach(rd => drawDoseOverlay(rd));
+        rds?.forEach(rd => {
+            if (files.includes(rd.filename)) drawDoseOverlay(rd);
+        });
 
-    }, [rds, sliceNum, canvasOffset, view, width, height])
+    }, [rds, sliceNum, canvasOffset, view, width, height, files])
 
     return (
         <canvas

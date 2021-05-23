@@ -73,9 +73,8 @@ export function useRD() {
       setRD([]);
       return;
     }
-    const files = Object.entries(selected).filter(dose => dose[1]).map(dose => dose[0]);
     const rdWorker = new Worker();
-    readRD(absDir, files, rdWorker).then(newRD => {
+    readRD(absDir, 'all', rdWorker).then(newRD => {
       if (newRD !== {} && newRD != null) setRD(newRD ?? []);
       // console.log(newRD);
       rdWorker.terminate();
@@ -84,7 +83,7 @@ export function useRD() {
     return function cleanup() {
       rdWorker.terminate();
     }
-  }, [absDir, selected]);
+  }, [absDir]);
   return rd;
 }
 
