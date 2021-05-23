@@ -67,6 +67,7 @@ export function useRD() {
   const absDir = useSelector(state => state.files.folderDirectory, shallowEqual);
   const selected = useSelector(state => state.selectionDrawer.selectedDoses, shallowEqual);
   const [rd, setRD] = useState([]);
+  const [selectedRD, setSelectedRD] = useState([]);
 
   useEffect(() => {
     if (absDir == null || absDir === '') {
@@ -84,7 +85,12 @@ export function useRD() {
       rdWorker.terminate();
     }
   }, [absDir]);
-  return rd;
+
+  useEffect(() => {
+    setSelectedRD(rd.filter(file => selected[file.filename]));
+  }, [selected, rd])
+
+  return selectedRD;
 }
 
 export function useDirectory() {

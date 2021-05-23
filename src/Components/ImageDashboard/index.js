@@ -45,7 +45,7 @@ function Dashboard() {
 
     const [sliceCoord, setSliceCoord] = useState({ x: 0, y: 0, z: 0 });
     const [canvasSize, setCanvasSize] = useState(512);
-    const isLoading = Object.keys(rs).length === 0 || Object.keys(series).length === 0;
+    const isLoading = Object.keys(series).length === 0;
 
     function initMiddle() {
         if (series == null || Object.keys(series).length === 0) return;
