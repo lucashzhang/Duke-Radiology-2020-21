@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import StructMenu from '../Drawer';
+import DoseMenu from '../Drawer/dose';
+import StructMenu from '../Drawer/structures';
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper, Grid } from '@material-ui/core';
 import CTCanvas from '../CTCanvas';
@@ -9,35 +10,29 @@ const useStyles = makeStyles((theme) => ({
     frame: {
         display: 'flex',
         flexDirection: 'row',
-        background: theme.palette.surfacePrimary.main
+        background: theme.palette.surfacePrimary.main,
+        justifyContent: 'center'
     },
     main: {
-        width: 'calc(100vw - 270px)',
-        height: '100vh',
+        minHeight: '100vh',
         display: 'flex',
-        justifyContent: 'center',
+        flexDirection: 'column',
         alignItems: 'center',
-        overflow: 'auto',
-    },
-    canvasContainer: {
-        display: 'flex',
+        width: 'min(165vh + 1rem, 100vw - 8rem)'
     },
     canvasView: {
-        // padding: '0.75rem 0.75rem 0.75rem 0rem',
+        margin: '1rem',
         padding: '1rem',
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, min(45vh - 0.5rem, 45vw - 0.5rem))',
-        gridTemplateRows: 'repeat(2, min(45vh - 0.5rem, 45vw - 0.5rem))',
-        gridGap: '1rem',
-        height: 'min(90vh + 1.5rem, 90vw + 1.5rem)',
-        width: 'min(135vh + 2rem, 135vw + 2rem)'
+        display: 'flex',
+        flexDirection: 'row',
+        height: 'min(55vh + 1rem, 33vw - 1.5rem)',
+        width: '100%'
     },
-    canvasMain: {
-        gridRow: '1/3',
-        gridColumn: '1/3',
+    canvas: {
+        marginLeft: '1rem'
     },
-    canvasSide1: {
-        gridRow: '1/3'
+    options: {
+        height: 'calc(100vh - min(55vh + 1rem, 33vw - 1.5rem) - 2rem)',
     }
 }));
 
@@ -49,7 +44,6 @@ function Dashboard() {
     const rd = useRD();
 
     const [sliceCoord, setSliceCoord] = useState({ x: 0, y: 0, z: 0 });
-    const [isDose, setIsDose] = useState(false);
     const [canvasSize, setCanvasSize] = useState(512);
     const isLoading = Object.keys(rs).length === 0 || Object.keys(series).length === 0;
 
@@ -91,14 +85,10 @@ function Dashboard() {
         }
     }
 
-    function toggleDose() {
-        setIsDose(prevState => !prevState);
-    }
-
     useEffect(() => {
 
         function handleResize() {
-            const newSize = Math.min(window.innerWidth * 0.9 - 16, window.innerHeight * 0.9 - 16);
+            const newSize = Math.min(window.innerWidth / 3 - 64, window.innerHeight * 0.55 - 16);
             setCanvasSize(newSize);
         }
         handleResize();
@@ -113,53 +103,57 @@ function Dashboard() {
 
     return (
         <div className={classes.frame}>
-            <StructMenu isDose={isDose} toggleDose={toggleDose}></StructMenu>
+            {/* <StructMenu isDose={isDose} toggleDose={toggleDose}></StructMenu> */}
             <div className={classes.main}>
-                <div className={classes.canvasContainer}>
-                    <Paper className={classes.canvasView}>
-                        <div className={classes.canvasMain}>
-                            <CTCanvas
-                                view='AXIAL'
-                                width={canvasSize + 8}
-                                height={canvasSize + 8}
-                                handleSlice={handleSlice}
-                                series={series}
-                                rs={rs}
-                                rd={rd}
-                                loading={isLoading}
-                                sliceCoords={sliceCoord}
-                            ></CTCanvas>
-                        </div>
-                        <div className={classes.canvas}>
-                            <CTCanvas
-                                view='CORONAL'
-                                width={canvasSize / 2 - 6}
-                                height={canvasSize / 2 - 6}
-                                handleSlice={handleSlice}
-                                series={series}
-                                rs={rs}
-                                rd={rd}
-                                loading={isLoading}
-                                sliceCoords={sliceCoord}
-                                isDose={isDose}
-                            ></CTCanvas>
-                        </div>
-                        <div className={classes.canvas}>
-                            <CTCanvas
-                                view='SAGITTAL'
-                                width={canvasSize / 2 - 6}
-                                height={canvasSize / 2 - 6}
-                                handleSlice={handleSlice}
-                                series={series}
-                                rs={rs}
-                                rd={rd}
-                                loading={isLoading}
-                                sliceCoords={sliceCoord}
-                                isDose={isDose}
-                            ></CTCanvas>
-                        </div>
-                    </Paper>
-                </div>
+                <Paper className={classes.canvasView}>
+                    <div className={classes.canvasMain}>
+                        <CTCanvas
+                            view='AXIAL'
+                            width={canvasSize}
+                            height={canvasSize}
+                            handleSlice={handleSlice}
+                            series={series}
+                            rs={rs}
+                            rd={rd}
+                            loading={isLoading}
+                            sliceCoords={sliceCoord}
+                        ></CTCanvas>
+                    </div>
+                    <div className={classes.canvas}>
+                        <CTCanvas
+                            view='CORONAL'
+                            width={canvasSize}
+                            height={canvasSize}
+                            handleSlice={handleSlice}
+                            series={series}
+                            rs={rs}
+                            rd={rd}
+                            loading={isLoading}
+                            sliceCoords={sliceCoord}
+                        ></CTCanvas>
+                    </div>
+                    <div className={classes.canvas}>
+                        <CTCanvas
+                            view='SAGITTAL'
+                            width={canvasSize}
+                            height={canvasSize}
+                            handleSlice={handleSlice}
+                            series={series}
+                            rs={rs}
+                            rd={rd}
+                            loading={isLoading}
+                            sliceCoords={sliceCoord}
+                        ></CTCanvas>
+                    </div>
+                </Paper>
+                <Grid container spacing={2}>
+                    <Grid item md={6} xs={12} className={classes.options}>
+                        <DoseMenu></DoseMenu>
+                    </Grid>
+                    <Grid item md={6} xs={12} className={classes.options}>
+                        <StructMenu></StructMenu>
+                    </Grid>
+                </Grid>
             </div>
         </div>
     );

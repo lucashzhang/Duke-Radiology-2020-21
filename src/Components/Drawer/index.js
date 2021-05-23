@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, shallowEqual, useDispatch } from "react-redux";
-import { Paper, FormGroup, FormControlLabel, Checkbox, CircularProgress, FormControl, Divider, List, ListItem, Typography, Switch, Accordion } from '@material-ui/core';
+import { Paper, FormGroup, FormControlLabel, Checkbox, CircularProgress, FormControl, Divider, List, ListItem, Typography } from '@material-ui/core';
 import { handleCheckedStructs, handleCheckedDoses } from '../../Redux/actions';
 
 
 const useStyles = makeStyles((theme) => ({
-    drawerContainer: {
+    container: {
         width: '232px',
         height: '100vh',
         overflowY: 'auto',
@@ -31,7 +31,6 @@ const useStyles = makeStyles((theme) => ({
 function StructMenu(props) {
 
     const classes = useStyles();
-    const isSwitchOn = props.isDose;
     const isLoading = props.loading != null ? props.loading : false;
 
     const checkedStructs = useSelector(state => state.selectionDrawer.selectedStructures, shallowEqual);
